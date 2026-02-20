@@ -436,35 +436,56 @@ code {
 }
 
 .scroll-indicator {
-    position: absolute;
-    bottom: 32px;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    background: var(--bg-primary);
+}
+
+.scroll-indicator a {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-muted);
     font-size: 0.75rem;
     letter-spacing: 1px;
     text-transform: uppercase;
     animation: bounce-down 2s ease-in-out infinite;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.scroll-indicator a:hover {
+    color: var(--accent);
 }
 
 .mouse {
     width: 26px;
     height: 40px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid var(--text-muted);
     border-radius: 13px;
     display: flex;
     justify-content: center;
     padding-top: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.scroll-indicator a:hover .mouse {
+    border-color: var(--accent);
 }
 
 .wheel {
     width: 3px;
     height: 8px;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--text-muted);
     border-radius: 2px;
     animation: scroll-wheel 2s ease-in-out infinite;
+    transition: background 0.3s ease;
+}
+
+.scroll-indicator a:hover .wheel {
+    background: var(--accent);
 }
 
 @keyframes scroll-wheel {
