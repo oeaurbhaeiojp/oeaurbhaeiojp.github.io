@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name — Master's Student</title>
+    <meta name="description" content="Personal academic website of [Your Name], Master's student at [University Name].">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <span class="logo-bracket">{</span> YN <span class="logo-bracket">}</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#resume">Resume</a></li>
+                <li><a href="#grades">Grades</a></li>
+                <li><a href="#courses">Courses</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#teaching">Teaching</a></li>
+                <li><a href="#goals">Goals</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Master's Student</div>
+            <h1 class="hero-title">
+                Hi, I'm <span class="highlight">Your Name</span>
+            </h1>
+            <p class="hero-subtitle">
+                M.Sc. in <span class="typed" id="typed"></span><span class="cursor-blink">|</span>
+            </p>
+            <p class="hero-desc">
+                Passionate about research, innovation, and making an impact in the world of technology and science.
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">View My Work</a>
+                <a href="#contact" class="btn btn-outline">Get In Touch</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" data-target="3.8">0</span>
+                    <span class="stat-label">GPA</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-target="5">0</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-target="2">0</span>
+                    <span class="stat-label">Publications</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-target="3">0</span>
+                    <span class="stat-label">TA Semesters</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll Down</span>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-grid">
+                <div class="about-image">
+                    <div class="image-frame">
+                        <div class="image-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <p>Your Photo</p>
+                        </div>
+                        <!-- Replace the div above with: <img src="your-photo.jpg" alt="Your Name"> -->
+                    </div>
+                </div>
+                <div class="about-content">
+                    <h3>Who I Am</h3>
+                    <p>
+                        I am a Master's student in <strong>[Your Field]</strong> at <strong>[University Name]</strong>,
+                        expected to graduate in <strong>[Year]</strong>. My research focuses on
+                        <strong>[Research Area]</strong>, under the supervision of
+                        <strong>Prof. [Advisor Name]</strong>.
+                    </p>
+                    <p>
+                        With a strong foundation in [relevant skills], I am passionate about
+                        pushing the boundaries of knowledge and contributing to meaningful research
+                        that can make a real-world impact.
+                    </p>
+                    <div class="about-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">🎓</span>
+                            <div>
+                                <strong>University</strong>
+                                <p>[University Name]</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📍</span>
+                            <div>
+                                <strong>Location</strong>
+                                <p>[City, Country]</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🔬</span>
+                            <div>
+                                <strong>Research Area</strong>
+                                <p>[Your Research Area]</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📧</span>
+                            <div>
+                                <strong>Email</strong>
+                                <p>[your.email@university.edu]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Machine Learning</span>
+                        <span class="skill-tag">Data Analysis</span>
+                        <span class="skill-tag">LaTeX</span>
+                        <span class="skill-tag">MATLAB</span>
+                        <span class="skill-tag">Research</span>
+                        <span class="skill-tag">Academic Writing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== RESUME SECTION ===== -->
+    <section class="section section-alt" id="resume">
+        <div class="container">
+            <h2 class="section-title">Resume</h2>
+            <div class="resume-header">
+                <p>A summary of my academic and professional journey.</p>
+                <a href="#" class="btn btn-primary btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download CV (PDF)
+                </a>
+            </div>
+            <div class="timeline">
+                <!-- Education -->
+                <div class="timeline-section">
+                    <h3 class="timeline-heading">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+                        Education
+                    </h3>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-date">2024 — Present</div>
+                            <h4>M.Sc. in [Your Field]</h4>
+                            <p class="timeline-org">[University Name]</p>
+                            <p>GPA: 3.8/4.0 — Thesis: "[Your Thesis Title]"</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-date">2020 — 2024</div>
+                            <h4>B.Sc. in [Your Field]</h4>
+                            <p class="timeline-org">[University Name]</p>
+                            <p>GPA: 3.6/4.0 — Graduated with honors</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div class="timeline-section">
+                    <h3 class="timeline-heading">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        Experience
+                    </h3>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-date">2024 — Present</div>
+                            <h4>Research Assistant</h4>
+                            <p class="timeline-org">[Lab Name], [University]</p>
+                            <p>Working on [brief description of research work].</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-date">Summer 2023</div>
+                            <h4>Software Engineering Intern</h4>
+                            <p class="timeline-org">[Company Name]</p>
+                            <p>Developed [brief description of work done].</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== GRADES SECTION ===== -->
+    <section class="section" id="grades">
+        <div class="container">
+            <h2 class="section-title">Academic Record</h2>
+            <p class="section-subtitle">My grades and academic performance throughout my studies.</p>
+
+            <div class="grades-overview">
+                <div class="gpa-card">
+                    <div class="gpa-circle">
+                        <svg viewBox="0 0 36 36" class="gpa-ring">
+                            <path class="gpa-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="gpa-ring-fill" stroke-dasharray="95, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <div class="gpa-value">3.80</div>
+                    </div>
+                    <div class="gpa-label">Cumulative GPA (out of 4.0)</div>
+                </div>
+            </div>
+
+            <div class="grades-table-wrapper">
+                <h3>Master's Coursework</h3>
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Grade</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>CS 601</code></td>
+                            <td>Advanced Algorithms</td>
+                            <td>3</td>
+                            <td><span class="grade grade-a">A</span></td>
+                            <td>Fall 2024</td>
+                        </tr>
+                        <tr>
+                            <td><code>CS 621</code></td>
+                            <td>Machine Learning</td>
+                            <td>3</td>
+                            <td><span class="grade grade-a">A</span></td>
+                            <td>Fall 2024</td>
+                        </tr>
+                        <tr>
+                            <td><code>CS 650</code></td>
+                            <td>Deep Learning</td>
+                            <td>3</td>
+                            <td><span class="grade grade-a">A-</span></td>
+                            <td>Spring 2025</td>
+                        </tr>
+                        <tr>
+                            <td><code>CS 680</code></td>
+                            <td>Research Methodology</td>
+                            <td>3</td>
+                            <td><span class="grade grade-a">A</span></td>
+                            <td>Spring 2025</td>
+                        </tr>
+                        <tr>
+                            <td><code>MATH 610</code></td>
+                            <td>Statistical Methods</td>
+                            <td>3</td>
+                            <td><span class="grade grade-b">B+</span></td>
+                            <td>Fall 2024</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== COURSES SECTION ===== -->
+    <section class="section section-alt" id="courses">
+        <div class="container">
+            <h2 class="section-title">Courses</h2>
+            <p class="section-subtitle">Key courses I have completed during my academic journey.</p>
+
+            <div class="courses-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="core">Core</button>
+                <button class="filter-btn" data-filter="elective">Elective</button>
+                <button class="filter-btn" data-filter="research">Research</button>
+            </div>
+
+            <div class="courses-grid">
+                <div class="course-card" data-category="core">
+                    <div class="course-icon">📊</div>
+                    <h4>Advanced Algorithms</h4>
+                    <p>Design and analysis of advanced algorithmic techniques including graph algorithms, dynamic programming, and NP-completeness.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Core</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+                <div class="course-card" data-category="core">
+                    <div class="course-icon">🤖</div>
+                    <h4>Machine Learning</h4>
+                    <p>Supervised and unsupervised learning, neural networks, SVMs, ensemble methods, and practical applications.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Core</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+                <div class="course-card" data-category="elective">
+                    <div class="course-icon">🧠</div>
+                    <h4>Deep Learning</h4>
+                    <p>CNNs, RNNs, Transformers, GANs, and modern deep learning architectures for various applications.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Elective</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+                <div class="course-card" data-category="research">
+                    <div class="course-icon">🔬</div>
+                    <h4>Research Methodology</h4>
+                    <p>Research design, literature review, scientific writing, and ethics in academic research.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Research</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+                <div class="course-card" data-category="core">
+                    <div class="course-icon">📈</div>
+                    <h4>Statistical Methods</h4>
+                    <p>Probability theory, statistical inference, regression analysis, and hypothesis testing.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Core</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+                <div class="course-card" data-category="elective">
+                    <div class="course-icon">💻</div>
+                    <h4>Natural Language Processing</h4>
+                    <p>Text processing, language models, sentiment analysis, and modern NLP with transformers.</p>
+                    <div class="course-meta">
+                        <span class="course-tag">Elective</span>
+                        <span class="course-credits">3 Credits</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROJECTS SECTION ===== -->
+    <section class="section" id="projects">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <p class="section-subtitle">A collection of my academic and personal projects.</p>
+
+            <div class="projects-grid">
+                <div class="project-card featured">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span>Python</span>
+                            <span>PyTorch</span>
+                            <span>Research</span>
+                        </div>
+                        <h3>Thesis Project: [Your Thesis Title]</h3>
+                        <p>Brief description of your main thesis research project and its goals. Explain the problem you're solving and the approach you're taking.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                GitHub
+                            </a>
+                            <a href="#" class="project-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Paper
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                        </div>
+                        <h3>Project Title #2</h3>
+                        <p>A brief description of this project. What problem does it solve? What technologies were used?</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>React</span>
+                        </div>
+                        <h3>Project Title #3</h3>
+                        <p>Another project description. Highlight the key achievements and technologies used.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span>LaTeX</span>
+                            <span>Research</span>
+                        </div>
+                        <h3>Project Title #4</h3>
+                        <p>Description of a research-oriented project or publication.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Paper
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TEACHING SECTION ===== -->
+    <section class="section section-alt" id="teaching">
+        <div class="container">
+            <h2 class="section-title">Teaching Experience</h2>
+            <p class="section-subtitle">My experience as a Teaching Assistant (TA).</p>
+
+            <div class="teaching-grid">
+                <div class="teaching-card">
+                    <div class="teaching-semester">Fall 2025</div>
+                    <h4>Introduction to Programming</h4>
+                    <p class="teaching-course-code">CS 101</p>
+                    <p>Conducted lab sessions for 60+ students, graded assignments, and held office hours. Created supplementary tutorial materials.</p>
+                    <div class="teaching-duties">
+                        <span>Lab Sessions</span>
+                        <span>Grading</span>
+                        <span>Office Hours</span>
+                        <span>Tutorial Materials</span>
+                    </div>
+                </div>
+                <div class="teaching-card">
+                    <div class="teaching-semester">Spring 2025</div>
+                    <h4>Data Structures</h4>
+                    <p class="teaching-course-code">CS 201</p>
+                    <p>Assisted professor with course material preparation, conducted review sessions, and mentored student project teams.</p>
+                    <div class="teaching-duties">
+                        <span>Review Sessions</span>
+                        <span>Mentoring</span>
+                        <span>Course Material</span>
+                    </div>
+                </div>
+                <div class="teaching-card">
+                    <div class="teaching-semester">Fall 2024</div>
+                    <h4>Discrete Mathematics</h4>
+                    <p class="teaching-course-code">MATH 301</p>
+                    <p>Graded homework and exams, held weekly problem-solving sessions, and provided one-on-one tutoring support.</p>
+                    <div class="teaching-duties">
+                        <span>Grading</span>
+                        <span>Problem Sessions</span>
+                        <span>Tutoring</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== GOALS SECTION ===== -->
+    <section class="section" id="goals">
+        <div class="container">
+            <h2 class="section-title">Goals & Aspirations</h2>
+            <p class="section-subtitle">Where I'm headed and what drives me forward.</p>
+
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <div class="goal-icon">🎯</div>
+                    <h4>Short-term Goals</h4>
+                    <ul>
+                        <li>Complete my Master's thesis with distinction</li>
+                        <li>Publish 2 papers in top-tier conferences</li>
+                        <li>Strengthen my expertise in [specific area]</li>
+                        <li>Contribute to open-source research projects</li>
+                    </ul>
+                </div>
+                <div class="goal-card">
+                    <div class="goal-icon">🚀</div>
+                    <h4>Long-term Goals</h4>
+                    <ul>
+                        <li>Pursue a Ph.D. in [field] at a top research university</li>
+                        <li>Build innovative solutions that address real-world challenges</li>
+                        <li>Become a leading researcher/professor in [area]</li>
+                        <li>Mentor the next generation of students and researchers</li>
+                    </ul>
+                </div>
+                <div class="goal-card">
+                    <div class="goal-icon">💡</div>
+                    <h4>Research Interests</h4>
+                    <ul>
+                        <li>[Research Interest 1]</li>
+                        <li>[Research Interest 2]</li>
+                        <li>[Research Interest 3]</li>
+                        <li>[Research Interest 4]</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="quote-block">
+                <blockquote>
+                    "The important thing is not to stop questioning. Curiosity has its own reason for existing."
+                </blockquote>
+                <cite>— Albert Einstein</cite>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT SECTION ===== -->
+    <section class="section section-alt" id="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle">Feel free to reach out for collaborations, research discussions, or just to say hello!</p>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <h4>Email</h4>
+                            <a href="mailto:your.email@university.edu">your.email@university.edu</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>[Department], [University Name]<br>[City, Country]</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <!-- GitHub -->
+                        <a href="https://github.com/oeaurbhaeiojp" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        </a>
+                        <!-- LinkedIn -->
+                        <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                        <!-- Google Scholar -->
+                        <a href="#" target="_blank" rel="noopener" class="social-link" aria-label="Google Scholar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </a>
+                        <!-- Twitter/X -->
+                        <a href="#" target="_blank" rel="noopener" class="social-link" aria-label="Twitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        Send Message
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Your Name. All rights reserved.</p>
+                <p class="footer-note">Built with passion for academia and research.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
