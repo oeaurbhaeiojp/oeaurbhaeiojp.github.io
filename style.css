@@ -213,8 +213,8 @@ code {
 .nav-links a:hover {
     color: var(--accent);
     background: var(--accent-bg);
-    width: auto;
-    padding: 0 16px;
+    width: 120px;
+    padding: 0 14px;
     gap: 7px;
 }
 
@@ -226,8 +226,8 @@ code {
 .nav-links a.active {
     color: #fff;
     background: var(--accent);
-    width: auto;
-    padding: 0 16px;
+    width: 120px;
+    padding: 0 14px;
     gap: 7px;
 }
 
