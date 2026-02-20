@@ -88,10 +88,10 @@ backToTop.addEventListener('click', () => {
 // ============================================
 const typedElement = document.getElementById('typed');
 const words = [
-    'Computer Science',
-    'Artificial Intelligence',
-    'Machine Learning',
-    'Data Science'
+    'Structural Engineering',
+    'Aerospace Engineering',
+    'Structural Health Monitoring',
+    'Composite Materials'
 ];
 let wordIndex = 0;
 let charIndex = 0;
