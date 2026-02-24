@@ -72,9 +72,14 @@ function updateActiveNav() {
 const navHamburger = document.getElementById('navHamburger');
 const navLinks = document.getElementById('navLinks');
 const navContainer = document.querySelector('.nav-container');
+const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
 function closeMobileNav() {
     if (navHamburger) navHamburger.classList.remove('active');
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.classList.remove('active');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+    }
     if (navLinks) {
         navLinks.classList.remove('active');
         document.body.style.overflow = '';
@@ -89,14 +94,18 @@ function closeMobileNav() {
 
 function openMobileNav() {
     if (navHamburger) navHamburger.classList.add('active');
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.classList.add('active');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'false');
+        // Move nav-links into overlay (first child of body = top of stacking order)
+        if (navLinks && navLinks.parentNode !== mobileMenuOverlay) {
+            mobileMenuOverlay.appendChild(navLinks);
+        }
+    }
     if (navLinks) {
         navLinks.classList.add('active');
         document.body.style.overflow = 'hidden';
         if (mainScroll) mainScroll.style.overflow = 'hidden';
-        // Move nav-links to body so it's not trapped by navbar's backdrop-filter
-        if (navLinks.parentNode !== document.body) {
-            document.body.appendChild(navLinks);
-        }
     }
 }
 
