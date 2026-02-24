@@ -73,16 +73,28 @@ const navHamburger = document.getElementById('navHamburger');
 const navLinks = document.getElementById('navLinks');
 
 navHamburger.addEventListener('click', () => {
+    const isOpen = !navLinks.classList.contains('active');
     navHamburger.classList.toggle('active');
     navLinks.classList.toggle('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (mainScroll) mainScroll.style.overflow = isOpen ? 'hidden' : '';
 });
+
+function closeMobileNav() {
+    navHamburger.classList.remove('active');
+    navLinks.classList.remove('active');
+    document.body.style.overflow = '';
+    if (mainScroll) mainScroll.style.overflow = '';
+}
 
 // Close mobile nav on link click
 navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-        navHamburger.classList.remove('active');
-        navLinks.classList.remove('active');
-    });
+    link.addEventListener('click', closeMobileNav);
+});
+
+// Close mobile nav when clicking overlay (backdrop)
+navLinks.addEventListener('click', (e) => {
+    if (!e.target.closest('a')) closeMobileNav();
 });
 
 // ============================================
