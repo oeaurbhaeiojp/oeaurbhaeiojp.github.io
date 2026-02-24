@@ -71,31 +71,54 @@ function updateActiveNav() {
 // ============================================
 const navHamburger = document.getElementById('navHamburger');
 const navLinks = document.getElementById('navLinks');
-
-navHamburger.addEventListener('click', () => {
-    const isOpen = !navLinks.classList.contains('active');
-    navHamburger.classList.toggle('active');
-    navLinks.classList.toggle('active');
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    if (mainScroll) mainScroll.style.overflow = isOpen ? 'hidden' : '';
-});
+const navContainer = document.querySelector('.nav-container');
 
 function closeMobileNav() {
-    navHamburger.classList.remove('active');
-    navLinks.classList.remove('active');
-    document.body.style.overflow = '';
-    if (mainScroll) mainScroll.style.overflow = '';
+    if (navHamburger) navHamburger.classList.remove('active');
+    if (navLinks) {
+        navLinks.classList.remove('active');
+        document.body.style.overflow = '';
+        if (mainScroll) mainScroll.style.overflow = '';
+        // Move nav-links back inside navbar (for desktop layout)
+        if (navContainer && navLinks.parentNode !== navContainer) {
+            const navActions = navContainer.querySelector('.nav-actions');
+            navContainer.insertBefore(navLinks, navActions);
+        }
+    }
 }
 
-// Close mobile nav on link click
-navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', closeMobileNav);
-});
+function openMobileNav() {
+    if (navHamburger) navHamburger.classList.add('active');
+    if (navLinks) {
+        navLinks.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (mainScroll) mainScroll.style.overflow = 'hidden';
+        // Move nav-links to body so it's not trapped by navbar's backdrop-filter
+        if (navLinks.parentNode !== document.body) {
+            document.body.appendChild(navLinks);
+        }
+    }
+}
 
-// Close mobile nav when clicking overlay (backdrop)
-navLinks.addEventListener('click', (e) => {
-    if (!e.target.closest('a')) closeMobileNav();
-});
+if (navHamburger && navLinks) {
+    navHamburger.addEventListener('click', () => {
+        if (navLinks.classList.contains('active')) {
+            closeMobileNav();
+        } else {
+            openMobileNav();
+        }
+    });
+
+    // Close mobile nav on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMobileNav);
+    });
+
+    // Close mobile nav when clicking overlay (backdrop)
+    navLinks.addEventListener('click', (e) => {
+        if (!e.target.closest('a')) closeMobileNav();
+    });
+}
 
 // ============================================
 // BACK TO TOP

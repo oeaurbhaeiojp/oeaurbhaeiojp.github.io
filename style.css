@@ -1668,7 +1668,7 @@ code {
         border-radius: 0;
         box-shadow: none;
         gap: 0;
-        z-index: 9998;
+        z-index: 99999;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
