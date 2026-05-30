@@ -215,7 +215,7 @@
   /* ===========================================================
      COURSES SECTION
      =========================================================== */
-  .courses-layout { display: flex; gap: 28px; align-items: flex-start; }
+  .courses-layout { display: flex; gap: 28px; align-items: flex-start; transition: gap 0.3s ease; }
   .course-nav {
     flex-shrink: 0;
     width: 230px;
@@ -228,6 +228,28 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, width 0.3s ease, padding 0.3s ease,
+                opacity 0.3s ease, border-width 0.3s ease;
+  }
+
+  /* Focus mode: when a PDF viewer is open, the course sidebar slides out to
+     the left and collapses, giving the content area the full width. */
+  .courses-layout.focus-mode { gap: 0; }
+  .courses-layout.focus-mode .course-nav {
+    transform: translateX(-100%);
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-width: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .course-back {
+    position: sticky;
+    top: 12px;
+    z-index: 5;
+    margin-bottom: 18px;
   }
   .course-nav button {
     text-align: left;
@@ -315,6 +337,9 @@
     border-radius: 8px;
     background: #111;
   }
+  /* In focus mode the viewer fills the full width and 80% of the screen height */
+  .focus-mode .pdf-frame,
+  .focus-mode .pdf-placeholder { height: 80vh; }
   .pdf-placeholder {
     width: 100%;
     height: 600px;
@@ -929,9 +954,39 @@ function redactionNotice() {
 /* ---------- COURSES ---------- */
 const courseNav     = document.getElementById('courseNav');
 const courseContent = document.getElementById('courseContent');
+const coursesLayout = document.querySelector('.courses-layout');
 const courseSlugs   = Object.keys(COURSES_DATA);
 
+/* ---------- Focus mode (full-width PDF viewer) ----------
+   When any drawer with a PDF is open, slide the course sidebar out and show a
+   "← Back" button. Closing all drawers brings the sidebar back. */
+function setFocusMode(on) {
+  coursesLayout.classList.toggle('focus-mode', on);
+  let back = document.getElementById('courseBack');
+  if (on && !back) {
+    back = document.createElement('button');
+    back.id = 'courseBack';
+    back.className = 'btn btn-sm course-back';
+    back.innerHTML = '← Back';
+    back.addEventListener('click', exitFocusMode);
+    courseContent.insertBefore(back, courseContent.firstChild);
+  } else if (!on && back) {
+    back.remove();
+  }
+}
+// reflect focus state from whether a drawer is currently open
+function refreshFocusMode() {
+  setFocusMode(!!courseContent.querySelector('.drawer.open'));
+}
+// close any open PDF drawer and bring the sidebar back
+function exitFocusMode() {
+  courseContent.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
+  courseContent.querySelectorAll('.hw-card.open, .proj-card.open').forEach(el => el.classList.remove('open'));
+  setFocusMode(false);
+}
+
 function renderCourse(slug) {
+  coursesLayout.classList.remove('focus-mode'); // always start a course unfocused
   const c = COURSES_DATA[slug];
 
   // homework cards
@@ -1018,6 +1073,7 @@ function toggleHw(card) {
     drawer.classList.add('open');
     loadPdfSlots(drawer);
   }
+  refreshFocusMode();
 }
 
 // Project accordion
@@ -1033,17 +1089,19 @@ function toggleProj(head) {
     drawer.classList.add('open');
     loadPdfSlots(drawer);
   }
+  refreshFocusMode();
 }
 function closeProj(btn) {
   const card = btn.closest('.proj-card');
   card.classList.remove('open');
   card.querySelector('.drawer').classList.remove('open');
+  refreshFocusMode();
 }
 
 // course sidebar buttons
 courseSlugs.forEach((slug, i) => {
   const btn = document.createElement('button');
-  btn.textContent = COURSES_DATA[slug].name;
+  btn.innerHTML = COURSES_DATA[slug].name; // innerHTML so &amp; renders as &
   btn.dataset.slug = slug;
   if (i === 0) btn.classList.add('active');
   btn.addEventListener('click', () => {
