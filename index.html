@@ -327,13 +327,11 @@
   .drawer-inner { padding: 4px 20px 22px; }
   .hw-drawer .drawer-inner { padding: 0; }
 
-  /* Wrapper lets the close button overlay the top-right corner of the viewer */
+  /* Close button sits in its own bar ABOVE the PDF (right-aligned) so it never
+     overlaps the browser's native PDF toolbar (download / print icons). */
   .pdf-wrap { position: relative; }
+  .pdf-toolbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
   .pdf-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 4;
     font-family: var(--sans);
     font-size: 0.78rem;
     padding: 5px 11px;
@@ -929,11 +927,14 @@ const TEACHING_DATA = [
 // opens, loadPdfSlots() does a HEAD request for the file (same-origin on
 // GitHub Pages); if it exists, the placeholder is swapped for a real iframe.
 function pdfViewer(src) {
-  // The close button sits outside .pdf-slot so loadPdfSlots() (which replaces
-  // the slot's contents with an iframe) never wipes it out.
+  // The close button sits in a toolbar above .pdf-slot (outside it) so
+  // loadPdfSlots() — which replaces the slot's contents with an iframe —
+  // never wipes it out, and it can't overlap the PDF's native toolbar.
   return `
     <div class="pdf-wrap">
-      <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">✕ Close</button>
+      <div class="pdf-toolbar">
+        <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">✕ Close</button>
+      </div>
       <div class="pdf-slot" data-src="${src}">
         <div class="pdf-placeholder">
           <div class="pp-icon">📄</div>
