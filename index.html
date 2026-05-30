@@ -320,10 +320,13 @@
   /* Accordion drawer (shared by HW + projects) */
   .drawer {
     max-height: 0;
+    opacity: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
   }
-  .drawer.open { max-height: 2600px; }
+  .drawer.open { max-height: 2600px; opacity: 1; }
+  /* the course content area fades during course switches (set inline in JS) */
+  .course-content { transition: opacity 0.3s ease; }
   .drawer-inner { padding: 4px 20px 22px; }
   .hw-drawer .drawer-inner { padding: 0; }
 
@@ -1001,7 +1004,7 @@ function closePdf(btn) {
   refreshFocusMode();
 }
 
-function renderCourse(slug) {
+function renderCourse(slug, fadeMs) {
   coursesLayout.classList.remove('focus-mode'); // always start a course unfocused
   const c = COURSES_DATA[slug];
 
@@ -1075,6 +1078,19 @@ function renderCourse(slug) {
     <p class="sub-heading">Projects</p>
     <div class="proj-grid">${projCards || '<p style="color:var(--text-dim)">No projects yet.</p>'}</div>
   `;
+
+  // Fade the freshly rendered content in (when switching courses). Start at 0
+  // with transitions off, then re-enable on the next frame so it animates.
+  if (fadeMs) {
+    courseContent.style.transition = 'none';
+    courseContent.style.opacity = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      courseContent.style.transition = `opacity ${fadeMs}ms ease`;
+      courseContent.style.opacity = '1';
+    }));
+  } else {
+    courseContent.style.opacity = '1'; // initial render: fully visible
+  }
 }
 
 // HW accordion: open the drawer that follows the clicked card
@@ -1114,17 +1130,37 @@ function closeProj(btn) {
   refreshFocusMode();
 }
 
+/* Switch courses with a smooth transition. If a PDF viewer is open, first
+   close it (fade + slide, 0.3s) and collapse the full-width view, THEN swap in
+   the new course and fade it in. With no PDF open, just crossfade (0.2s).
+   Nothing ever cuts instantly. */
+function switchCourse(slug, btn) {
+  // highlight the chosen course immediately
+  courseNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const pdfOpen = !!courseContent.querySelector('.drawer.open');
+  const dur = pdfOpen ? 300 : 200;
+
+  if (pdfOpen) {
+    // smoothly close the open PDF viewer(s) and exit full-width mode
+    courseContent.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
+    courseContent.querySelectorAll('.hw-card.open, .proj-card.open').forEach(el => el.classList.remove('open'));
+    setFocusMode(false);
+  }
+  // fade the current content out, then swap + fade the new content in
+  courseContent.style.transition = `opacity ${dur}ms ease`;
+  courseContent.style.opacity = '0';
+  setTimeout(() => renderCourse(slug, dur), dur);
+}
+
 // course sidebar buttons
 courseSlugs.forEach((slug, i) => {
   const btn = document.createElement('button');
   btn.innerHTML = COURSES_DATA[slug].name; // innerHTML so &amp; renders as &
   btn.dataset.slug = slug;
   if (i === 0) btn.classList.add('active');
-  btn.addEventListener('click', () => {
-    courseNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderCourse(slug);
-  });
+  btn.addEventListener('click', () => switchCourse(slug, btn));
   courseNav.appendChild(btn);
 });
 renderCourse(courseSlugs[0]); // initial
