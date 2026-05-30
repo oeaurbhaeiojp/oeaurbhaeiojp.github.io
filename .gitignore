@@ -1,0 +1,2 @@
+# Local backups kept for manual restore, not tracked
+*.backup
