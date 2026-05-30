@@ -614,17 +614,18 @@
     font-weight: 600;
     letter-spacing: 0.3px;
   }
-  .teach-list { display: flex; flex-direction: column; gap: 1px; }
+  .teach-list { display: flex; flex-direction: column; gap: 8px; }
   .teach-item {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 10px;
     padding: 12px 16px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    margin-bottom: 8px;
+  }
+  .teach-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
   }
   .teach-item .tname { font-weight: 600; font-family: var(--serif); font-size: 1rem; }
   .teach-item .tprof { color: var(--text-dim); font-size: 0.88rem; }
@@ -633,10 +634,23 @@
     font-size: 0.76rem;
     padding: 3px 10px;
     border-radius: 999px;
+    background: var(--bg-soft);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  /* Head TA highlighted in the teal accent */
+  .teach-item .trole.trole-head {
     background: var(--teal-soft);
     color: var(--teal);
-    border: 1px solid var(--teal-border);
-    white-space: nowrap;
+    border-color: var(--teal-border);
+    font-weight: 600;
+  }
+  .teach-item .tduties {
+    margin: 8px 0 0;
+    font-size: 0.86rem;
+    color: var(--text-dim);
+    line-height: 1.5;
   }
 
   /* ===========================================================
@@ -1111,31 +1125,46 @@ const CERTIFICATES_DATA = [
    ================================================================= */
 const TEACHING_DATA = [
   {
-    semester: "Fall 2024",
+    semester: "Fall 2025",
     entries: [
-      { course: "Aircraft Structures", professor: "Dr. Abedian", role: "Head TA" },
-      { course: "Strength of Materials", professor: "Dr. Sharifi", role: "TA" }
+      { course: "Aircraft Structures", professor: "Dr. Kouchakzadeh", role: "TA",
+        duties: "Conducted TA sessions, designed and graded assignments and quizzes" },
+      { course: "Mechanics of Materials", professor: "Dr. Hosseini Kordkheili", role: "Head TA",
+        duties: "Prepared TA session slides, designed exercises, coordinated TA team, evaluated performance" },
+      { course: "Composite Materials", professor: "Dr. Fallah (Mechanical Eng. Dept.)", role: "TA" },
+      { course: "Foundations of Data Science", professor: "Dr. Khalaj (Electrical Eng. Dept.)", role: "TA",
+        duties: "Prepared lecture slides, designed and graded quizzes" }
     ]
   },
   {
-    semester: "Spring 2024",
+    semester: "Spring 2025",
     entries: [
-      { course: "Statics", professor: "Dr. Dehghani", role: "TA" },
-      { course: "Dynamics", professor: "Dr. Sharifi", role: "TA" }
+      { course: "Aircraft Structure Design", professor: "Dr. Dehghani", role: "TA" },
+      { course: "Probability &amp; Statistics for Engineers", professor: "Dr. Kiani", role: "TA",
+        duties: "Designed and graded assignments and quizzes" }
+    ]
+  },
+  {
+    semester: "Fall 2024",
+    entries: [
+      { course: "Aircraft Structures", professor: "Dr. Kouchakzadeh", role: "TA",
+        duties: "Conducted TA sessions, designed and graded assignments and quizzes" }
     ]
   },
   {
     semester: "Fall 2023",
     entries: [
-      { course: "Engineering Mathematics", professor: "Dr. Abedian", role: "Head TA" },
-      { course: "Finite Element Methods", professor: "Dr. Dehghani", role: "TA" }
+      { course: "Mechanics of Materials", professor: "Dr. Hosseini Kordkheili", role: "Head TA",
+        duties: "Conducted TA sessions, designed and graded assignments and quizzes, reported on TA and student performance" },
+      { course: "Dynamics", professor: "Dr. Sharifi", role: "TA",
+        duties: "Designed and edited homework and quiz notebooks" }
     ]
   },
   {
     semester: "Spring 2023",
     entries: [
-      { course: "Programming for Engineers", professor: "Dr. Sharifi", role: "TA" },
-      { course: "Differential Equations", professor: "Dr. Abedian", role: "TA" }
+      { course: "Introduction to Aerospace Engineering", professor: "Dr. Sharifi", role: "TA",
+        duties: "Developed presentation templates, evaluated and graded student presentations" }
     ]
   }
 ];
@@ -1420,9 +1449,12 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
     <div class="teach-list">
       ${group.entries.map(e => `
         <div class="teach-item">
-          <span class="tname">${e.course}</span>
-          <span class="tprof">${e.professor}</span>
-          <span class="trole">${e.role}</span>
+          <div class="teach-row">
+            <span class="tname">${e.course}</span>
+            <span class="tprof">${e.professor}</span>
+            <span class="trole${e.role === 'Head TA' ? ' trole-head' : ''}">${e.role}</span>
+          </div>
+          ${e.duties ? `<p class="tduties">${e.duties}</p>` : ''}
         </div>`).join('')}
     </div>
   </div>
