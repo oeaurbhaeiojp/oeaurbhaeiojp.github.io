@@ -23,7 +23,6 @@
     --coral-soft:rgba(216, 90, 48, 0.14);
     --serif:     Georgia, 'Times New Roman', serif;
     --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --sidebar-w: 220px;
     --maxw:      820px;
   }
 
@@ -49,57 +48,68 @@
 
   /* ===========================================================
      LAYOUT
+     -----------------------------------------------------------
+     Top nav is a STATIC horizontal bar (not fixed/sticky): it sits
+     at the very top, full width, and scrolls away with the page.
      =========================================================== */
-  .sidebar {
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    width: var(--sidebar-w);
-    padding: 40px 26px;
+  .topbar {
+    width: 100%;
     background: var(--bg-soft);
-    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 40px;
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    z-index: 50;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
   }
   .brand {
     font-family: var(--serif);
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 36px;
     letter-spacing: 0.2px;
+    white-space: nowrap;
   }
   .brand span { color: var(--teal); }
-  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: auto;
+  }
   .nav a {
     color: var(--text-dim);
     font-size: 0.95rem;
-    padding: 8px 12px;
+    padding: 7px 13px;
     border-radius: 6px;
-    border-left: 2px solid transparent;
+    border-bottom: 2px solid transparent;
     transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   }
   .nav a:hover { color: var(--text); background: var(--bg-card); }
   .nav a.active {
     color: var(--teal);
     background: var(--teal-soft);
-    border-left-color: var(--teal);
-  }
-  .sidebar-footer {
-    margin-top: auto;
-    padding-top: 28px;
-    font-size: 0.78rem;
-    color: var(--text-dim);
+    border-bottom-color: var(--teal);
   }
 
   .content {
-    margin-left: var(--sidebar-w);
-    padding: 0 56px 120px;
+    padding: 0 40px 120px;
+    /* clip (not hidden) so the full-width courses view can't trigger a
+       horizontal scrollbar, while keeping the course sidebar's sticky behavior */
+    overflow-x: clip;
   }
   .inner { max-width: var(--maxw); margin: 0 auto; }
 
-  section { padding-top: 88px; }
+  /* SPA pages: only the .active page is shown, with a simple fade in */
+  .page { display: none; padding-top: 40px; }
+  .page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
   section > h2 {
     font-size: 1.7rem;
     margin: 0 0 24px;
@@ -155,7 +165,7 @@
   /* ===========================================================
      HERO
      =========================================================== */
-  .hero { padding-top: 64px; display: flex; gap: 40px; align-items: flex-start; }
+  .hero { padding-top: 8px; display: flex; gap: 40px; align-items: flex-start; }
   .hero-text { flex: 1; }
   .hero h1 { font-size: 2.5rem; margin: 0 0 6px; }
   .hero .role { font-size: 1.15rem; color: var(--teal); margin: 0 0 4px; font-family: var(--serif); }
@@ -208,7 +218,23 @@
   /* ===========================================================
      COURSES SECTION
      =========================================================== */
-  .courses-layout { display: flex; gap: 28px; align-items: flex-start; }
+  .courses-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    width: 100%;
+    transition: width 0.3s ease, margin-left 0.3s ease, padding 0.3s ease;
+  }
+
+  /* Focus mode: when a PDF viewer is open, the whole courses layout (sidebar
+     + content) breaks out of the centered column to use the full page width.
+     The sidebar stays visible on the left; the content area takes the rest. */
+  .courses-layout.focus-mode {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 0 40px;
+  }
+
   .course-nav {
     flex-shrink: 0;
     width: 230px;
@@ -301,6 +327,25 @@
   .drawer-inner { padding: 4px 20px 22px; }
   .hw-drawer .drawer-inner { padding: 0; }
 
+  /* Wrapper lets the close button overlay the top-right corner of the viewer */
+  .pdf-wrap { position: relative; }
+  .pdf-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 4;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    padding: 5px 11px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .pdf-close:hover { border-color: var(--coral); color: var(--coral); background: var(--bg-card-2); }
+
   .pdf-frame {
     width: 100%;
     height: 600px;
@@ -308,6 +353,9 @@
     border-radius: 8px;
     background: #111;
   }
+  /* In focus mode the viewer fills the full width and 80% of the screen height */
+  .focus-mode .pdf-frame,
+  .focus-mode .pdf-placeholder { height: 80vh; }
   .pdf-placeholder {
     width: 100%;
     height: 600px;
@@ -447,34 +495,14 @@
   }
   .contact-box p { margin: 0 0 18px; color: var(--text-dim); }
 
-  /* mobile menu toggle (hidden on desktop) */
-  .menu-toggle {
-    display: none;
-    position: fixed;
-    top: 14px; right: 14px;
-    z-index: 60;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-
   /* ===========================================================
      RESPONSIVE
      =========================================================== */
-  @media (max-width: 900px) {
-    .sidebar {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      width: 240px;
-    }
-    .sidebar.open { transform: translateX(0); }
-    .menu-toggle { display: block; }
-    .content { margin-left: 0; padding: 0 22px 100px; }
-    .hero { flex-direction: column-reverse; align-items: flex-start; gap: 22px; padding-top: 72px; }
+  @media (max-width: 760px) {
+    .topbar-inner { padding: 14px 22px; gap: 12px; flex-direction: column; align-items: flex-start; }
+    .nav { margin-left: 0; }
+    .content { padding: 0 22px 100px; }
+    .hero { flex-direction: column-reverse; align-items: flex-start; gap: 22px; padding-top: 4px; }
     .courses-layout { flex-direction: column; }
     .course-nav {
       width: 100%;
@@ -489,31 +517,30 @@
 </head>
 <body>
 
-<button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
-
-<!-- ============================ SIDEBAR ============================ -->
-<aside class="sidebar" id="sidebar">
-  <div class="brand">R.&nbsp;<span>Pourjafarian</span></div>
-  <nav class="nav" id="mainNav">
-    <a href="#about" class="active">About</a>
-    <a href="#research">Research</a>
-    <a href="#courses">Courses</a>
-    <a href="#certificates">Certificates</a>
-    <a href="#teaching">Teaching</a>
-    <a href="#skills">Skills</a>
-    <a href="#contact">Contact</a>
-  </nav>
-  <div class="sidebar-footer">
-    M.Sc. Structural Engineering<br />
-    Sharif University of Technology
+<!-- ============================ TOP NAV (static, scrolls away) ============================ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">R.&nbsp;<span>Pourjafarian</span></div>
+    <nav class="nav" id="mainNav">
+      <a href="#about" class="active">About</a>
+      <a href="#research">Research</a>
+      <a href="#courses">Courses</a>
+      <a href="#certificates">Certificates</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </div>
-</aside>
+</header>
 
 <!-- ============================ MAIN ============================ -->
 <main class="content">
   <div class="inner">
 
-    <!-- ---------- HERO ---------- -->
+    <!-- ---------- ABOUT (default page, includes hero) ---------- -->
+    <section id="about" class="page about active">
+
+    <!-- HERO -->
     <header class="hero" id="top">
       <div class="hero-text">
         <h1>Rouzbeh Pourjafarian</h1>
@@ -538,8 +565,6 @@
       </div>
     </header>
 
-    <!-- ---------- ABOUT ---------- -->
-    <section id="about" class="about">
       <h2>About</h2>
       <p>I am a master's student in Structural Engineering at Sharif University of Technology,
         with a bachelor's background in Aerospace Engineering. My work sits at the intersection
@@ -552,7 +577,7 @@
     </section>
 
     <!-- ---------- RESEARCH ---------- -->
-    <section id="research">
+    <section id="research" class="page">
       <h2>Research experience</h2>
       <div class="timeline">
 
@@ -596,7 +621,7 @@
     </section>
 
     <!-- ---------- COURSES ---------- -->
-    <section id="courses">
+    <section id="courses" class="page">
       <h2>Courses</h2>
       <div class="courses-layout">
         <nav class="course-nav" id="courseNav"><!-- populated by JS --></nav>
@@ -605,19 +630,19 @@
     </section>
 
     <!-- ---------- CERTIFICATES ---------- -->
-    <section id="certificates">
+    <section id="certificates" class="page">
       <h2>Online certificates</h2>
       <div class="cert-grid" id="certGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- TEACHING ---------- -->
-    <section id="teaching">
+    <section id="teaching" class="page">
       <h2>Teaching experience</h2>
       <div id="teachContainer"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- SKILLS ---------- -->
-    <section id="skills">
+    <section id="skills" class="page">
       <h2>Skills</h2>
       <div class="skills-grid">
         <div class="skill-col">
@@ -654,7 +679,7 @@
     </section>
 
     <!-- ---------- CONTACT ---------- -->
-    <section id="contact">
+    <section id="contact" class="page">
       <h2>Contact</h2>
       <div class="contact-box">
         <p>For full versions of course materials, reach out via email or LinkedIn.</p>
@@ -904,12 +929,17 @@ const TEACHING_DATA = [
 // opens, loadPdfSlots() does a HEAD request for the file (same-origin on
 // GitHub Pages); if it exists, the placeholder is swapped for a real iframe.
 function pdfViewer(src) {
+  // The close button sits outside .pdf-slot so loadPdfSlots() (which replaces
+  // the slot's contents with an iframe) never wipes it out.
   return `
-    <div class="pdf-slot" data-src="${src}">
-      <div class="pdf-placeholder">
-        <div class="pp-icon">📄</div>
-        <div>PDF will appear here — upload to</div>
-        <code>${src}</code>
+    <div class="pdf-wrap">
+      <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">✕ Close</button>
+      <div class="pdf-slot" data-src="${src}">
+        <div class="pdf-placeholder">
+          <div class="pp-icon">📄</div>
+          <div>PDF will appear here — upload to</div>
+          <code>${src}</code>
+        </div>
       </div>
     </div>`;
 }
@@ -945,9 +975,33 @@ function redactionNotice() {
 /* ---------- COURSES ---------- */
 const courseNav     = document.getElementById('courseNav');
 const courseContent = document.getElementById('courseContent');
+const coursesLayout = document.querySelector('.courses-layout');
 const courseSlugs   = Object.keys(COURSES_DATA);
 
+/* ---------- Focus mode (full-width PDF viewer) ----------
+   When any PDF drawer is open, the whole courses layout expands to the full
+   page width. The sidebar stays visible; closing the PDF restores the width. */
+function setFocusMode(on) {
+  coursesLayout.classList.toggle('focus-mode', on);
+}
+// reflect focus state from whether a drawer is currently open
+function refreshFocusMode() {
+  setFocusMode(!!courseContent.querySelector('.drawer.open'));
+}
+// "✕ Close" button inside a PDF viewer: close its drawer + clear card highlight
+function closePdf(btn) {
+  const drawer = btn.closest('.drawer');
+  if (!drawer) return;
+  drawer.classList.remove('open');
+  const projCard = drawer.closest('.proj-card');
+  if (projCard) projCard.classList.remove('open');
+  const prev = drawer.previousElementSibling;       // the HW card, for HW drawers
+  if (prev && prev.classList.contains('hw-card')) prev.classList.remove('open');
+  refreshFocusMode();
+}
+
 function renderCourse(slug) {
+  coursesLayout.classList.remove('focus-mode'); // always start a course unfocused
   const c = COURSES_DATA[slug];
 
   // homework cards
@@ -1034,6 +1088,7 @@ function toggleHw(card) {
     drawer.classList.add('open');
     loadPdfSlots(drawer);
   }
+  refreshFocusMode();
 }
 
 // Project accordion
@@ -1049,17 +1104,19 @@ function toggleProj(head) {
     drawer.classList.add('open');
     loadPdfSlots(drawer);
   }
+  refreshFocusMode();
 }
 function closeProj(btn) {
   const card = btn.closest('.proj-card');
   card.classList.remove('open');
   card.querySelector('.drawer').classList.remove('open');
+  refreshFocusMode();
 }
 
 // course sidebar buttons
 courseSlugs.forEach((slug, i) => {
   const btn = document.createElement('button');
-  btn.textContent = COURSES_DATA[slug].name;
+  btn.innerHTML = COURSES_DATA[slug].name; // innerHTML so &amp; renders as &
   btn.dataset.slug = slug;
   if (i === 0) btn.classList.add('active');
   btn.addEventListener('click', () => {
@@ -1102,28 +1159,36 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
 `).join('');
 
 /* =================================================================
-   SCROLL SPY (IntersectionObserver) + mobile menu
+   SPA PAGE ROUTER
+   -----------------------------------------------------------------
+   Only one .page is visible at a time. Clicking a nav link hides all
+   pages and shows the selected one (display none/block via .active),
+   fading it in. Default page on load is About.
    ================================================================= */
 const navLinks = document.querySelectorAll('#mainNav a');
-const sections = [...navLinks].map(a => document.querySelector(a.getAttribute('href')));
+const pages    = document.querySelectorAll('.page');
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-      });
-    }
+function showPage(id) {
+  // fall back to About if the id is unknown
+  if (!document.getElementById(id) || !document.getElementById(id).classList.contains('page')) {
+    id = 'about';
+  }
+  pages.forEach(p => p.classList.toggle('active', p.id === id));
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  window.scrollTo(0, 0);
+}
+
+navLinks.forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    showPage(id);
+    history.replaceState(null, '', '#' + id);
   });
-}, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+});
 
-sections.forEach(s => s && observer.observe(s));
-
-// mobile sidebar toggle
-const sidebar = document.getElementById('sidebar');
-document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.toggle('open'));
-navLinks.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+// initial page: from URL hash if valid, otherwise About
+showPage((location.hash || '#about').slice(1));
 </script>
 </body>
 </html>
