@@ -1,0 +1,1 @@
+Place your profile photo at assets/photo.jpg (square works best, ~400x400px).

@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rouzbeh Pourjafarian — Structural Engineer &amp; AI Researcher</title>
+<meta name="description" content="Personal academic website of Rouzbeh Pourjafarian, M.Sc. Structural Engineering at Sharif University of Technology." />
+<style>
+  /* ===========================================================
+     THEME TOKENS
+     =========================================================== */
+  :root {
+    --bg:        #1e1e24;
+    --bg-soft:   #25252d;
+    --bg-card:   #2a2a33;
+    --bg-card-2: #30303a;
+    --border:    #3a3a46;
+    --text:      #e8e6df;
+    --text-dim:  #a8a69e;
+    --teal:      #1D9E75;
+    --teal-soft: rgba(29, 158, 117, 0.14);
+    --coral:     #D85A30;
+    --coral-soft:rgba(216, 90, 48, 0.14);
+    --serif:     Georgia, 'Times New Roman', serif;
+    --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --sidebar-w: 220px;
+    --maxw:      820px;
+  }
+
+  /* ===========================================================
+     RESET / BASE
+     =========================================================== */
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.25; }
+  a { color: var(--teal); text-decoration: none; transition: color 0.2s ease; }
+  a:hover { color: #2bc191; }
+  p { color: var(--text); }
+  img { max-width: 100%; display: block; }
+
+  /* ===========================================================
+     LAYOUT
+     =========================================================== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    padding: 40px 26px;
+    background: var(--bg-soft);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 50;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 36px;
+    letter-spacing: 0.2px;
+  }
+  .brand span { color: var(--teal); }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav a {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .nav a:hover { color: var(--text); background: var(--bg-card); }
+  .nav a.active {
+    color: var(--teal);
+    background: var(--teal-soft);
+    border-left-color: var(--teal);
+  }
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 28px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .content {
+    margin-left: var(--sidebar-w);
+    padding: 0 56px 120px;
+  }
+  .inner { max-width: var(--maxw); margin: 0 auto; }
+
+  section { padding-top: 88px; }
+  section > h2 {
+    font-size: 1.7rem;
+    margin: 0 0 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ===========================================================
+     BUTTONS / BADGES
+     =========================================================== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    padding: 9px 16px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn:hover { border-color: var(--teal); color: var(--text); background: var(--bg-card-2); }
+  .btn-primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .btn-primary:hover { background: #178a65; border-color: #178a65; color: #fff; }
+  .btn-sm { padding: 6px 12px; font-size: 0.82rem; }
+
+  .pill {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--teal-soft);
+    color: var(--teal);
+    border: 1px solid rgba(29,158,117,0.35);
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.74rem;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: var(--coral-soft);
+    color: var(--coral);
+    border: 1px solid rgba(216,90,48,0.35);
+    letter-spacing: 0.2px;
+  }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ===========================================================
+     HERO
+     =========================================================== */
+  .hero { padding-top: 64px; display: flex; gap: 40px; align-items: flex-start; }
+  .hero-text { flex: 1; }
+  .hero h1 { font-size: 2.5rem; margin: 0 0 6px; }
+  .hero .role { font-size: 1.15rem; color: var(--teal); margin: 0 0 4px; font-family: var(--serif); }
+  .hero .meta { color: var(--text-dim); margin: 0 0 20px; font-size: 0.98rem; }
+  .hero .pill-row { margin: 18px 0 24px; }
+  .hero-photo {
+    flex-shrink: 0;
+    width: 168px;
+    height: 168px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===========================================================
+     RESEARCH TIMELINE
+     =========================================================== */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .tl-card::before {
+    content: "";
+    position: absolute;
+    left: -26px; top: 24px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 2px solid var(--bg);
+  }
+  .tl-card .date { font-size: 0.8rem; color: var(--coral); letter-spacing: 0.4px; text-transform: uppercase; }
+  .tl-card h3 { font-size: 1.15rem; margin: 6px 0 4px; }
+  .tl-card .sub { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 10px; }
+  .tl-card p { margin: 0; font-size: 0.95rem; }
+
+  /* ===========================================================
+     COURSES SECTION
+     =========================================================== */
+  .courses-layout { display: flex; gap: 28px; align-items: flex-start; }
+  .course-nav {
+    flex-shrink: 0;
+    width: 230px;
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .course-nav button {
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    border-left: 2px solid transparent;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1.35;
+  }
+  .course-nav button:hover { color: var(--text); background: var(--bg-card); }
+  .course-nav button.active {
+    color: var(--teal);
+    background: var(--teal-soft);
+    border-left-color: var(--teal);
+  }
+  .course-content { flex: 1; min-width: 0; }
+  .course-content h3.course-title { font-size: 1.45rem; margin: 0 0 4px; }
+  .course-content .course-sub {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+  }
+  .sub-heading {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--coral);
+    margin: 30px 0 14px;
+    font-family: var(--sans);
+    font-weight: 600;
+  }
+  .sub-heading:first-of-type { margin-top: 8px; }
+
+  /* HW grid */
+  .hw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .hw-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); }
+  .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; }
+  .hw-card .hw-topic { font-size: 0.82rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+
+  /* Project cards */
+  .proj-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .proj-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+  .proj-card.open { border-color: var(--teal); }
+  .proj-head { padding: 18px 20px; cursor: pointer; }
+  .proj-head:hover h4 { color: var(--teal); }
+  .proj-head h4 { font-size: 1.1rem; margin: 0 0 6px; transition: color 0.2s ease; }
+  .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
+  .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* Accordion drawer (shared by HW + projects) */
+  .drawer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .drawer.open { max-height: 2600px; }
+  .drawer-inner { padding: 4px 20px 22px; }
+  .hw-drawer .drawer-inner { padding: 0; }
+
+  .pdf-frame {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #111;
+  }
+  .pdf-placeholder {
+    width: 100%;
+    height: 600px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: var(--bg-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    padding: 24px;
+    gap: 8px;
+  }
+  .pdf-placeholder .pp-icon { font-size: 2rem; opacity: 0.6; }
+  .pdf-placeholder code { color: var(--teal); font-size: 0.82rem; background: var(--bg-card); padding: 2px 7px; border-radius: 4px; }
+
+  .redaction-notice {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--coral);
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .redaction-notice p { margin: 0; font-size: 0.88rem; color: var(--text-dim); flex: 1; min-width: 220px; }
+
+  .proj-block { margin-top: 22px; }
+  .proj-block-label {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .drawer-close {
+    margin-top: 18px;
+    display: inline-flex;
+  }
+
+  /* ===========================================================
+     CERTIFICATES
+     =========================================================== */
+  .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .cert-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .cert-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .cert-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .cert-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .cert-body { padding: 16px 18px; }
+  .cert-body h4 { font-size: 1.02rem; margin: 0 0 6px; }
+  .cert-body .cert-meta { font-size: 0.83rem; color: var(--teal); margin: 0 0 8px; }
+  .cert-body .cert-summary { font-size: 0.86rem; color: var(--text-dim); margin: 0; }
+
+  /* ===========================================================
+     TEACHING
+     =========================================================== */
+  .teach-group { margin-bottom: 26px; }
+  .teach-group h3 {
+    font-size: 1rem;
+    color: var(--coral);
+    margin: 0 0 12px;
+    font-family: var(--sans);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .teach-list { display: flex; flex-direction: column; gap: 1px; }
+  .teach-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .teach-item .tname { font-weight: 600; font-family: var(--serif); font-size: 1rem; }
+  .teach-item .tprof { color: var(--text-dim); font-size: 0.88rem; }
+  .teach-item .trole {
+    margin-left: auto;
+    font-size: 0.76rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--teal-soft);
+    color: var(--teal);
+    border: 1px solid rgba(29,158,117,0.35);
+    white-space: nowrap;
+  }
+
+  /* ===========================================================
+     SKILLS
+     =========================================================== */
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .skill-col {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .skill-col h3 { font-size: 1rem; margin: 0 0 14px; color: var(--teal); }
+  .skill-col .pill-row { gap: 8px; }
+
+  /* ===========================================================
+     ABOUT / CONTACT
+     =========================================================== */
+  .about p { font-size: 1.02rem; }
+  .contact-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px;
+  }
+  .contact-box p { margin: 0 0 18px; color: var(--text-dim); }
+
+  /* mobile menu toggle (hidden on desktop) */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 14px; right: 14px;
+    z-index: 60;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  /* ===========================================================
+     RESPONSIVE
+     =========================================================== */
+  @media (max-width: 900px) {
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      width: 240px;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .menu-toggle { display: block; }
+    .content { margin-left: 0; padding: 0 22px 100px; }
+    .hero { flex-direction: column-reverse; align-items: flex-start; gap: 22px; padding-top: 72px; }
+    .courses-layout { flex-direction: column; }
+    .course-nav {
+      width: 100%;
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      overflow-x: auto;
+    }
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+
+<!-- ============================ SIDEBAR ============================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">R.&nbsp;<span>Pourjafarian</span></div>
+  <nav class="nav" id="mainNav">
+    <a href="#about" class="active">About</a>
+    <a href="#research">Research</a>
+    <a href="#courses">Courses</a>
+    <a href="#certificates">Certificates</a>
+    <a href="#teaching">Teaching</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="sidebar-footer">
+    M.Sc. Structural Engineering<br />
+    Sharif University of Technology
+  </div>
+</aside>
+
+<!-- ============================ MAIN ============================ -->
+<main class="content">
+  <div class="inner">
+
+    <!-- ---------- HERO ---------- -->
+    <header class="hero" id="top">
+      <div class="hero-text">
+        <h1>Rouzbeh Pourjafarian</h1>
+        <p class="role">Structural Engineer &amp; AI Researcher</p>
+        <p class="meta">M.Sc. Structural Engineering · Sharif University of Technology<br />
+          B.Sc. Aerospace Engineering</p>
+        <div class="pill-row">
+          <span class="pill">Composite Materials</span>
+          <span class="pill">Agentic AI</span>
+          <span class="pill">Digital Twins</span>
+          <span class="pill">Structural Health Monitoring</span>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="mailto:rouzbeh.pourjafarian@ae.sharif.edu">✉ Email</a>
+          <a class="btn" href="https://www.linkedin.com/in/rouzbeh-pourjafarian/" target="_blank" rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+          <a class="btn" href="https://github.com/rouzbeh-pourjafarian" target="_blank" rel="noopener">⌥&nbsp;&nbsp;GitHub</a>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <img src="assets/photo.jpg" alt="Rouzbeh Pourjafarian"
+             onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('beforeend','<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a8a69e;font-size:0.8rem;text-align:center;padding:14px&quot;>Add photo at<br>assets/photo.jpg</div>');" />
+      </div>
+    </header>
+
+    <!-- ---------- ABOUT ---------- -->
+    <section id="about" class="about">
+      <h2>About</h2>
+      <p>I am a master's student in Structural Engineering at Sharif University of Technology,
+        with a bachelor's background in Aerospace Engineering. My work sits at the intersection
+        of classical structural mechanics and modern machine intelligence — combining finite
+        element modeling of composite materials with data-driven methods for structural health
+        monitoring. I am especially interested in how agentic AI and large language models can
+        accelerate engineering design and turn sensor data into actionable digital twins. Through
+        research on inverse finite element methods, piezoelectric sensing, and multi-agent design
+        systems, I aim to bridge the gap between physics-based simulation and intelligent automation.</p>
+    </section>
+
+    <!-- ---------- RESEARCH ---------- -->
+    <section id="research">
+      <h2>Research experience</h2>
+      <div class="timeline">
+
+        <article class="tl-card">
+          <div class="date">10/25 – 04/26</div>
+          <h3>LLM-based multi-agent mechanism design</h3>
+          <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
+          <p>Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG)
+            to automate the conceptual design of mechanical linkages, coordinating specialized
+            agents for synthesis, evaluation, and refinement.</p>
+        </article>
+
+        <article class="tl-card">
+          <div class="date">07/25 – 08/25</div>
+          <h3>Inverse finite element method &amp; acoustic emission</h3>
+          <p class="sub">Personal Research</p>
+          <p>Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of
+            structural deformation from sparse strain measurements, integrating acoustic emission
+            (AE) signals to enhance damage localization.</p>
+        </article>
+
+        <article class="tl-card">
+          <div class="date">02/25 – 07/25</div>
+          <h3>Structural health monitoring &amp; damage detection</h3>
+          <p class="sub">Bachelor Thesis · Dr. Abedian</p>
+          <p>Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural
+            health monitoring and damage detection, evaluating sensor placement and signal response
+            under various damage scenarios.</p>
+        </article>
+
+        <article class="tl-card">
+          <div class="date">01/23 – 07/23</div>
+          <h3>UAV autopilot system development</h3>
+          <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
+          <p>Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission
+            Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and
+            simulation of control laws.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ---------- COURSES ---------- -->
+    <section id="courses">
+      <h2>Courses</h2>
+      <div class="courses-layout">
+        <nav class="course-nav" id="courseNav"><!-- populated by JS --></nav>
+        <div class="course-content" id="courseContent"><!-- populated by JS --></div>
+      </div>
+    </section>
+
+    <!-- ---------- CERTIFICATES ---------- -->
+    <section id="certificates">
+      <h2>Online certificates</h2>
+      <div class="cert-grid" id="certGrid"><!-- populated by JS --></div>
+    </section>
+
+    <!-- ---------- TEACHING ---------- -->
+    <section id="teaching">
+      <h2>Teaching experience</h2>
+      <div id="teachContainer"><!-- populated by JS --></div>
+    </section>
+
+    <!-- ---------- SKILLS ---------- -->
+    <section id="skills">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-col">
+          <h3>Software</h3>
+          <div class="pill-row">
+            <span class="pill">ABAQUS</span>
+            <span class="pill">SolidWorks</span>
+            <span class="pill">COMSOL</span>
+            <span class="pill">MATLAB</span>
+            <span class="pill">Mission Planner</span>
+            <span class="pill">AAA</span>
+          </div>
+        </div>
+        <div class="skill-col">
+          <h3>Programming</h3>
+          <div class="pill-row">
+            <span class="pill">Python</span>
+            <span class="pill">C++</span>
+            <span class="pill">SQL</span>
+          </div>
+        </div>
+        <div class="skill-col">
+          <h3>AI / ML tools</h3>
+          <div class="pill-row">
+            <span class="pill">CrewAI</span>
+            <span class="pill">LangChain</span>
+            <span class="pill">TensorFlow</span>
+            <span class="pill">PyTorch</span>
+            <span class="pill">Scikit-learn</span>
+            <span class="pill">Docker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- CONTACT ---------- -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="contact-box">
+        <p>For full versions of course materials, reach out via email or LinkedIn.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="mailto:rouzbeh.pourjafarian@ae.sharif.edu">✉ rouzbeh.pourjafarian@ae.sharif.edu</a>
+          <a class="btn" href="https://www.linkedin.com/in/rouzbeh-pourjafarian/" target="_blank" rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ============================ SCRIPT ============================ -->
+<script>
+/* =================================================================
+   CONTACT CONSTANTS  (used inside redaction notices)
+   ================================================================= */
+const CONTACT_EMAIL    = "rouzbeh.pourjafarian@ae.sharif.edu";
+const CONTACT_LINKEDIN = "https://www.linkedin.com/in/rouzbeh-pourjafarian/";
+
+/* =================================================================
+   COURSES_DATA
+   -----------------------------------------------------------------
+   This is the ONLY thing the owner edits to manage course content.
+   - Each top-level key is the course SLUG (kebab-case). It also names
+     the asset folder:  assets/courses/<slug>/
+   - homeworks[].id   -> file at assets/courses/<slug>/hw/hw<id>.pdf
+   - projects[].slug  -> folder assets/courses/<slug>/projects/<slug>/
+        report.pdf, slides.pdf live inside that folder.
+   - hasReport / hasSlides / hasCode toggle which blocks render.
+   - code (string) is the GitHub URL, shown only when hasCode is true.
+   ================================================================= */
+const COURSES_DATA = {
+  "advanced-aircraft-structures": {
+    name: "Advanced Aircraft Structures",
+    homeworks: [
+      { id: 1, topic: "Thin-walled beam analysis" },
+      { id: 2, topic: "Shear flow in closed sections" },
+      { id: 3, topic: "Torsion of multi-cell sections" }
+    ],
+    projects: [
+      {
+        slug: "wing-structural-analysis",
+        title: "Wing structural analysis",
+        description: "Finite element stress and buckling analysis of a wing box structure under aerodynamic loads.",
+        tags: ["ABAQUS", "FEM", "SolidWorks"],
+        hasReport: true,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      }
+    ]
+  },
+
+  "advanced-engineering-mathematics": {
+    name: "Advanced Engineering Mathematics",
+    homeworks: [
+      { id: 1, topic: "Partial differential equations" },
+      { id: 2, topic: "Sturm–Liouville problems" },
+      { id: 3, topic: "Fourier &amp; Laplace transforms" }
+    ],
+    projects: [
+      {
+        slug: "numerical-pde-solver",
+        title: "Numerical PDE solver",
+        description: "Implementation and comparison of finite-difference schemes for the heat and wave equations.",
+        tags: ["Python", "NumPy", "PDE"],
+        hasReport: true,
+        hasSlides: false,
+        hasCode: true,
+        code: "https://github.com/rouzbeh-pourjafarian"
+      }
+    ]
+  },
+
+  "continuum-mechanics": {
+    name: "Continuum Mechanics",
+    homeworks: [
+      { id: 1, topic: "Index notation &amp; tensors" },
+      { id: 2, topic: "Strain and deformation gradients" },
+      { id: 3, topic: "Stress measures &amp; constitutive laws" }
+    ],
+    projects: [
+      {
+        slug: "hyperelastic-material-model",
+        title: "Hyperelastic material modeling",
+        description: "Calibration of a Neo-Hookean material model against experimental uniaxial tension data.",
+        tags: ["MATLAB", "Constitutive Modeling"],
+        hasReport: true,
+        hasSlides: false,
+        hasCode: false,
+        code: ""
+      }
+    ]
+  },
+
+  "advanced-structural-analysis-design": {
+    name: "Advanced Structural Analysis &amp; Design",
+    homeworks: [
+      { id: 1, topic: "Matrix stiffness method" },
+      { id: 2, topic: "Nonlinear structural analysis" },
+      { id: 3, topic: "Stability &amp; buckling" }
+    ],
+    projects: [
+      {
+        slug: "frame-optimization",
+        title: "Steel frame optimization",
+        description: "Weight minimization of a multi-story steel frame subject to code-based design constraints.",
+        tags: ["Python", "Optimization", "FEM"],
+        hasReport: true,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      }
+    ]
+  },
+
+  "composite-material-damage-mechanics": {
+    name: "Composite Material Damage Mechanics",
+    homeworks: [
+      { id: 1, topic: "Classical lamination theory" },
+      { id: 2, topic: "Failure criteria for laminates" },
+      { id: 3, topic: "Progressive damage modeling" }
+    ],
+    projects: [
+      {
+        slug: "delamination-analysis",
+        title: "Delamination analysis",
+        description: "Cohesive-zone modeling of delamination growth in a laminated composite coupon.",
+        tags: ["ABAQUS", "Cohesive Zone", "Composites"],
+        hasReport: true,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      }
+    ]
+  },
+
+  "multidisciplinary-optimal-design": {
+    name: "Multidisciplinary Optimal Design",
+    homeworks: [
+      { id: 1, topic: "Gradient-based optimization" },
+      { id: 2, topic: "Design of experiments &amp; surrogates" },
+      { id: 3, topic: "Multi-objective optimization" }
+    ],
+    projects: [
+      {
+        slug: "mdo-aircraft-wing",
+        title: "MDO of an aircraft wing",
+        description: "Coupled aero-structural optimization of a wing trading off weight and aerodynamic efficiency.",
+        tags: ["Python", "MDO", "Optimization"],
+        hasReport: true,
+        hasSlides: false,
+        hasCode: true,
+        code: "https://github.com/rouzbeh-pourjafarian"
+      }
+    ]
+  },
+
+  "theory-of-plates-and-shells": {
+    name: "Theory of Plates and Shells",
+    homeworks: [
+      { id: 1, topic: "Kirchhoff plate bending" },
+      { id: 2, topic: "Navier &amp; Lévy solutions" },
+      { id: 3, topic: "Shells of revolution" }
+    ],
+    projects: [
+      {
+        slug: "plate-vibration",
+        title: "Plate vibration analysis",
+        description: "Analytical and FEM modal analysis of rectangular plates with various boundary conditions.",
+        tags: ["MATLAB", "ABAQUS", "Modal Analysis"],
+        hasReport: true,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      }
+    ]
+  }
+};
+
+/* =================================================================
+   CERTIFICATES_DATA
+   -----------------------------------------------------------------
+   slug -> thumbnail at assets/certificates/<slug>.jpg
+   ================================================================= */
+const CERTIFICATES_DATA = [
+  {
+    slug: "llm-applications",
+    name: "LLM Applications Development",
+    issuer: "Quera College",
+    date: "09/25",
+    summary: "Hands-on course on building applications with large language models, covering RAG, prompting patterns, and agent workflows."
+  },
+  {
+    slug: "prompt-engineering",
+    name: "Prompt Engineering",
+    issuer: "Quera College",
+    date: "09/25",
+    summary: "Techniques for designing, structuring, and evaluating prompts to reliably steer large language models."
+  }
+];
+
+/* =================================================================
+   TEACHING_DATA
+   -----------------------------------------------------------------
+   Grouped by semester. Edit freely — purely presentational.
+   ================================================================= */
+const TEACHING_DATA = [
+  {
+    semester: "Fall 2024",
+    entries: [
+      { course: "Aircraft Structures", professor: "Dr. Abedian", role: "Head TA" },
+      { course: "Strength of Materials", professor: "Dr. Sharifi", role: "TA" }
+    ]
+  },
+  {
+    semester: "Spring 2024",
+    entries: [
+      { course: "Statics", professor: "Dr. Dehghani", role: "TA" },
+      { course: "Dynamics", professor: "Dr. Sharifi", role: "TA" }
+    ]
+  },
+  {
+    semester: "Fall 2023",
+    entries: [
+      { course: "Engineering Mathematics", professor: "Dr. Abedian", role: "Head TA" },
+      { course: "Finite Element Methods", professor: "Dr. Dehghani", role: "TA" }
+    ]
+  },
+  {
+    semester: "Spring 2023",
+    entries: [
+      { course: "Programming for Engineers", professor: "Dr. Sharifi", role: "TA" },
+      { course: "Differential Equations", professor: "Dr. Abedian", role: "TA" }
+    ]
+  }
+];
+
+/* =================================================================
+   RENDER HELPERS
+   ================================================================= */
+
+// Build a PDF viewer block. We render a styled placeholder by default so the
+// layout looks complete even before any files are uploaded. When the drawer
+// opens, loadPdfSlots() does a HEAD request for the file (same-origin on
+// GitHub Pages); if it exists, the placeholder is swapped for a real iframe.
+function pdfViewer(src) {
+  return `
+    <div class="pdf-slot" data-src="${src}">
+      <div class="pdf-placeholder">
+        <div class="pp-icon">📄</div>
+        <div>PDF will appear here — upload to</div>
+        <code>${src}</code>
+      </div>
+    </div>`;
+}
+
+// For every not-yet-resolved PDF slot inside a container, check if the file
+// exists and swap in an iframe when it does.
+function loadPdfSlots(container) {
+  container.querySelectorAll('.pdf-slot:not([data-resolved])').forEach(slot => {
+    slot.setAttribute('data-resolved', '1');
+    const src = slot.getAttribute('data-src');
+    fetch(src, { method: 'HEAD' })
+      .then(res => {
+        const type = res.headers.get('content-type') || '';
+        if (res.ok && !type.includes('text/html')) {
+          slot.innerHTML =
+            `<iframe class="pdf-frame" src="${src}" title="PDF viewer"></iframe>`;
+        }
+        // otherwise keep the placeholder
+      })
+      .catch(() => { /* offline / missing -> keep placeholder */ });
+  });
+}
+
+function redactionNotice() {
+  return `
+    <div class="redaction-notice">
+      <p>Some content is redacted for privacy. Need the full version?</p>
+      <a class="btn btn-sm btn-primary" href="mailto:${CONTACT_EMAIL}">✉ Email</a>
+      <a class="btn btn-sm" href="${CONTACT_LINKEDIN}" target="_blank" rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+    </div>`;
+}
+
+/* ---------- COURSES ---------- */
+const courseNav     = document.getElementById('courseNav');
+const courseContent = document.getElementById('courseContent');
+const courseSlugs   = Object.keys(COURSES_DATA);
+
+function renderCourse(slug) {
+  const c = COURSES_DATA[slug];
+
+  // homework cards
+  const hwCards = c.homeworks.map(hw => {
+    const src = `assets/courses/${slug}/hw/hw${hw.id}.pdf`;
+    return `
+      <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)">
+        <div class="hw-num">HW ${hw.id}</div>
+        <div class="hw-topic">${hw.topic}</div>
+      </div>
+      <div class="drawer hw-drawer" data-drawer="${hw.id}" style="grid-column:1/-1">
+        <div class="drawer-inner">
+          <div style="padding-top:14px">${pdfViewer(src)}</div>
+          ${redactionNotice()}
+        </div>
+      </div>`;
+  }).join('');
+
+  // project cards
+  const projCards = c.projects.map(p => {
+    const base = `assets/courses/${slug}/projects/${p.slug}`;
+    let blocks = '';
+    if (p.hasReport) {
+      blocks += `
+        <div class="proj-block">
+          <p class="proj-block-label">Report</p>
+          ${pdfViewer(base + '/report.pdf')}
+          ${redactionNotice()}
+        </div>`;
+    }
+    if (p.hasSlides) {
+      blocks += `
+        <div class="proj-block">
+          <p class="proj-block-label">Slides</p>
+          ${pdfViewer(base + '/slides.pdf')}
+          ${redactionNotice()}
+        </div>`;
+    }
+    if (p.hasCode && p.code) {
+      blocks += `
+        <div class="proj-block">
+          <p class="proj-block-label">Code</p>
+          <a class="btn btn-primary btn-sm" href="${p.code}" target="_blank" rel="noopener">⌥&nbsp;&nbsp;View on GitHub</a>
+        </div>`;
+    }
+    const tags = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+    return `
+      <div class="proj-card">
+        <div class="proj-head" onclick="toggleProj(this)">
+          <h4>${p.title}</h4>
+          <p class="proj-desc">${p.description}</p>
+          <div class="tag-row">${tags}</div>
+        </div>
+        <div class="drawer">
+          <div class="drawer-inner">
+            ${blocks}
+            <button class="btn btn-sm drawer-close" onclick="closeProj(this)">✕ Close</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  courseContent.innerHTML = `
+    <h3 class="course-title">${c.name}</h3>
+    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}</p>
+
+    <p class="sub-heading">Homeworks</p>
+    <div class="hw-grid">${hwCards}</div>
+
+    <p class="sub-heading">Projects</p>
+    <div class="proj-grid">${projCards || '<p style="color:var(--text-dim)">No projects yet.</p>'}</div>
+  `;
+}
+
+// HW accordion: open the drawer that follows the clicked card
+function toggleHw(card) {
+  const drawer = card.nextElementSibling;
+  const isOpen = drawer.classList.contains('open');
+  // close siblings in same grid
+  card.parentNode.querySelectorAll('.hw-card.open').forEach(el => el.classList.remove('open'));
+  card.parentNode.querySelectorAll('.drawer.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) {
+    card.classList.add('open');
+    drawer.classList.add('open');
+    loadPdfSlots(drawer);
+  }
+}
+
+// Project accordion
+function toggleProj(head) {
+  const card   = head.parentNode;
+  const drawer = head.nextElementSibling;
+  const isOpen = card.classList.contains('open');
+  if (isOpen) {
+    card.classList.remove('open');
+    drawer.classList.remove('open');
+  } else {
+    card.classList.add('open');
+    drawer.classList.add('open');
+    loadPdfSlots(drawer);
+  }
+}
+function closeProj(btn) {
+  const card = btn.closest('.proj-card');
+  card.classList.remove('open');
+  card.querySelector('.drawer').classList.remove('open');
+}
+
+// course sidebar buttons
+courseSlugs.forEach((slug, i) => {
+  const btn = document.createElement('button');
+  btn.textContent = COURSES_DATA[slug].name;
+  btn.dataset.slug = slug;
+  if (i === 0) btn.classList.add('active');
+  btn.addEventListener('click', () => {
+    courseNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCourse(slug);
+  });
+  courseNav.appendChild(btn);
+});
+renderCourse(courseSlugs[0]); // initial
+
+/* ---------- CERTIFICATES ---------- */
+document.getElementById('certGrid').innerHTML = CERTIFICATES_DATA.map(cert => `
+  <div class="cert-card">
+    <div class="cert-thumb">
+      <img src="assets/certificates/${cert.slug}.jpg" alt="${cert.name} certificate"
+        onerror="this.style.display='none'; this.parentNode.textContent='Thumbnail: assets/certificates/${cert.slug}.jpg';" />
+    </div>
+    <div class="cert-body">
+      <h4>${cert.name}</h4>
+      <p class="cert-meta">${cert.issuer} · ${cert.date}</p>
+      ${cert.summary ? `<p class="cert-summary">${cert.summary}</p>` : ''}
+    </div>
+  </div>
+`).join('');
+
+/* ---------- TEACHING ---------- */
+document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
+  <div class="teach-group">
+    <h3>${group.semester}</h3>
+    <div class="teach-list">
+      ${group.entries.map(e => `
+        <div class="teach-item">
+          <span class="tname">${e.course}</span>
+          <span class="tprof">${e.professor}</span>
+          <span class="trole">${e.role}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+`).join('');
+
+/* =================================================================
+   SCROLL SPY (IntersectionObserver) + mobile menu
+   ================================================================= */
+const navLinks = document.querySelectorAll('#mainNav a');
+const sections = [...navLinks].map(a => document.querySelector(a.getAttribute('href')));
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+sections.forEach(s => s && observer.observe(s));
+
+// mobile sidebar toggle
+const sidebar = document.getElementById('sidebar');
+document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.toggle('open'));
+navLinks.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Place certificate thumbnails here as <slug>.jpg
+  llm-applications.jpg
+  prompt-engineering.jpg
+The slug must match CERTIFICATES_DATA in index.html.
