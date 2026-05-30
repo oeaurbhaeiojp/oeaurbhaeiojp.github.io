@@ -303,6 +303,25 @@
     font-size: 0.9rem;
     margin: 0 0 24px;
   }
+  /* Instructor sits inline in .course-sub and inherits its exact font + muted
+     color. As a link it stays muted by default and only turns teal (with an
+     underline) on hover. */
+  .course-sub .instructor {
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .course-sub a.instructor:hover {
+    color: var(--teal);
+    text-decoration: underline;
+  }
+  .course-sub .instructor-icon {
+    width: 0.85em;
+    height: 0.85em;
+    vertical-align: -0.08em;
+    margin-right: 4px;
+  }
   .sub-heading {
     font-size: 0.78rem;
     text-transform: uppercase;
@@ -761,6 +780,8 @@ const CONTACT_LINKEDIN = "https://www.linkedin.com/in/rouzbeh-pourjafarian/";
 const COURSES_DATA = {
   "advanced-aircraft-structures": {
     name: "Advanced Aircraft Structures",
+    instructor: "Dr. Kouchakzadeh",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Thin-walled beam analysis" },
       { id: 2, topic: "Shear flow in closed sections" },
@@ -782,6 +803,8 @@ const COURSES_DATA = {
 
   "advanced-engineering-mathematics": {
     name: "Advanced Engineering Mathematics",
+    instructor: "Dr. PLACEHOLDER",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Partial differential equations" },
       { id: 2, topic: "Sturm–Liouville problems" },
@@ -803,6 +826,8 @@ const COURSES_DATA = {
 
   "continuum-mechanics": {
     name: "Continuum Mechanics",
+    instructor: "Dr. PLACEHOLDER",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Index notation &amp; tensors" },
       { id: 2, topic: "Strain and deformation gradients" },
@@ -824,6 +849,8 @@ const COURSES_DATA = {
 
   "advanced-structural-analysis-design": {
     name: "Advanced Structural Analysis &amp; Design",
+    instructor: "Dr. Dehghani",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Matrix stiffness method" },
       { id: 2, topic: "Nonlinear structural analysis" },
@@ -845,6 +872,8 @@ const COURSES_DATA = {
 
   "composite-material-damage-mechanics": {
     name: "Composite Material Damage Mechanics",
+    instructor: "Dr. Fallah",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Classical lamination theory" },
       { id: 2, topic: "Failure criteria for laminates" },
@@ -866,6 +895,8 @@ const COURSES_DATA = {
 
   "multidisciplinary-optimal-design": {
     name: "Multidisciplinary Optimal Design",
+    instructor: "Dr. PLACEHOLDER",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Gradient-based optimization" },
       { id: 2, topic: "Design of experiments &amp; surrogates" },
@@ -887,6 +918,8 @@ const COURSES_DATA = {
 
   "theory-of-plates-and-shells": {
     name: "Theory of Plates and Shells",
+    instructor: "Dr. PLACEHOLDER",
+    instructorUrl: "PLACEHOLDER_URL",
     homeworks: [
       { id: 1, topic: "Kirchhoff plate bending" },
       { id: 2, topic: "Navier &amp; Lévy solutions" },
@@ -1020,6 +1053,19 @@ function redactionNotice() {
     </div>`;
 }
 
+// Instructor chunk appended to the course-sub line: " · <icon> Dr. Name".
+// Renders a link only when instructorUrl is a real URL (not blank/PLACEHOLDER).
+function instructorHtml(c) {
+  if (!c.instructor) return '';
+  const icon = '<svg class="instructor-icon" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3 0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>';
+  const label = `${icon}${c.instructor}`;
+  const hasUrl = c.instructorUrl && c.instructorUrl !== 'PLACEHOLDER_URL';
+  const node = hasUrl
+    ? `<a class="instructor" href="${c.instructorUrl}" target="_blank" rel="noopener">${label}</a>`
+    : `<span class="instructor">${label}</span>`;
+  return ` · ${node}`;
+}
+
 /* ---------- COURSES ---------- */
 const courseNav     = document.getElementById('courseNav');
 const courseContent = document.getElementById('courseContent');
@@ -1114,7 +1160,7 @@ function renderCourse(slug, fadeMs) {
 
   courseContent.innerHTML = `
     <h3 class="course-title">${c.name}</h3>
-    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}</p>
+    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}${instructorHtml(c)}</p>
 
     <p class="sub-heading">Homeworks</p>
     <div class="hw-grid">${hwCards}</div>
