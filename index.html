@@ -10,21 +10,75 @@
      THEME TOKENS
      =========================================================== */
   :root {
-    --bg:        #1e1e24;
-    --bg-soft:   #25252d;
-    --bg-card:   #2a2a33;
-    --bg-card-2: #30303a;
-    --border:    #3a3a46;
-    --text:      #e8e6df;
-    --text-dim:  #a8a69e;
-    --teal:      #1D9E75;
-    --teal-soft: rgba(29, 158, 117, 0.14);
-    --coral:     #D85A30;
-    --coral-soft:rgba(216, 90, 48, 0.14);
     --serif:     Georgia, 'Times New Roman', serif;
     --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --maxw:      820px;
   }
+
+  /* Internal semantic aliases -> theme tokens. Declared on <body> so they
+     resolve against the tokens set by the active body.dark / body.light class. */
+  body {
+    --bg:          var(--bg-primary);
+    --bg-soft:     var(--bg-sidebar);
+    --bg-card:     var(--bg-secondary);
+    --bg-card-2:   var(--bg-elevated);
+    --border:      var(--border-color);
+    --text:        var(--text-primary);
+    --text-dim:    var(--text-muted);
+    --teal:        var(--accent-teal);
+    --coral:       var(--accent-coral);
+    --teal-soft:   var(--accent-teal-soft);
+    --coral-soft:  var(--accent-coral-soft);
+    --teal-border:  var(--accent-teal-border);
+    --coral-border: var(--accent-coral-border);
+  }
+
+  /* ---- DARK THEME (default) ---- */
+  body.dark {
+    --bg-primary:   #1e1e24;
+    --bg-secondary: #2a2a32;
+    --bg-sidebar:   #232329;
+    --bg-elevated:  #30303a;
+    --text-primary: #e8e6df;
+    --text-muted:   #9a9890;
+    --accent-teal:  #1D9E75;
+    --accent-coral: #D85A30;
+    --border-color: #3a3a44;
+    --nav-bg:       #1a1a20;
+    --accent-teal-soft:    rgba(29, 158, 117, 0.14);
+    --accent-coral-soft:   rgba(216, 90, 48, 0.14);
+    --accent-teal-border:  rgba(29, 158, 117, 0.35);
+    --accent-coral-border: rgba(216, 90, 48, 0.35);
+    --accent-teal-hover:   #178a65;
+    --link-hover:          #2bc191;
+    --on-accent:           #ffffff;
+    --pdf-bg:              #111111;
+  }
+
+  /* ---- LIGHT THEME (distill.pub-inspired) ---- */
+  body.light {
+    --bg-primary:   #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-sidebar:   #f0eeea;
+    --bg-elevated:  #e9e7e1;
+    --text-primary: #1a1a1a;
+    --text-muted:   #666660;
+    --accent-teal:  #0f6e56;
+    --accent-coral: #993c1d;
+    --border-color: #e0deda;
+    --nav-bg:       #fafaf8;
+    --accent-teal-soft:    rgba(15, 110, 86, 0.12);
+    --accent-coral-soft:   rgba(153, 60, 29, 0.12);
+    --accent-teal-border:  rgba(15, 110, 86, 0.32);
+    --accent-coral-border: rgba(153, 60, 29, 0.32);
+    --accent-teal-hover:   #0c5a46;
+    --link-hover:          #0c5a46;
+    --on-accent:           #ffffff;
+    --pdf-bg:              #ffffff;
+  }
+
+  /* Smooth color transitions everywhere when toggling themes */
+  * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 
   /* ===========================================================
      RESET / BASE
@@ -42,7 +96,7 @@
   }
   h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.25; }
   a { color: var(--teal); text-decoration: none; transition: color 0.2s ease; }
-  a:hover { color: #2bc191; }
+  a:hover { color: var(--link-hover); }
   p { color: var(--text); }
   img { max-width: 100%; display: block; }
 
@@ -54,7 +108,7 @@
      =========================================================== */
   .topbar {
     width: 100%;
-    background: var(--bg-soft);
+    background: var(--nav-bg);
     border-bottom: 1px solid var(--border);
   }
   .topbar-inner {
@@ -80,8 +134,35 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 4px;
-    margin-left: auto;
+    margin: 0 auto; /* brand on the left, nav centered, toggle pushed far right */
   }
+
+  /* Light/dark theme toggle — icon only, far right of the nav bar */
+  .theme-toggle {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+  .theme-toggle:hover { color: var(--accent-teal); }
+  .theme-toggle .ticon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .theme-toggle .ticon svg { display: block; }
+  body.dark  .theme-toggle .ticon-moon { opacity: 1; }
+  body.light .theme-toggle .ticon-sun  { opacity: 1; }
   .nav a {
     color: var(--text-dim);
     font-size: 0.95rem;
@@ -136,8 +217,8 @@
     text-decoration: none;
   }
   .btn:hover { border-color: var(--teal); color: var(--text); background: var(--bg-card-2); }
-  .btn-primary { background: var(--teal); border-color: var(--teal); color: #fff; }
-  .btn-primary:hover { background: #178a65; border-color: #178a65; color: #fff; }
+  .btn-primary { background: var(--teal); border-color: var(--teal); color: var(--on-accent); }
+  .btn-primary:hover { background: var(--accent-teal-hover); border-color: var(--accent-teal-hover); color: var(--on-accent); }
   .btn-sm { padding: 6px 12px; font-size: 0.82rem; }
 
   /* Icon inside a button (inline SVG, inherits color). Teal accent on outline
@@ -175,7 +256,7 @@
     border-radius: 999px;
     background: var(--teal-soft);
     color: var(--teal);
-    border: 1px solid rgba(29,158,117,0.35);
+    border: 1px solid var(--teal-border);
   }
   .tag {
     display: inline-block;
@@ -184,7 +265,7 @@
     border-radius: 5px;
     background: var(--coral-soft);
     color: var(--coral);
-    border: 1px solid rgba(216,90,48,0.35);
+    border: 1px solid var(--coral-border);
     letter-spacing: 0.2px;
   }
   .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -413,7 +494,7 @@
     height: 600px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: #111;
+    background: var(--pdf-bg);
   }
   /* In focus mode the viewer fills the full width and 80% of the screen height */
   .focus-mode .pdf-frame,
@@ -528,7 +609,7 @@
     border-radius: 999px;
     background: var(--teal-soft);
     color: var(--teal);
-    border: 1px solid rgba(29,158,117,0.35);
+    border: 1px solid var(--teal-border);
     white-space: nowrap;
   }
 
@@ -577,7 +658,18 @@
   }
 </style>
 </head>
-<body>
+<body class="dark">
+<script>
+  /* Apply saved theme ASAP to avoid a flash of the wrong theme. */
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t !== 'light' && t !== 'dark') t = 'dark';
+      document.body.classList.remove('dark', 'light');
+      document.body.classList.add(t);
+    } catch (e) { /* keep default dark */ }
+  })();
+</script>
 
 <!-- ============================ TOP NAV (static, scrolls away) ============================ -->
 <header class="topbar">
@@ -592,6 +684,14 @@
       <a href="#skills">Skills</a>
       <a href="#contact">Contact</a>
     </nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
+      <span class="ticon ticon-moon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </span>
+      <span class="ticon ticon-sun">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </span>
+    </button>
   </div>
 </header>
 
@@ -632,7 +732,7 @@
       </div>
       <div class="hero-photo">
         <img src="assets/photo.jpg" alt="Rouzbeh Pourjafarian"
-             onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('beforeend','<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#a8a69e;font-size:0.8rem;text-align:center;padding:14px&quot;>Add photo at<br>assets/photo.jpg</div>');" />
+             onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('beforeend','<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:0.8rem;text-align:center;padding:14px&quot;>Add photo at<br>assets/photo.jpg</div>');" />
       </div>
     </header>
 
@@ -1331,6 +1431,16 @@ navLinks.forEach(a => {
 
 // initial page: from URL hash if valid, otherwise About
 showPage((location.hash || '#about').slice(1));
+
+/* =================================================================
+   THEME TOGGLE  (light / dark) + persistence in localStorage["theme"]
+   ================================================================= */
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+  document.body.classList.remove('dark', 'light');
+  document.body.classList.add(next);
+  try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
+});
 </script>
 </body>
 </html>
