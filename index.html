@@ -366,25 +366,16 @@
   .tl-card p { margin: 0; font-size: 0.95rem; }
   .tl-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 
-  /* Course project cards (Research & Projects section) */
-  .cproj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  .cproj-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-  .cproj-card:hover { border-color: var(--teal); transform: translateY(-2px); }
-  .cproj-card h4 { font-size: 1.08rem; margin: 0 0 4px; }
-  .cproj-card .cproj-meta { font-size: 0.82rem; margin: 0 0 10px; }
-  .cproj-card .cproj-course { color: var(--teal); font-weight: 600; }
-  .cproj-card .cproj-date { color: var(--text-dim); }
-  .cproj-card .cproj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
-  .cproj-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-  .cproj-card .cproj-actions { margin-top: auto; }
+  /* Research & Projects: tabbed panels (fade in on switch, like Courses) */
+  .rp-panel { display: none; }
+  .rp-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* Course project cards reuse the EXACT .tl-card style; only the timeline
+     dot is removed and they're laid out in a grid instead of a rail. */
+  .cproj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+  .cproj-grid .tl-card { margin-bottom: 0; display: flex; flex-direction: column; }
+  .cproj-grid .tl-card::before { display: none; }
+  .cproj-actions { margin-top: auto; padding-top: 14px; }
 
   /* ===========================================================
      COURSES SECTION
@@ -832,120 +823,136 @@
     <!-- ---------- RESEARCH & PROJECTS ---------- -->
     <section id="research" class="page">
       <h2>Research &amp; Projects</h2>
+      <div class="courses-layout">
+        <nav class="course-nav" id="rpNav">
+          <button class="active" data-rp="experience">Research Experience</button>
+          <button data-rp="projects">Course Projects</button>
+        </nav>
+        <div class="course-content" id="rpContent">
 
-      <p class="sub-heading">Research experience</p>
-      <div class="timeline">
+          <!-- Research experience tab -->
+          <div class="rp-panel active" data-panel="experience">
+            <div class="timeline">
 
-        <article class="tl-card">
-          <div class="date">10/25 – 04/26</div>
-          <h3>LLM-based multi-agent mechanism design</h3>
-          <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
-          <p>Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG)
-            to automate the conceptual design of mechanical linkages, coordinating specialized
-            agents for synthesis, evaluation, and refinement.</p>
-        </article>
+              <article class="tl-card">
+                <div class="date">10/25 – 04/26</div>
+                <h3>LLM-based multi-agent mechanism design</h3>
+                <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
+                <p>Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG)
+                  to automate the conceptual design of mechanical linkages, coordinating specialized
+                  agents for synthesis, evaluation, and refinement.</p>
+              </article>
 
-        <article class="tl-card">
-          <div class="date">07/25 – 08/25</div>
-          <h3>Inverse finite element method &amp; acoustic emission</h3>
-          <p class="sub">Personal Research</p>
-          <p>Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of
-            structural deformation from sparse strain measurements, integrating acoustic emission
-            (AE) signals to enhance damage localization.</p>
-        </article>
+              <article class="tl-card">
+                <div class="date">07/25 – 08/25</div>
+                <h3>Inverse finite element method &amp; acoustic emission</h3>
+                <p class="sub">Personal Research</p>
+                <p>Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of
+                  structural deformation from sparse strain measurements, integrating acoustic emission
+                  (AE) signals to enhance damage localization.</p>
+              </article>
 
-        <article class="tl-card">
-          <div class="date">02/25 – 07/25</div>
-          <h3>Structural health monitoring &amp; damage detection</h3>
-          <p class="sub">Bachelor Thesis · Dr. Abedian</p>
-          <p>Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural
-            health monitoring and damage detection, evaluating sensor placement and signal response
-            under various damage scenarios.</p>
-        </article>
+              <article class="tl-card">
+                <div class="date">02/25 – 07/25</div>
+                <h3>Structural health monitoring &amp; damage detection</h3>
+                <p class="sub">Bachelor Thesis · Dr. Abedian</p>
+                <p>Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural
+                  health monitoring and damage detection, evaluating sensor placement and signal response
+                  under various damage scenarios.</p>
+              </article>
 
-        <article class="tl-card">
-          <div class="date">01/23 – 07/23</div>
-          <h3>UAV autopilot system development</h3>
-          <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
-          <p>Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission
-            Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and
-            simulation of control laws.</p>
-        </article>
+              <article class="tl-card">
+                <div class="date">01/23 – 07/23</div>
+                <h3>UAV autopilot system development</h3>
+                <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
+                <p>Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission
+                  Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and
+                  simulation of control laws.</p>
+              </article>
 
-        <article class="tl-card">
-          <div class="date">06/22 – 08/22</div>
-          <h3>Battery thermal system</h3>
-          <p class="sub">RAeS Competition — Lyrebird Electric STOL Aircraft</p>
-          <p>Designed and simulated a battery cooling system for an electric STOL aircraft using
-            COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow
-            in compact wing-mounted ducts. Validated the thermal design maintaining battery
-            temperature below 25°C.</p>
-          <div class="tag-row">
-            <span class="tag">COMSOL</span>
-            <span class="tag">Thermal Analysis</span>
-            <span class="tag">CFD</span>
+              <article class="tl-card">
+                <div class="date">06/22 – 08/22</div>
+                <h3>Battery thermal system</h3>
+                <p class="sub">RAeS Competition — Lyrebird Electric STOL Aircraft</p>
+                <p>Designed and simulated a battery cooling system for an electric STOL aircraft using
+                  COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow
+                  in compact wing-mounted ducts. Validated the thermal design maintaining battery
+                  temperature below 25°C.</p>
+                <div class="tag-row">
+                  <span class="tag">COMSOL</span>
+                  <span class="tag">Thermal Analysis</span>
+                  <span class="tag">CFD</span>
+                </div>
+              </article>
+
+            </div>
           </div>
-        </article>
 
-      </div>
+          <!-- Course projects tab (cards use the exact same .tl-card style) -->
+          <div class="rp-panel" data-panel="projects">
+            <div class="cproj-grid">
 
-      <p class="sub-heading">Course projects</p>
-      <div class="cproj-grid">
+              <article class="tl-card">
+                <div class="date">Fall 2024 – Spring 2025</div>
+                <h3>Hybrid-Electric STOL Air Taxi</h3>
+                <p class="sub">Aircraft Design I &amp; II</p>
+                <p>Structural design and analysis of a hybrid-electric STOL air taxi with distributed
+                  electric propulsion. Created 3D CAD models in SolidWorks and performed stress,
+                  deformation, and buckling analysis in ABAQUS.</p>
+                <div class="tag-row">
+                  <span class="tag">ABAQUS</span>
+                  <span class="tag">SolidWorks</span>
+                  <span class="tag">FEM</span>
+                  <span class="tag">Structural Analysis</span>
+                </div>
+                <div class="cproj-actions">
+                  <a class="btn btn-sm btn-outline" href="assets/projects/stol-air-taxi/report.pdf" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
+                  </a>
+                </div>
+              </article>
 
-        <div class="cproj-card">
-          <h4>Hybrid-Electric STOL Air Taxi</h4>
-          <p class="cproj-meta"><span class="cproj-course">Aircraft Design I &amp; II</span> · <span class="cproj-date">Fall 2024 – Spring 2025</span></p>
-          <p class="cproj-desc">Structural design and analysis of a hybrid-electric STOL air taxi with
-            distributed electric propulsion. Created 3D CAD models in SolidWorks and performed stress,
-            deformation, and buckling analysis in ABAQUS.</p>
-          <div class="tag-row">
-            <span class="tag">ABAQUS</span>
-            <span class="tag">SolidWorks</span>
-            <span class="tag">FEM</span>
-            <span class="tag">Structural Analysis</span>
+              <article class="tl-card">
+                <div class="date">Spring 2025</div>
+                <h3>Heat Transfer Coefficient Prediction of Nanofluids</h3>
+                <p class="sub">Heat Transfer</p>
+                <p>Developed a machine learning pipeline to predict nanofluid heat transfer coefficients.
+                  Implemented Linear, Polynomial, Random Forest, and Neural Network regression models
+                  evaluated using MAE, MSE, and R².</p>
+                <div class="tag-row">
+                  <span class="tag">Python</span>
+                  <span class="tag">Machine Learning</span>
+                  <span class="tag">Scikit-learn</span>
+                  <span class="tag">Neural Networks</span>
+                </div>
+                <div class="cproj-actions">
+                  <a class="btn btn-sm btn-outline" href="assets/projects/nanofluid-prediction/report.pdf" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
+                  </a>
+                </div>
+              </article>
+
+              <article class="tl-card">
+                <div class="date">Fall 2024</div>
+                <h3>AI Research Assistant</h3>
+                <p class="sub">Foundations of Data Science</p>
+                <p>Designed an AI research assistant to retrieve and summarize scholarly articles.
+                  Crawled 10,000+ AI papers from Semantic Scholar, built a RAG pipeline using FAISS,
+                  LangChain, and OpenAI API for semantic search and automated summaries.</p>
+                <div class="tag-row">
+                  <span class="tag">Python</span>
+                  <span class="tag">RAG</span>
+                  <span class="tag">LangChain</span>
+                  <span class="tag">FAISS</span>
+                  <span class="tag">NLP</span>
+                  <span class="tag">KeyBERT</span>
+                </div>
+              </article>
+
+            </div>
           </div>
-          <div class="cproj-actions">
-            <a class="btn btn-sm btn-outline" href="assets/projects/stol-air-taxi/report.pdf" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
-            </a>
-          </div>
+
         </div>
-
-        <div class="cproj-card">
-          <h4>Heat Transfer Coefficient Prediction of Nanofluids</h4>
-          <p class="cproj-meta"><span class="cproj-course">Heat Transfer</span> · <span class="cproj-date">Spring 2025</span></p>
-          <p class="cproj-desc">Developed a machine learning pipeline to predict nanofluid heat transfer
-            coefficients. Implemented Linear, Polynomial, Random Forest, and Neural Network regression
-            models evaluated using MAE, MSE, and R².</p>
-          <div class="tag-row">
-            <span class="tag">Python</span>
-            <span class="tag">Machine Learning</span>
-            <span class="tag">Scikit-learn</span>
-            <span class="tag">Neural Networks</span>
-          </div>
-          <div class="cproj-actions">
-            <a class="btn btn-sm btn-outline" href="assets/projects/nanofluid-prediction/report.pdf" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
-            </a>
-          </div>
-        </div>
-
-        <div class="cproj-card">
-          <h4>AI Research Assistant</h4>
-          <p class="cproj-meta"><span class="cproj-course">Foundations of Data Science</span> · <span class="cproj-date">Fall 2024</span></p>
-          <p class="cproj-desc">Designed an AI research assistant to retrieve and summarize scholarly
-            articles. Crawled 10,000+ AI papers from Semantic Scholar, built a RAG pipeline using FAISS,
-            LangChain, and OpenAI API for semantic search and automated summaries.</p>
-          <div class="tag-row">
-            <span class="tag">Python</span>
-            <span class="tag">RAG</span>
-            <span class="tag">LangChain</span>
-            <span class="tag">FAISS</span>
-            <span class="tag">NLP</span>
-            <span class="tag">KeyBERT</span>
-          </div>
-        </div>
-
       </div>
     </section>
 
@@ -1612,6 +1619,24 @@ navLinks.forEach(a => {
 
 // initial page: from URL hash if valid, otherwise About
 showPage((location.hash || '#about').slice(1));
+
+/* =================================================================
+   RESEARCH & PROJECTS  tabs (sidebar switches panels, default Experience)
+   ================================================================= */
+(function () {
+  const rpNav = document.getElementById('rpNav');
+  if (!rpNav) return;
+  const rpPanels = document.querySelectorAll('#rpContent .rp-panel');
+  rpNav.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.classList.contains('active')) return;
+      rpNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const key = btn.dataset.rp;
+      rpPanels.forEach(p => p.classList.toggle('active', p.dataset.panel === key));
+    });
+  });
+})();
 
 /* =================================================================
    THEME TOGGLE  (light / dark) + persistence in localStorage["theme"]
