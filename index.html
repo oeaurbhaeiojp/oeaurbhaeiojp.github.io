@@ -99,6 +99,9 @@
 
   .content {
     padding: 0 40px 120px;
+    /* clip (not hidden) so the full-width courses view can't trigger a
+       horizontal scrollbar, while keeping the course sidebar's sticky behavior */
+    overflow-x: clip;
   }
   .inner { max-width: var(--maxw); margin: 0 auto; }
 
@@ -215,7 +218,23 @@
   /* ===========================================================
      COURSES SECTION
      =========================================================== */
-  .courses-layout { display: flex; gap: 28px; align-items: flex-start; transition: gap 0.3s ease; }
+  .courses-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    width: 100%;
+    transition: width 0.3s ease, margin-left 0.3s ease, padding 0.3s ease;
+  }
+
+  /* Focus mode: when a PDF viewer is open, the whole courses layout (sidebar
+     + content) breaks out of the centered column to use the full page width.
+     The sidebar stays visible on the left; the content area takes the rest. */
+  .courses-layout.focus-mode {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 0 40px;
+  }
+
   .course-nav {
     flex-shrink: 0;
     width: 230px;
@@ -228,28 +247,6 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 12px;
-    overflow: hidden;
-    transition: transform 0.3s ease, width 0.3s ease, padding 0.3s ease,
-                opacity 0.3s ease, border-width 0.3s ease;
-  }
-
-  /* Focus mode: when a PDF viewer is open, the course sidebar slides out to
-     the left and collapses, giving the content area the full width. */
-  .courses-layout.focus-mode { gap: 0; }
-  .courses-layout.focus-mode .course-nav {
-    transform: translateX(-100%);
-    width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    border-width: 0;
-    opacity: 0;
-    pointer-events: none;
-  }
-  .course-back {
-    position: sticky;
-    top: 12px;
-    z-index: 5;
-    margin-bottom: 18px;
   }
   .course-nav button {
     text-align: left;
@@ -329,6 +326,25 @@
   .drawer.open { max-height: 2600px; }
   .drawer-inner { padding: 4px 20px 22px; }
   .hw-drawer .drawer-inner { padding: 0; }
+
+  /* Wrapper lets the close button overlay the top-right corner of the viewer */
+  .pdf-wrap { position: relative; }
+  .pdf-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 4;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    padding: 5px 11px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .pdf-close:hover { border-color: var(--coral); color: var(--coral); background: var(--bg-card-2); }
 
   .pdf-frame {
     width: 100%;
@@ -913,12 +929,17 @@ const TEACHING_DATA = [
 // opens, loadPdfSlots() does a HEAD request for the file (same-origin on
 // GitHub Pages); if it exists, the placeholder is swapped for a real iframe.
 function pdfViewer(src) {
+  // The close button sits outside .pdf-slot so loadPdfSlots() (which replaces
+  // the slot's contents with an iframe) never wipes it out.
   return `
-    <div class="pdf-slot" data-src="${src}">
-      <div class="pdf-placeholder">
-        <div class="pp-icon">📄</div>
-        <div>PDF will appear here — upload to</div>
-        <code>${src}</code>
+    <div class="pdf-wrap">
+      <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">✕ Close</button>
+      <div class="pdf-slot" data-src="${src}">
+        <div class="pdf-placeholder">
+          <div class="pp-icon">📄</div>
+          <div>PDF will appear here — upload to</div>
+          <code>${src}</code>
+        </div>
       </div>
     </div>`;
 }
@@ -958,31 +979,25 @@ const coursesLayout = document.querySelector('.courses-layout');
 const courseSlugs   = Object.keys(COURSES_DATA);
 
 /* ---------- Focus mode (full-width PDF viewer) ----------
-   When any drawer with a PDF is open, slide the course sidebar out and show a
-   "← Back" button. Closing all drawers brings the sidebar back. */
+   When any PDF drawer is open, the whole courses layout expands to the full
+   page width. The sidebar stays visible; closing the PDF restores the width. */
 function setFocusMode(on) {
   coursesLayout.classList.toggle('focus-mode', on);
-  let back = document.getElementById('courseBack');
-  if (on && !back) {
-    back = document.createElement('button');
-    back.id = 'courseBack';
-    back.className = 'btn btn-sm course-back';
-    back.innerHTML = '← Back';
-    back.addEventListener('click', exitFocusMode);
-    courseContent.insertBefore(back, courseContent.firstChild);
-  } else if (!on && back) {
-    back.remove();
-  }
 }
 // reflect focus state from whether a drawer is currently open
 function refreshFocusMode() {
   setFocusMode(!!courseContent.querySelector('.drawer.open'));
 }
-// close any open PDF drawer and bring the sidebar back
-function exitFocusMode() {
-  courseContent.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
-  courseContent.querySelectorAll('.hw-card.open, .proj-card.open').forEach(el => el.classList.remove('open'));
-  setFocusMode(false);
+// "✕ Close" button inside a PDF viewer: close its drawer + clear card highlight
+function closePdf(btn) {
+  const drawer = btn.closest('.drawer');
+  if (!drawer) return;
+  drawer.classList.remove('open');
+  const projCard = drawer.closest('.proj-card');
+  if (projCard) projCard.classList.remove('open');
+  const prev = drawer.previousElementSibling;       // the HW card, for HW drawers
+  if (prev && prev.classList.contains('hw-card')) prev.classList.remove('open');
+  refreshFocusMode();
 }
 
 function renderCourse(slug) {
