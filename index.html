@@ -334,22 +334,36 @@
   .sub-heading:first-of-type { margin-top: 8px; }
 
   /* HW grid */
-  .hw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .hw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  /* Compact, landscape cards: number + topic on one line, ellipsis if too long */
   .hw-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 60px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 9px;
-    padding: 14px 16px;
+    padding: 12px 16px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
   .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); }
-  .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; }
-  .hw-card .hw-topic { font-size: 0.82rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+  .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; flex-shrink: 0; }
+  .hw-card .hw-sep { color: var(--text-dim); flex-shrink: 0; }
+  .hw-card .hw-topic {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
 
-  /* Project cards */
-  .proj-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  /* Project cards — full-width landscape; multi-column when several exist */
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 14px; }
   .proj-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -1102,9 +1116,10 @@ function renderCourse(slug, fadeMs) {
   const hwCards = c.homeworks.map(hw => {
     const src = `assets/courses/${slug}/hw/hw${hw.id}.pdf`;
     return `
-      <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)">
-        <div class="hw-num">HW ${hw.id}</div>
-        <div class="hw-topic">${hw.topic}</div>
+      <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)" title="HW ${hw.id} — ${hw.topic}">
+        <span class="hw-num">HW ${hw.id}</span>
+        <span class="hw-sep">—</span>
+        <span class="hw-topic">${hw.topic}</span>
       </div>
       <div class="drawer hw-drawer" data-drawer="${hw.id}" style="grid-column:1/-1">
         <div class="drawer-inner">
