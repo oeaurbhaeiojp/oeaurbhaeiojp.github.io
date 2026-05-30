@@ -1,0 +1,4 @@
+Upload the project report here as report.pdf:
+  assets/projects/ai-research-assistant/report.pdf
+
+The "View report" button in the Research & Projects section links to this file.
