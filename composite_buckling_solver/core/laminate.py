@@ -185,8 +185,31 @@ def compute_ABD(
         D += Qbar * (zk**3 - zkm1**3) / 3
 
     return LaminateStiffness(
-        A=sp.simplify(A), B=sp.simplify(B), D=sp.simplify(D), Qbars=qbars
+        A=_finalize(A), B=_finalize(B), D=_finalize(D), Qbars=qbars
     )
+
+
+def _finalize(matrix: sp.Matrix) -> sp.Matrix:
+    """Tidy an assembled stiffness matrix for fast, clean downstream use.
+
+    The per-ply ``Qbar`` integrals carry symbolic trigonometry (``cos(pi/4)``
+    etc.) even when every input is numeric, because the ply angle is multiplied
+    by the exact symbol ``pi``.  Running ``sympy.simplify`` on those mixed
+    trig expressions is correct but extremely slow (seconds per laminate), so:
+
+    * if the matrix has **no free symbols** (a fully numeric laminate, the
+      common case) it is collapsed to floating point with ``evalf(chop=True)``,
+      which is exact-enough and orders of magnitude faster; tiny rounding
+      residuals (e.g. ``cos(pi/2)``) are chopped to zero, and
+    * if the matrix is **genuinely symbolic** (e.g. a symbolic ply angle or
+      modulus) it is simplified so the result stays readable.
+
+    Note: symbolic *ply-angle* sweeps remain expensive; prefer evaluating those
+    numerically at each angle.
+    """
+    if matrix.free_symbols:
+        return sp.simplify(matrix)
+    return matrix.evalf(chop=True)
 
 
 def _is_negligible(matrix: sp.Matrix, tol: float = 1e-6) -> bool:
