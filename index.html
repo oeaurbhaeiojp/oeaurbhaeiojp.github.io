@@ -1400,7 +1400,7 @@ function renderCourse(slug, fadeMs) {
 
   // homework cards
   const hwCards = c.homeworks.map(hw => {
-    const src = `assets/courses/${slug}/hw/hw${hw.id}.pdf`;
+    const src = `assets/courses/${slug}/hw/HW${hw.id}.pdf`;
     return `
       <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)" title="HW ${hw.id} — ${hw.topic}">
         <span class="hw-num">HW ${hw.id}</span>
