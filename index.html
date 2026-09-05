@@ -469,18 +469,22 @@
   .sub-heading:first-of-type { margin-top: 8px; }
 
   /* HW grid */
-  /* Flexbox, not CSS grid: each card's drawer is a full-row sibling right
-     after it, and flex-wrap lets a full-basis drawer force a new line while
-     cards before/after it still pack normally — plus it lets the open card
-     grow (flex-grow) at its row-mates' expense, see .hw-card.open below. */
-  .hw-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  /* A plain vertical stack: each item is either a two-card .hw-row or a
+     full-width .hw-drawer for one of that row's cards. Keeping drawers OUT
+     of the row's own flex context means they can never interfere with the
+     row's card-vs-card sizing math. */
+  .hw-grid { display: flex; flex-direction: column; gap: 12px; }
+  /* Two cards per row; wraps to one-per-line only if the viewport is too
+     narrow for both at their minimum width. */
+  .hw-row { display: flex; flex-wrap: wrap; gap: 12px; }
   /* Compact, landscape cards: number + topic on one line, ellipsis if too long */
   .hw-card {
     display: flex;
     align-items: center;
     gap: 8px;
     min-height: 60px;
-    flex: 1 1 220px;
+    flex: 1 1 0;
+    min-width: 220px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 9px;
@@ -490,13 +494,10 @@
     overflow: hidden;
   }
   .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
-  /* Grows to make room for its own full topic text; open siblings in the same
-     row shrink toward their basis instead (see .hw-card.sibling-open). */
-  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; flex-grow: 4; }
-  /* A row-mate of the open card: shrink toward a compact minimum so the open
-     card's full name has room, while staying visible and clickable. */
-  .hw-card.sibling-open { flex-grow: 0.2; }
-  .hw-drawer { flex: 1 1 100%; }
+  /* Grows to make room for its own full topic text; its row-mate shrinks
+     toward a compact minimum instead (see .hw-card.sibling-open). */
+  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; flex-grow: 5; }
+  .hw-card.sibling-open { flex-grow: 0.3; min-width: 140px; }
   .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; flex-shrink: 0; }
   .hw-card .hw-sep { color: var(--text-dim); flex-shrink: 0; }
   .hw-card .hw-topic {
@@ -1412,9 +1413,12 @@ function closePdf(btn) {
   drawer.classList.remove('open');
   const projCard = drawer.closest('.proj-card');
   if (projCard) projCard.classList.remove('open');
-  const prev = drawer.previousElementSibling;       // the HW card, for HW drawers
-  if (prev && prev.classList.contains('hw-card')) prev.classList.remove('open');
-  drawer.parentNode.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
+  const grid = drawer.closest('.hw-grid');           // present only for HW drawers
+  if (grid) {
+    const card = grid.querySelector(`.hw-card[data-hw="${drawer.dataset.drawer}"]`);
+    if (card) card.classList.remove('open');
+    grid.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
+  }
   refreshFocusMode();
 }
 
@@ -1422,22 +1426,29 @@ function renderCourse(slug, fadeMs) {
   coursesLayout.classList.remove('focus-mode'); // always start a course unfocused
   const c = COURSES_DATA[slug];
 
-  // homework cards
-  const hwCards = c.homeworks.map(hw => {
-    const src = `assets/courses/${slug}/hw/HW${hw.id}.pdf`;
-    return `
+  // homework cards — paired two-per-row; each pair is its own flex row so the
+  // open card can grow and its row-mate shrink without touching other rows.
+  // Drawers sit outside the row (full-width) so they never affect its flex math.
+  let hwCards = '';
+  for (let i = 0; i < c.homeworks.length; i += 2) {
+    const pair = c.homeworks.slice(i, i + 2);
+    hwCards += `<div class="hw-row">` + pair.map(hw => `
       <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)" title="HW ${hw.id} — ${hw.topic}">
         <span class="hw-num">HW ${hw.id}</span>
         <span class="hw-sep">—</span>
         <span class="hw-topic">${hw.topic}</span>
-      </div>
+      </div>`).join('') + `</div>`;
+    hwCards += pair.map(hw => {
+      const src = `assets/courses/${slug}/hw/HW${hw.id}.pdf`;
+      return `
       <div class="drawer hw-drawer" data-drawer="${hw.id}">
         <div class="drawer-inner">
           <div style="padding-top:14px">${pdfViewer(src)}</div>
           ${redactionNotice()}
         </div>
       </div>`;
-  }).join('');
+    }).join('');
+  }
 
   // project cards
   const projCards = c.projects.map(p => {
@@ -1508,17 +1519,20 @@ function renderCourse(slug, fadeMs) {
   }
 }
 
-// HW accordion: open the drawer that follows the clicked card
+// HW accordion: open this card's drawer (looked up by data-hw/data-drawer,
+// since drawers now live below their row rather than right after each card)
 function toggleHw(card) {
-  const drawer = card.nextElementSibling;
+  const grid = card.closest('.hw-grid');
+  const drawer = grid.querySelector(`.hw-drawer[data-drawer="${card.dataset.hw}"]`);
   const isOpen = drawer.classList.contains('open');
-  // close siblings in same grid
-  card.parentNode.querySelectorAll('.hw-card.open').forEach(el => el.classList.remove('open'));
-  card.parentNode.querySelectorAll('.drawer.open').forEach(el => el.classList.remove('open'));
-  card.parentNode.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
+  // close whichever HW (in any row) was open before
+  grid.querySelectorAll('.hw-card.open').forEach(el => el.classList.remove('open'));
+  grid.querySelectorAll('.drawer.open').forEach(el => el.classList.remove('open'));
+  grid.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
   if (!isOpen) {
     card.classList.add('open');
     drawer.classList.add('open');
+    // shrink just this card's row-mate (card.parentNode is the .hw-row pair)
     card.parentNode.querySelectorAll('.hw-card').forEach(el => { if (el !== card) el.classList.add('sibling-open'); });
     loadPdfSlots(drawer);
   }
