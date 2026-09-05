@@ -1182,12 +1182,42 @@ const COURSES_DATA = {
     ],
     projects: [
       {
-        slug: "delamination-analysis",
-        title: "Delamination analysis",
-        description: "Cohesive-zone modeling of delamination growth in a laminated composite coupon.",
-        tags: ["ABAQUS", "Cohesive Zone", "Composites"],
-        hasReport: true,
+        slug: "abaqus-user-subroutines",
+        title: "User Subroutines in Abaqus",
+        description: "A tutorial presentation on writing Abaqus user subroutines (UMAT) in Fortran, covering the theoretical minimum, how Abaqus solves nonlinear problems, UMAT anatomy, a worked example, and how to run one in practice.",
+        tags: ["ABAQUS", "Fortran", "UMAT"],
+        hasReport: false,
         hasSlides: true,
+        hasCode: false,
+        code: ""
+      },
+      {
+        slug: "hill-yield-criterion",
+        title: "Anisotropic Yield Criterion of Hill",
+        description: "An examination of the Hill anisotropic yield criterion, where it comes from and the assumptions it is derived from.",
+        tags: [],
+        hasReport: false,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      },
+      {
+        slug: "continuum-damage-mechanics-overview",
+        title: "Continuum Damage Mechanics",
+        description: "A theoretical overview of continuum damage mechanics, covering damage measures and definitions, thermodynamic aspects, damage growth equations, and life prediction in structures, presented as background for the course project.",
+        tags: [],
+        hasReport: false,
+        hasSlides: true,
+        hasCode: false,
+        code: ""
+      },
+      {
+        slug: "cdm-neural-network-reproduction",
+        title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
+        description: "Abstract: this report reproduces Yan, Zou, Ilkhani and Jones (2020), Composites Part B 194:108014, in which three artificial neural networks (ANNs), trained on the response of a mesoscale unit cell, replace a Linde-type continuum damage mechanics (CDM) user subroutine (UMAT) at the macro scale. The original authors released neither code nor data, so every component, including the constitutive model, the periodic unit cell, the training dataset, the three networks, and the macro-scale UMAT, was rebuilt independently from the text and figures of the paper. The reproduction is evaluated against five acceptance criteria spanning the regression network's accuracy, the two classifiers' accuracy, the open-hole plate benchmark, and the reported computational speed-up. All five are met.",
+        tags: ["Neural Network"],
+        hasReport: true,
+        hasSlides: false,
         hasCode: false,
         code: ""
       }
