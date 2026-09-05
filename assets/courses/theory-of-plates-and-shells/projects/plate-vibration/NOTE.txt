@@ -1,7 +1,4 @@
 Place project files here:
-  report.pdf   -> shown when hasReport: true
-  slides.pdf   -> shown when hasSlides: true
-  article.pdf  -> shown when hasArticle: true (needs an accompanying
-                  articleNote string on the project, shown as a paragraph
-                  above the PDF)
+  report.pdf  -> shown when hasReport: true
+  slides.pdf  -> shown when hasSlides: true
 Folder name must match the project "slug" in COURSES_DATA in index.html.

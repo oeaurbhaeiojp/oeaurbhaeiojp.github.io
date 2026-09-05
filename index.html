@@ -609,7 +609,6 @@
     margin: 0 0 10px;
     font-weight: 600;
   }
-  .proj-block-note { font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; margin: 0 0 14px; text-align: justify; }
   .drawer-close {
     margin-top: 18px;
     display: inline-flex;
@@ -1237,12 +1236,10 @@ const COURSES_DATA = {
       {
         slug: "plate-vibration",
         title: "Plate vibration analysis",
-        description: "Analytical and FEM modal analysis of rectangular plates with various boundary conditions.",
+        description: "Abstract: based on Huang (2024), &ldquo;An improved plate deep energy method for the bending, buckling and free vibration problems of irregular Kirchhoff plates,&rdquo; Engineering Structures 301, 117235. A physics-informed deep-energy neural network, combined with a coordinate transformation and finite-difference approximations, is used to solve the governing PDEs for bending, buckling, and free vibration of Kirchhoff plates with irregular, non-rectangular geometries, without relying on traditional mesh-based discretization.",
         tags: ["MATLAB", "ABAQUS", "Modal Analysis"],
         hasReport: false,
         hasSlides: true,
-        hasArticle: true,
-        articleNote: "Reference paper the presentation above is based on: Huang (2024), &ldquo;An improved plate deep energy method for the bending, buckling and free vibration problems of irregular Kirchhoff plates,&rdquo; <em>Engineering Structures</em> 301, 117235. It proposes a physics-informed deep-energy neural network, combined with a coordinate transformation and finite-difference approximations, to solve the governing PDEs for bending, buckling, and free vibration of Kirchhoff plates with irregular, non-rectangular geometries, without relying on traditional mesh-based discretization.",
         hasCode: false,
         code: ""
       }
@@ -1471,14 +1468,6 @@ function renderCourse(slug, fadeMs) {
           <p class="proj-block-label">Slides</p>
           ${pdfViewer(base + '/slides.pdf')}
           ${redactionNotice()}
-        </div>`;
-    }
-    if (p.hasArticle) {
-      blocks += `
-        <div class="proj-block">
-          <p class="proj-block-label">Article</p>
-          <p class="proj-block-note">${p.articleNote}</p>
-          ${pdfViewer(base + '/article.pdf')}
         </div>`;
     }
     if (p.hasCode && p.code) {
