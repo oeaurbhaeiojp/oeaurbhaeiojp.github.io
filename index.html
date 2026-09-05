@@ -482,12 +482,16 @@
     padding: 12px 16px;
     cursor: pointer;
     transition: all 0.2s ease;
+    overflow: hidden;
   }
   .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
-  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); }
+  /* Open card spans the full grid row (matching its drawer below) instead of
+     staying a narrow pill sitting above a full-width panel. */
+  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); grid-column: 1/-1; transform: none; }
   .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; flex-shrink: 0; }
   .hw-card .hw-sep { color: var(--text-dim); flex-shrink: 0; }
   .hw-card .hw-topic {
+    flex: 1 1 auto;
     font-size: 0.85rem;
     color: var(--text-dim);
     line-height: 1.4;
@@ -1163,8 +1167,8 @@ const COURSES_DATA = {
     instructorUrl: "https://sharif.edu",
     homeworks: [
       { id: 1, topic: "Classical lamination theory" },
-      { id: 2, topic: "Failure criteria for laminates" },
-      { id: 3, topic: "Progressive damage modeling" }
+      { id: 2, topic: "Off-axis compliance &amp; UMAT stress invariants" },
+      { id: 3, topic: "Composite tube under axial-torsion loading" }
     ],
     projects: [
       {
