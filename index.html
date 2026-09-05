@@ -469,29 +469,34 @@
   .sub-heading:first-of-type { margin-top: 8px; }
 
   /* HW grid */
-  /* dense: since each card's drawer is a full-row sibling right after it,
-     plain row-flow would strand every card alone on its own row (the next
-     card can't back-fill the empty cells left in that row); dense packing
-     lets later cards fill those gaps so cards sit two/three per row. */
-  .hw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); grid-auto-flow: dense; gap: 12px; }
+  /* Flexbox, not CSS grid: each card's drawer is a full-row sibling right
+     after it, and flex-wrap lets a full-basis drawer force a new line while
+     cards before/after it still pack normally — plus it lets the open card
+     grow (flex-grow) at its row-mates' expense, see .hw-card.open below. */
+  .hw-grid { display: flex; flex-wrap: wrap; gap: 12px; }
   /* Compact, landscape cards: number + topic on one line, ellipsis if too long */
   .hw-card {
     display: flex;
     align-items: center;
     gap: 8px;
     min-height: 60px;
+    flex: 1 1 220px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 9px;
     padding: 12px 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease, flex-grow 0.25s ease;
     overflow: hidden;
   }
   .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
-  /* Stays at its normal (compact) grid width when open — siblings in the same
-     row remain visible and clickable; only the drawer below spans full width. */
-  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; }
+  /* Grows to make room for its own full topic text; open siblings in the same
+     row shrink toward their basis instead (see .hw-card.sibling-open). */
+  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; flex-grow: 4; }
+  /* A row-mate of the open card: shrink toward a compact minimum so the open
+     card's full name has room, while staying visible and clickable. */
+  .hw-card.sibling-open { flex-grow: 0.2; }
+  .hw-drawer { flex: 1 1 100%; }
   .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; flex-shrink: 0; }
   .hw-card .hw-sep { color: var(--text-dim); flex-shrink: 0; }
   .hw-card .hw-topic {
@@ -1409,6 +1414,7 @@ function closePdf(btn) {
   if (projCard) projCard.classList.remove('open');
   const prev = drawer.previousElementSibling;       // the HW card, for HW drawers
   if (prev && prev.classList.contains('hw-card')) prev.classList.remove('open');
+  drawer.parentNode.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
   refreshFocusMode();
 }
 
@@ -1425,7 +1431,7 @@ function renderCourse(slug, fadeMs) {
         <span class="hw-sep">—</span>
         <span class="hw-topic">${hw.topic}</span>
       </div>
-      <div class="drawer hw-drawer" data-drawer="${hw.id}" style="grid-column:1/-1">
+      <div class="drawer hw-drawer" data-drawer="${hw.id}">
         <div class="drawer-inner">
           <div style="padding-top:14px">${pdfViewer(src)}</div>
           ${redactionNotice()}
@@ -1509,9 +1515,11 @@ function toggleHw(card) {
   // close siblings in same grid
   card.parentNode.querySelectorAll('.hw-card.open').forEach(el => el.classList.remove('open'));
   card.parentNode.querySelectorAll('.drawer.open').forEach(el => el.classList.remove('open'));
+  card.parentNode.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
   if (!isOpen) {
     card.classList.add('open');
     drawer.classList.add('open');
+    card.parentNode.querySelectorAll('.hw-card').forEach(el => { if (el !== card) el.classList.add('sibling-open'); });
     loadPdfSlots(drawer);
   }
   refreshFocusMode();
