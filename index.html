@@ -523,7 +523,6 @@
   .proj-card.open { border-color: var(--teal); }
   .proj-head { padding: 18px 20px; cursor: pointer; }
   .proj-head:hover h4 { color: var(--teal); }
-  .proj-head .proj-kind { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); font-weight: 700; margin: 0 0 6px; }
   .proj-head h4 { font-size: 1.1rem; margin: 0 0 6px; transition: color 0.2s ease; }
   .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; text-align: justify; }
   .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1258,7 +1257,6 @@ const COURSES_DATA = {
     name: "Theory of Plates and Shells",
     instructor: "Dr. Fallah",
     instructorUrl: "http://sharif.ir/~fallah/",
-    projectsLabel: "Presentation",
     homeworks: [
       { id: 1, topic: "Kirchhoff plate bending" },
       { id: 2, topic: "Navier &amp; Lévy solutions" },
@@ -1271,6 +1269,7 @@ const COURSES_DATA = {
     projects: [
       {
         slug: "plate-vibration",
+        kind: "Presentation",
         title: "An improved plate deep energy method for the bending, buckling and free vibration problems of irregular Kirchhoff plates",
         description: "Abstract: an improved plate deep energy method without penalty terms is introduced to study the bending, free vibration and buckling problems of irregular Kirchhoff plates. The finite difference produced by convolution operation is employed for a faster calculation of derivatives and enforcement of boundary conditions. Most deep learning based neural network methods adopt the penalty method to impose boundary constraints, which may cause convergence issues especially when dealing with complex solution domain or mixed boundary conditions. In this paper, the R-function is utilized to build the distance function multiplied by the neural network output to meet the Dirichlet boundary constraints, while the boundary constraints expressed by derivative functions are applied by introducing virtual nodes. With such treatments, the boundary losses of a plate system can be avoided. To validate the proposed method, numerical examples considering plates with irregular shapes and mixed boundary conditions are studied, and the results are compared to those provided by the theoretical solutions, finite element method (FEM), and literature. (Huang &amp; Peng, 2024, Engineering Structures 301, 117235.)",
         tags: [],
@@ -1486,8 +1485,9 @@ function renderCourse(slug, fadeMs) {
     }).join('');
   }
 
-  // project cards
-  const projCards = c.projects.map(p => {
+  // project cards — presentations (kind: "Presentation") are pulled into
+  // their own section, separate from actual projects.
+  function projCardHtml(p) {
     const base = `assets/courses/${slug}/projects/${p.slug}`;
     let blocks = '';
     if (p.hasReport) {
@@ -1517,7 +1517,6 @@ function renderCourse(slug, fadeMs) {
     return `
       <div class="proj-card">
         <div class="proj-head" onclick="toggleProj(this)">
-          <p class="proj-kind">${p.kind || 'Project'}</p>
           <h4>${p.title}</h4>
           <p class="proj-desc">${p.description}</p>
           <div class="tag-row">${tags}</div>
@@ -1529,17 +1528,26 @@ function renderCourse(slug, fadeMs) {
           </div>
         </div>
       </div>`;
-  }).join('');
+  }
+  const presentationItems = c.projects.filter(p => p.kind === 'Presentation');
+  const projectItems = c.projects.filter(p => p.kind !== 'Presentation');
+  const presentationCards = presentationItems.map(projCardHtml).join('');
+  const projectCards = projectItems.map(projCardHtml).join('');
 
   courseContent.innerHTML = `
     <h3 class="course-title">${c.name}</h3>
-    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} ${(c.projectsLabel || 'Project').toLowerCase()}${c.projects.length!==1?'s':''}${instructorHtml(c)}</p>
+    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}${instructorHtml(c)}</p>
 
     <p class="sub-heading">Homeworks</p>
     <div class="hw-grid">${hwCards}</div>
 
-    <p class="sub-heading">${c.projectsLabel || 'Projects'}</p>
-    <div class="proj-grid">${projCards || '<p style="color:var(--text-dim)">No projects yet.</p>'}</div>
+    ${presentationItems.length ? `
+    <p class="sub-heading">Presentations</p>
+    <div class="proj-grid">${presentationCards}</div>` : ''}
+
+    ${(projectItems.length || !presentationItems.length) ? `
+    <p class="sub-heading">Projects</p>
+    <div class="proj-grid">${projectCards || '<p style="color:var(--text-dim)">No projects yet.</p>'}</div>` : ''}
   `;
 
   // Fade the freshly rendered content in (when switching courses). Start at 0
