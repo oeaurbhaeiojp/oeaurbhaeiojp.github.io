@@ -1152,19 +1152,16 @@ const COURSES_DATA = {
     name: "Advanced Structural Design",
     instructor: "Dr. Haddadpour",
     instructorUrl: "https://sharif.edu",
-    homeworks: [
-      { id: 1, topic: "Matrix stiffness method" },
-      { id: 2, topic: "Nonlinear structural analysis" },
-      { id: 3, topic: "Stability &amp; buckling" }
-    ],
+    homeworks: [],
     projects: [
       {
-        slug: "frame-optimization",
-        title: "Steel frame optimization",
-        description: "Weight minimization of a multi-story steel frame subject to code-based design constraints.",
-        tags: ["Python", "Optimization", "FEM"],
+        slug: "agentic-llm-wingbox-design",
+        kind: "Project",
+        title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
+        description: "Abstract: this report presents the architecture and engineering basis of an agentic artificial-intelligence system for the preliminary structural sizing of a transport-aircraft wing box. Rather than a hand or spreadsheet-driven design cycle, the system is organized as a directed graph of specialist computational and decision nodes, built with LangGraph, in which a large language model (LLM) is restricted to exactly the judgment calls a structural engineer would make, such as material family, spar location, stringer catalogue selection, web architecture and joint configuration, while every numerical quantity is produced by a deterministic, unit-tested Python implementation of the classical sizing methods of Niu, Megson and Roskam. This is a project report, not a paper-reproduction study: the system is presented on its own terms, and an external published design is used once, as a validation benchmark, rather than as the report's own subject. The report first reviews the traditional, manual wing-box design process the system's phases are modeled on, then introduces the general concepts of agentic AI, large language models and the LangGraph orchestration framework, and describes how these are combined into the present system: its graph topology, the enforced separation between LLM decisions and Python computations, the material-selection method (an Ashby structural index combined with alloy-family screening and Pareto-front trade-off selection), and the governing equations used at each design phase. Implementation details are discussed next, followed by two verification benchmarks of deliberately different scope. The narrow one, a single cross-section worked by hand in the course lecture material, is reproduced to tabulated precision as an automated acceptance gate and surfaced four notational and arithmetic slips in the reference itself along the way. The broad one runs the complete pipeline, with the live LLM decider in every judgment node, against a real, independently published wing-box design (a Pilatus PC-21/Super Tucano-class trainer wing from a METU MSc thesis) and converges on a wingbox weight within about five percent of that design's own optimized result, corroborated by a real Abaqus finite-element solve of the converged geometry.",
+        tags: ["LLM", "Python", "Aircraft Structures"],
         hasReport: true,
-        hasSlides: true,
+        hasSlides: false,
         hasCode: false,
         code: ""
       }
@@ -1538,8 +1535,9 @@ function renderCourse(slug, fadeMs) {
     <h3 class="course-title">${c.name}</h3>
     <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}${instructorHtml(c)}</p>
 
+    ${c.homeworks.length ? `
     <p class="sub-heading">Homeworks</p>
-    <div class="hw-grid">${hwCards}</div>
+    <div class="hw-grid">${hwCards}</div>` : ''}
 
     ${presentationItems.length ? `
     <p class="sub-heading">Presentations</p>
