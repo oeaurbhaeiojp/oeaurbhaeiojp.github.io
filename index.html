@@ -1576,6 +1576,8 @@ const COURSES_DATA = {
      abstract -> the longer text revealed when the card is opened (omit
                  it and the card simply shows the report)
      hasReport-> whether base + "/report.pdf" should be offered
+     hasCode  -> whether base + "/notebook.ipynb" should be offered as a
+                 download (for projects whose deliverable is a notebook)
    ================================================================= */
 const EXTRA_PROJECTS = [
   {
@@ -1595,10 +1597,11 @@ const EXTRA_PROJECTS = [
     course: "Heat Transfer",
     period: "Spring 2025",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
-    summary: "A machine learning pipeline predicting nanofluid heat transfer coefficients across four regression models.",
-    abstract: "Developed a machine learning pipeline to predict nanofluid heat transfer coefficients. Implemented Linear, Polynomial, Random Forest, and Neural Network regression models evaluated using MAE, MSE, and R².",
-    tags: ["Python", "Machine Learning", "Scikit-learn", "Neural Networks"],
-    hasReport: true
+    summary: "A regression pipeline that predicts the convective heat transfer coefficient of nanofluids from their physical and chemical properties.",
+    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models — linear, degree-2 polynomial, random forest, and an MLP neural network — are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction. Random forest gave the best accuracy on the held-out set.",
+    tags: ["Python", "scikit-learn", "Regression", "Random Forest", "Neural Networks"],
+    hasReport: true,
+    hasCode: true
   }
 ];
 
@@ -1805,6 +1808,7 @@ function showcaseProjects() {
     tags: p.tags,
     hasReport: p.hasReport,
     hasSlides: false,
+    hasCode: p.hasCode,
     reports: p.reports
   }));
   return out;
@@ -1848,6 +1852,15 @@ function showcaseCardHtml(item, prefix) {
         <p class="proj-block-label">Slides</p>
         ${pdfViewer(item.base + '/slides.pdf')}
         ${redactionNotice()}
+      </div>`;
+  }
+  if (item.hasCode) {
+    // Deliverable is a Jupyter notebook — browsers have no viewer for it,
+    // so a download link is the honest option (same as the homework pages).
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">Code</p>
+        <a class="btn btn-sm btn-outline" href="${item.base}/notebook.ipynb" download data-guard>${ICON_FILE}Download notebook (notebook.ipynb)</a>
       </div>`;
   }
 
