@@ -1249,14 +1249,15 @@ const COURSES_DATA = {
     ],
     projects: [
       {
-        slug: "mdo-aircraft-wing",
-        title: "MDO of an aircraft wing",
-        description: "Coupled aero-structural optimization of a wing trading off weight and aerodynamic efficiency.",
-        tags: ["Python", "MDO", "Optimization"],
+        slug: "llm-agent-composite-optimization",
+        kind: "Project",
+        title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
+        description: "Abstract: in multi-objective optimization of composite structures, the problem formulation is set by the designer, who decides ahead of the run on suitable objective functions, constraints and design variables, and if the response is unsuitable, revises the problem and repeats the run. This work hands that same loop to a large-language-model-based agent. The agent takes a design description in natural language, extracts the mathematical problem formulation, and passes it to the NSGA-II algorithm through a typed contract; it then diagnoses the cause if the resulting Pareto front is degenerate or any other issue exists, and revises the formulation accordingly. All physical computations are carried out in a deterministic kernel, and the language model never computes any physical quantity; failure detection is likewise deterministic and threshold-based, and the model only selects a single remedial action from a closed list. For evaluation, a problem from a published paper on multi-objective optimization of a composite plate was solved twice, once with a manual formulation and once with the agent's automatic formulation, in a blind test. The agent's search scored a perfect match, and under an equal search budget its formulation produced exactly the same front: all 37 designs with the same number of layers, the same stacking sequence, and zero difference in buckling load. The deterministic kernel also reproduced the paper's analytical numbers with a worst-case error of 0.001 percent. Finally, on a deliberately defective request, the feedback loop found the bug within four iterations, revised the formulation twice, and improved the front's hypervolume by 4.17 and then 36.13 percent.",
+        tags: ["NSGA-II", "LLM", "Composite Optimization"],
         hasReport: true,
         hasSlides: false,
-        hasCode: true,
-        code: "https://github.com/rouzbeh-pourjafarian"
+        hasCode: false,
+        code: ""
       }
     ]
   },
