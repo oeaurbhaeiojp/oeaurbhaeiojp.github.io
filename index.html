@@ -113,7 +113,12 @@
      RESET / BASE
      =========================================================== */
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  /* scroll-padding-top keeps the sticky topbar from covering whatever a
+     native fragment scroll (a #hash in the address bar, a shared link,
+     even scrollIntoView) lands on — without it, the target's top few dozen
+     pixels render right under the topbar instead of below it. --topbar-h is
+     measured in JS; the fallback is the desktop topbar height. */
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h, 65px) + 12px); }
   body {
     margin: 0;
     background: var(--bg);
@@ -180,8 +185,11 @@
     margin: 0 auto; /* brand on the left, nav centered, toggle pushed far right */
   }
 
-  /* Light/dark theme toggle — icon only, far right of the nav bar */
-  .theme-toggle {
+  .topbar-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+
+  /* Light/dark theme toggle, and (mobile only) the hamburger nav toggle —
+     both are icon-only buttons that crossfade between two SVG states. */
+  .theme-toggle, .nav-toggle {
     position: relative;
     width: 22px;
     height: 22px;
@@ -193,8 +201,8 @@
     flex-shrink: 0;
     transition: color 0.2s ease;
   }
-  .theme-toggle:hover { color: var(--indigo); }
-  .theme-toggle .ticon {
+  .theme-toggle:hover, .nav-toggle:hover { color: var(--indigo); }
+  .theme-toggle .ticon, .nav-toggle .ticon {
     position: absolute;
     inset: 0;
     display: flex;
@@ -204,9 +212,14 @@
     transform: rotate(-90deg) scale(0.5);
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
-  .theme-toggle .ticon svg { display: block; }
+  .theme-toggle .ticon svg, .nav-toggle .ticon svg { display: block; }
   body.dark  .theme-toggle .ticon-moon { opacity: 1; transform: none; }
   body.light .theme-toggle .ticon-sun  { opacity: 1; transform: none; }
+  /* Hidden on desktop entirely — the mobile breakpoint below turns it on. */
+  .nav-toggle { display: none; }
+  .nav-toggle .ticon-menu { opacity: 1; transform: none; }
+  .nav-toggle.open .ticon-menu { opacity: 0; transform: rotate(90deg) scale(0.5); }
+  .nav-toggle.open .ticon-x { opacity: 1; transform: none; }
   .nav a {
     color: var(--text-dim);
     font-size: 0.95rem;
@@ -908,12 +921,42 @@
 
   /* ===========================================================
      RESPONSIVE
+     -----------------------------------------------------------
+     Below 760px: the link row becomes a hamburger-triggered dropdown
+     (brand + hamburger + theme-toggle stay on one row via the `order`
+     values below; .nav is display:none until .open, then takes its own
+     full-width row). Everything past the nav is the rest of the mobile
+     pass: touch targets, grids that would otherwise force horizontal
+     scroll at phone widths, and a couple of desktop-scaled numbers.
      =========================================================== */
   @media (max-width: 760px) {
-    .topbar-inner { padding: 14px 22px; gap: 12px; flex-direction: column; align-items: flex-start; }
-    .nav { margin-left: 0; }
-    .content { padding: 0 22px 100px; }
+    .topbar-inner { padding: 12px 18px; gap: 12px; }
+    .topbar-actions { order: 1; margin-left: auto; }
+    .nav-toggle { display: block; }
+    .nav {
+      display: none;
+      order: 2;
+      width: 100%;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .nav.open { display: flex; }
+    /* Full-width, generously padded rows read as a mobile menu, not a
+       squeezed copy of the desktop link row — and clear the ~44px touch
+       target guideline the desktop underline-on-hover version doesn't
+       need to. */
+    .nav a { padding: 12px 6px; border-bottom: 1px solid var(--border); }
+    .nav a:last-child { border-bottom: none; }
+    .theme-toggle, .nav-toggle { width: 26px; height: 26px; }
+
+    .content { padding: 0 18px 100px; }
     .hero { flex-direction: column-reverse; align-items: flex-start; gap: 22px; padding-top: 4px; }
+    .hero h1 { font-size: 1.9rem; }
+    .hero-photo { width: 128px; height: 128px; }
+
     .courses-layout { flex-direction: column; }
     .course-nav {
       width: 100%;
@@ -922,8 +965,19 @@
       flex-wrap: wrap;
       overflow-x: auto;
     }
+    /* The full-bleed PDF/report view still breaks out to 100vw on mobile,
+       but 40px of side padding is too much to give up on a ~360px phone. */
+    .courses-layout.focus-mode { padding: 0 16px; }
+
     .skills-grid { grid-template-columns: 1fr; }
     .cert-grid { grid-template-columns: 1fr; }
+    /* Two 220px-min cards side by side force horizontal squeeze/scroll
+       well before 760px; one per row avoids it entirely. */
+    .hw-row { flex-direction: column; }
+    .hw-card.open { flex-grow: 1; }
+    .hw-card.sibling-open { flex-grow: 1; min-width: 0; }
+    /* minmax(360px, 1fr) is wider than the viewport itself on a phone. */
+    .proj-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -953,14 +1007,26 @@
       <a href="#skills">Skills &amp; Certificates</a>
       <a href="#contact">Contact</a>
     </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
-      <span class="ticon ticon-moon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      </span>
-      <span class="ticon ticon-sun">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-      </span>
-    </button>
+    <div class="topbar-actions">
+      <!-- Mobile only (see the 760px breakpoint): .nav is hidden and this
+           toggles it open as a full-width dropdown instead. -->
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav">
+        <span class="ticon ticon-menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </span>
+        <span class="ticon ticon-x">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </span>
+      </button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
+        <span class="ticon ticon-moon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </span>
+        <span class="ticon ticon-sun">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -2191,6 +2257,7 @@ document.getElementById('teachCount').textContent =
      #courses/<courseSlug>                (that course)
      #courses/<courseSlug>/<projectSlug>  (that course, that project open)
    ================================================================= */
+const mainNav  = document.getElementById('mainNav');
 const navLinks = document.querySelectorAll('#mainNav a');
 const pages    = document.querySelectorAll('.page');
 
@@ -2225,11 +2292,31 @@ function applyRoute(rawHash) {
   }
 }
 
+/* =================================================================
+   MOBILE NAV  (hamburger dropdown, <760px — see the breakpoint in <style>)
+   ================================================================= */
+const navToggle = document.getElementById('navToggle');
+function setMobileNavOpen(open) {
+  mainNav.classList.toggle('open', open);
+  navToggle.classList.toggle('open', open);
+  navToggle.setAttribute('aria-expanded', String(open));
+}
+navToggle.addEventListener('click', () => setMobileNavOpen(!mainNav.classList.contains('open')));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mainNav.classList.contains('open')) setMobileNavOpen(false);
+});
+// A resize past the breakpoint (rotating a tablet, widening a browser
+// window) shouldn't leave the dropdown stuck open with nowhere to hide.
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 760) setMobileNavOpen(false);
+});
+
 navLinks.forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
     const id = a.getAttribute('href').slice(1);
     showPage(id);
+    setMobileNavOpen(false);
     // Courses keeps whichever course is already on screen, so the URL has to
     // name it — a bare "#courses" would send anyone the link is shared with
     // to the first course instead of the one actually being looked at.
