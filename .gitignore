@@ -1,3 +1,7 @@
 # Local backups kept for manual restore, not tracked
 *.backup
 *.backup[0-9]*
+
+# Local tooling — not part of the published site
+.claude/
+.impeccable/

@@ -51,11 +51,11 @@ placeholder. No code change needed — the filename is fixed.
 2. **Upload the PDF.** Put the file at:
 
    ```
-   assets/courses/<course-slug>/hw/hw<id>.pdf
+   assets/courses/<course-slug>/hw/HW<id>.pdf
    ```
 
    The number in the filename must match the `id`. For example `id: 3` →
-   `hw3.pdf`.
+   `HW3.pdf`.
 
 That's it — a new **HW 3** card appears, and clicking it slides open the PDF
 viewer.
@@ -72,7 +72,7 @@ viewer.
      slug: "my-new-project",            // kebab-case; also the folder name
      title: "My New Project",
      description: "One-line summary of the project.",
-     tags: ["ABAQUS", "FEM"],           // coral badges
+     tags: ["ABAQUS", "FEM"],           // amber badges (the --meta accent)
      hasReport: true,                   // shows report.pdf viewer
      hasSlides: true,                   // shows slides.pdf viewer
      hasCode: true,                     // shows a GitHub button
@@ -92,6 +92,29 @@ viewer.
 
 Clicking the project card expands it inline to show the report, slides, and/or
 code button.
+
+### Promoting a project to "Selected work"
+
+Add three extra fields to any project and it also appears in the **Selected
+work** block on the home page *and* in the **Course Projects** tab — while
+staying in its course. You write it once; it renders in all three places.
+
+```js
+featured: true,
+period:  "Fall 2025",              // the small date line on the card
+summary: "Two lines, no more.",    // the collapsed card text; the long
+                                   // `description` becomes the abstract
+                                   // revealed when the card is clicked
+```
+
+Optionally drop a thumbnail next to the PDFs — it shows on the right of the
+card, and the slot stays neutral (no broken image) until you add it:
+
+```
+assets/courses/<course-slug>/projects/<project-slug>/thumb.jpg
+```
+
+Landscape works best (roughly 4:3, ~600×450 px).
 
 ---
 
@@ -159,9 +182,28 @@ code button.
 - **Research experience:** edit the `<article class="tl-card">` blocks inside
   `<section id="research">`. Newest first. Each card has a `date`, an `h3` title,
   a `sub` line (role · org · advisor), and a description paragraph.
+- **Projects:** nothing to edit by hand. The Projects page is generated from
+  `COURSES_DATA` (projects marked `featured: true`) plus `EXTRA_PROJECTS` —
+  the array for projects whose course has no page of its own.
 - **Teaching:** edit the `TEACHING_DATA` array (grouped by semester).
 - **Hero pills / skills:** edit the `pill` spans in the hero and the
   `<section id="skills">` block.
+
+### The pages, and what belongs on each
+
+| Page | Answers | Source |
+|------|---------|--------|
+| About | Who you are, plus the three strongest pieces of work | markup + `featured` projects |
+| Research | What research you have actually done | `<article>` blocks in `#research` |
+| Projects | What you have built | `COURSES_DATA` + `EXTRA_PROJECTS` |
+| Courses | Your graduate coursework in depth | `COURSES_DATA` |
+| Teaching | What you have taught | `TEACHING_DATA` |
+| Skills & Certificates | What you know / are credentialed in | markup + `CERTIFICATES_DATA` |
+| Contact | How to reach you | markup |
+
+Research and Projects are deliberately **separate** pages: for an admissions
+committee, a research position under a named advisor and a course project are
+different kinds of evidence, and merging them hides that difference.
 
 ---
 
@@ -170,10 +212,16 @@ code button.
 Use **kebab-case** (lowercase, words joined by hyphens) for every slug and
 folder. The slug in the data **must exactly match** the folder name.
 
+> ⚠️ **Capitalisation matters on the live site.** Windows treats `hw1.pdf` and
+> `HW1.pdf` as the same file, but GitHub Pages does not. A file that opens fine
+> at `localhost:8000` can 404 once pushed — and the site will just show its
+> "PDF will appear here" placeholder, with no error explaining why. Homework
+> files are **`HW<id>.pdf`** (uppercase HW); everything else is lowercase.
+
 | Thing        | Data field            | Folder / file                                              |
 |--------------|-----------------------|------------------------------------------------------------|
 | Course       | key in `COURSES_DATA` | `assets/courses/<course-slug>/`                            |
-| Homework     | `id`                  | `assets/courses/<course-slug>/hw/hw<id>.pdf`              |
+| Homework     | `id`                  | `assets/courses/<course-slug>/hw/HW<id>.pdf`              |
 | Project      | `slug`                | `assets/courses/<course-slug>/projects/<project-slug>/`  |
 | Report       | `hasReport`           | `.../projects/<project-slug>/report.pdf`                  |
 | Slides       | `hasSlides`           | `.../projects/<project-slug>/slides.pdf`                  |
@@ -237,7 +285,7 @@ assets/
   courses/
     <course-slug>/
       hw/
-        hw1.pdf, hw2.pdf   # homework PDFs
+        HW1.pdf, HW2.pdf   # homework PDFs
       projects/
         <project-slug>/
           report.pdf

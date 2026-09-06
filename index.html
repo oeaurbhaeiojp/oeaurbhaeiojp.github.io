@@ -19,80 +19,91 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ===========================================================
      THEME TOKENS
      =========================================================== */
   :root {
-    --serif:     'Fraunces', Georgia, 'Times New Roman', serif;
-    --sans:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --serif:     'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --sans:      'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --maxw:      820px;
   }
 
-  /* Internal semantic aliases -> theme tokens. Declared on <body> so they
-     resolve against the tokens set by the active body.dark / body.light class. */
+  /* Two layers, on purpose:
+       body.dark / body.light below hold the RAW PALETTE, named by the hue it
+       actually is (--indigo, --amber, --cyan).
+       The block here maps those hues to the ROLE each one plays, and the rest
+       of the stylesheet only ever uses these role names. So changing which hue
+       carries a role is a one-line edit here, not a find-and-replace.
+
+       --accent -> anything interactive or identity-bearing: links, buttons,
+                   active nav/course states, focus ring, skill pills.
+       --meta   -> supporting metadata, never an action: dates, section labels
+                   ("Homeworks"/"Projects"), semester headings, project tags.
+       --decor  -> decoration only, no meaning: the gradient under the topbar. */
   body {
-    --bg:          var(--bg-primary);
-    --bg-soft:     var(--bg-sidebar);
-    --bg-card:     var(--bg-secondary);
-    --bg-card-2:   var(--bg-elevated);
-    --border:      var(--border-color);
-    --text:        var(--text-primary);
-    --text-dim:    var(--text-muted);
-    --teal:        var(--accent-teal);
-    --coral:       var(--accent-coral);
-    --violet:      var(--accent-violet);
-    --teal-soft:   var(--accent-teal-soft);
-    --coral-soft:  var(--accent-coral-soft);
-    --teal-border:  var(--accent-teal-border);
-    --coral-border: var(--accent-coral-border);
+    --bg:            var(--bg-primary);
+    --bg-soft:       var(--bg-sidebar);
+    --bg-card:       var(--bg-secondary);
+    --bg-card-2:     var(--bg-elevated);
+    --border:        var(--border-color);
+    --text:          var(--text-primary);
+    --text-dim:      var(--text-muted);
+    --accent:        var(--indigo);
+    --accent-soft:   var(--indigo-soft);
+    --accent-border: var(--indigo-border);
+    --accent-hover:  var(--indigo-deep);
+    --meta:          var(--amber);
+    --meta-soft:     var(--amber-soft);
+    --meta-border:   var(--amber-border);
+    --decor:         var(--cyan);
   }
 
-  /* ---- DARK THEME (default) — cool charcoal-navy, jade + amber + indigo ---- */
+  /* ---- DARK THEME (default) — charcoal-navy ground, indigo + amber + cyan ---- */
   body.dark {
-    --bg-primary:   #14161c;
-    --bg-secondary: #1d2029;
-    --bg-sidebar:   #191c24;
-    --bg-elevated:  #262b36;
-    --text-primary: #ecebf0;
-    --text-muted:   #8d92a0;
-    --accent-teal:  #9dabdc;
-    --accent-coral: #e7a23a;
-    --accent-violet: #3ddbd9;
-    --border-color: #2b303c;
-    --nav-bg:       #101217;
-    --accent-teal-soft:    rgba(157, 171, 220, 0.16);
-    --accent-coral-soft:   rgba(231, 162, 58, 0.16);
-    --accent-teal-border:  rgba(157, 171, 220, 0.38);
-    --accent-coral-border: rgba(231, 162, 58, 0.38);
-    --accent-teal-hover:   #7c90d0;
-    --link-hover:          #b9c4e8;
-    --on-accent:           #0e1015;
-    --pdf-bg:              #111111;
+    --bg-primary:    #14161c;
+    --bg-secondary:  #1d2029;
+    --bg-sidebar:    #191c24;
+    --bg-elevated:   #262b36;
+    --text-primary:  #ecebf0;
+    --text-muted:    #9ba1af;
+    --border-color:  #2b303c;
+    --nav-bg:        #101217;
+    --indigo:        #9dabdc;
+    --indigo-soft:   rgba(157, 171, 220, 0.16);
+    --indigo-border: rgba(157, 171, 220, 0.38);
+    --indigo-deep:   #7c90d0;
+    --amber:         #e7a23a;
+    --amber-soft:    rgba(231, 162, 58, 0.16);
+    --amber-border:  rgba(231, 162, 58, 0.38);
+    --cyan:          #3ddbd9;
+    --link-hover:    #b9c4e8;
+    --on-accent:     #0e1015;
+    --pdf-bg:        #111111;
   }
 
-  /* ---- LIGHT THEME — cool neutral, jade + amber + indigo (not warm cream) ---- */
+  /* ---- LIGHT THEME — cool neutral ground, indigo + amber + cyan (not cream) ---- */
   body.light {
-    --bg-primary:   #ffffff;
-    --bg-secondary: #eef1f6;
-    --bg-sidebar:   #f2f4f8;
-    --bg-elevated:  #e3e7ef;
-    --text-primary: #171a21;
-    --text-muted:   #5a616f;
-    --accent-teal:  #3d4fce;
-    --accent-coral: #b5750e;
-    --accent-violet: #0c7c82;
-    --border-color: #dee2ea;
-    --nav-bg:       #f3f5fa;
-    --accent-teal-soft:    rgba(61, 79, 206, 0.12);
-    --accent-coral-soft:   rgba(181, 117, 14, 0.12);
-    --accent-teal-border:  rgba(61, 79, 206, 0.32);
-    --accent-coral-border: rgba(181, 117, 14, 0.32);
-    --accent-teal-hover:   #2e3da8;
-    --link-hover:          #2e3da8;
-    --on-accent:           #ffffff;
-    --pdf-bg:              #ffffff;
+    --bg-primary:    #ffffff;
+    --bg-secondary:  #eef1f6;
+    --bg-sidebar:    #f2f4f8;
+    --bg-elevated:   #e3e7ef;
+    --text-primary:  #171a21;
+    --text-muted:    #5a616f;
+    --border-color:  #dee2ea;
+    --nav-bg:        #f3f5fa;
+    --indigo:        #3d4fce;
+    --indigo-soft:   rgba(61, 79, 206, 0.12);
+    --indigo-border: rgba(61, 79, 206, 0.32);
+    --indigo-deep:   #2e3da8;
+    --amber:         #b5750e;
+    --amber-soft:    rgba(181, 117, 14, 0.12);
+    --amber-border:  rgba(181, 117, 14, 0.32);
+    --cyan:          #0c7c82;
+    --link-hover:    #2e3da8;
+    --on-accent:     #ffffff;
+    --pdf-bg:        #ffffff;
   }
 
   /* Smooth color transitions everywhere when toggling themes */
@@ -113,7 +124,7 @@
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.25; }
-  a { color: var(--teal); text-decoration: none; transition: color 0.2s ease; }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s ease; }
   a:hover { color: var(--link-hover); }
   p { color: var(--text); }
   img { max-width: 100%; display: block; }
@@ -130,19 +141,16 @@
     border-bottom: 1px solid var(--border);
     position: relative;
   }
+  /* Static gradient underline — ties the palette together without running
+     forever and unprompted; motion here did no rhetorical work for the
+     page, it just cost the reader ambient distraction. */
   .topbar::after {
     content: "";
     position: absolute;
     left: 0; right: 0; bottom: -1px;
     height: 3px;
-    background: linear-gradient(90deg, var(--teal), var(--violet), var(--coral), var(--teal));
-    background-size: 200% 100%;
-    opacity: 0.85;
-    animation: gradientShift 9s ease-in-out infinite;
-  }
-  @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50%      { background-position: 100% 50%; }
+    background: linear-gradient(90deg, var(--accent), var(--decor), var(--meta));
+    opacity: 0.7;
   }
   .topbar-inner {
     max-width: 1100px;
@@ -161,7 +169,7 @@
     letter-spacing: 0.2px;
     white-space: nowrap;
   }
-  .brand span { color: var(--teal); }
+  .brand span { color: var(--accent); }
   .nav {
     display: flex;
     flex-direction: row;
@@ -183,7 +191,7 @@
     flex-shrink: 0;
     transition: color 0.2s ease;
   }
-  .theme-toggle:hover { color: var(--accent-teal); }
+  .theme-toggle:hover { color: var(--indigo); }
   .theme-toggle .ticon {
     position: absolute;
     inset: 0;
@@ -206,8 +214,8 @@
   }
   .nav a:hover { color: var(--text); }
   .nav a.active {
-    color: var(--teal);
-    border-bottom-color: var(--teal);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .content {
@@ -231,6 +239,22 @@
   }
 
   /* ===========================================================
+     FOCUS RING
+     -----------------------------------------------------------
+     Themed from the palette (--accent) rather than left to the browser
+     default, and applied to every custom keyboard-operable element:
+     real buttons/links plus the role="button" divs (hw-card, proj-head).
+     =========================================================== */
+  a:focus-visible,
+  button:focus-visible,
+  .hw-card:focus-visible,
+  .proj-head:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ===========================================================
      BUTTONS / BADGES
      =========================================================== */
   .btn {
@@ -248,44 +272,43 @@
     transition: all 0.2s ease;
     text-decoration: none;
   }
-  .btn:hover { border-color: var(--teal); color: var(--text); background: var(--bg-card-2); }
-  .btn-primary { background: var(--teal); border-color: var(--teal); color: var(--on-accent); }
-  .btn-primary:hover { background: var(--accent-teal-hover); border-color: var(--accent-teal-hover); color: var(--on-accent); }
+  .btn:hover { border-color: var(--accent); color: var(--text); background: var(--bg-card-2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--on-accent); }
   .btn-sm { padding: 6px 12px; font-size: 0.82rem; }
 
-  /* Icon inside a button (inline SVG, inherits color). Teal accent on outline
+  /* Icon inside a button (inline SVG, inherits color). Accent color on outline
      buttons; white on the filled primary button. */
   .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-  .btn:not(.btn-primary) svg { color: var(--teal); }
+  .btn:not(.btn-primary) svg { color: var(--accent); }
 
-  /* Download CV button — teal pill that stands out from the contact buttons */
+  /* Download CV button — filled accent button that stands out from the contact buttons */
   .btn-cv {
-    background: var(--teal);
-    border-color: var(--teal);
+    background: var(--accent);
+    border-color: var(--accent);
     color: var(--on-accent);
-    border-radius: 999px;
     font-weight: 600;
   }
   .btn-cv:hover {
-    background: var(--accent-teal-hover);
-    border-color: var(--accent-teal-hover);
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
     color: var(--on-accent);
   }
   .btn.btn-cv svg { color: var(--on-accent); }
 
-  /* Outlined teal button (used for the hero contact buttons): teal border +
-     teal text/icon, fills teal with white text on hover. */
+  /* Outlined button (used for the hero contact buttons): accent border +
+     accent text/icon, fills with the accent and light text on hover. */
   .btn-outline {
     background: transparent;
-    border-color: var(--teal);
-    color: var(--teal);
+    border-color: var(--accent);
+    color: var(--accent);
   }
   .btn-outline:hover {
-    background: var(--teal);
-    border-color: var(--teal);
+    background: var(--accent);
+    border-color: var(--accent);
     color: var(--on-accent);
   }
-  .btn.btn-outline svg { color: var(--teal); }
+  .btn.btn-outline svg { color: var(--accent); }
   .btn-outline:hover svg { color: var(--on-accent); }
 
   /* Contact buttons reveal the actual address/link in a subtle tooltip on hover
@@ -311,29 +334,36 @@
   }
   .contact-btn:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  .pill {
+  /* Links that point at a file which may not be uploaded yet (CV, standalone
+     "View report" links) — greyed out instead of a raw 404 as the failure
+     mode, matching the graceful placeholder every course PDF already gets. */
+  .link-unavailable { opacity: 0.45; }
+
+  /* One chip shape for both jobs — a declared skill/domain (.pill, --accent) and
+     a technology actually used in a specific piece of work (.tag, --meta).
+     They used to differ in shape too, for no reason a visitor could infer;
+     now shape is shared and color is the only thing that carries meaning. */
+  .pill, .tag {
     display: inline-block;
+    border-radius: 999px;
+    transition: transform 0.15s ease;
+  }
+  .pill:hover, .tag:hover { transform: scale(1.06); }
+  .pill {
     font-size: 0.8rem;
     padding: 5px 12px;
-    border-radius: 999px;
-    background: var(--teal-soft);
-    color: var(--teal);
-    border: 1px solid var(--teal-border);
-    transition: transform 0.15s ease;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
   }
-  .pill:hover { transform: scale(1.06); }
   .tag {
-    display: inline-block;
     font-size: 0.74rem;
-    padding: 3px 9px;
-    border-radius: 5px;
-    background: var(--coral-soft);
-    color: var(--coral);
-    border: 1px solid var(--coral-border);
+    padding: 3px 10px;
+    background: var(--meta-soft);
+    color: var(--meta);
+    border: 1px solid var(--meta-border);
     letter-spacing: 0.2px;
-    transition: transform 0.15s ease;
   }
-  .tag:hover { transform: scale(1.06); }
   .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -346,12 +376,12 @@
     display: flex; gap: 40px; align-items: flex-start;
     border-radius: 18px;
     background:
-      radial-gradient(480px 220px at 8% 0%, var(--teal-soft), transparent 65%),
-      radial-gradient(420px 200px at 96% 10%, var(--coral-soft), transparent 65%);
+      radial-gradient(480px 220px at 8% 0%, var(--accent-soft), transparent 65%),
+      radial-gradient(420px 200px at 96% 10%, var(--meta-soft), transparent 65%);
   }
   .hero-text { flex: 1; animation: heroIn 0.6s ease both; }
   .hero h1 { font-size: 2.5rem; margin: 0 0 6px; }
-  .hero .role { font-size: 1.15rem; color: var(--teal); margin: 0 0 4px; font-family: var(--serif); }
+  .hero .role { font-size: 1.15rem; color: var(--accent); margin: 0 0 4px; font-family: var(--serif); }
   .hero .meta { color: var(--text-dim); margin: 0 0 20px; font-size: 0.98rem; }
   .hero .pill-row { margin: 18px 0 24px; }
   .hero-photo {
@@ -362,7 +392,6 @@
     overflow: hidden;
     border: 1px solid var(--border);
     background: var(--bg-card);
-    box-shadow: 0 0 0 4px var(--teal-soft), 0 14px 30px -16px rgba(0, 0, 0, 0.35);
     animation: heroIn 0.6s ease 0.12s both;
   }
   .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
@@ -392,25 +421,85 @@
     left: -26px; top: 24px;
     width: 11px; height: 11px;
     border-radius: 50%;
-    background: var(--teal);
+    background: var(--accent);
     border: 2px solid var(--bg);
   }
-  .tl-card .date { font-size: 0.8rem; color: var(--coral); letter-spacing: 0.4px; text-transform: uppercase; }
+  .tl-card .date { font-size: 0.8rem; color: var(--meta); letter-spacing: 0.4px; text-transform: uppercase; }
   .tl-card h3 { font-size: 1.15rem; margin: 6px 0 4px; }
   .tl-card .sub { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 10px; }
   .tl-card p { margin: 0; font-size: 0.95rem; }
   .tl-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 
-  /* Research & Projects: tabbed panels (fade in on switch, like Courses) */
-  .rp-panel { display: none; }
-  .rp-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  /* ===========================================================
+     PROJECT SHOWCASE CARDS
+     -----------------------------------------------------------
+     Collapsed: title + course + two lines of summary, thumbnail on the
+     right. Opened: the full abstract and the report's PDF viewer.
+     Used by "Selected work" on About and by the Course Projects tab.
+     =========================================================== */
+  .cproj-grid { display: flex; flex-direction: column; gap: 16px; }
 
-  /* Course project cards reuse the EXACT .tl-card style; only the timeline
-     dot is removed and they're laid out in a grid instead of a rail. */
-  .cproj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-  .cproj-grid .tl-card { margin-bottom: 0; display: flex; flex-direction: column; }
-  .cproj-grid .tl-card::before { display: none; }
-  .cproj-actions { margin-top: auto; padding-top: 14px; }
+  .showcase {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+  .showcase.open { border-color: var(--accent); }
+  .showcase-head {
+    display: flex;
+    gap: 22px;
+    align-items: flex-start;
+    padding: 20px 22px;
+    cursor: pointer;
+  }
+  .showcase-head:hover h3 { color: var(--accent); }
+  .showcase-text { flex: 1; min-width: 0; }
+  .showcase-text .date {
+    font-size: 0.8rem;
+    color: var(--meta);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .showcase-text h3 { font-size: 1.15rem; margin: 6px 0 4px; transition: color 0.2s ease; }
+  .showcase-text .sub { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 10px; }
+  /* Exactly two lines when collapsed; the rest lives behind the card. */
+  .showcase-summary {
+    margin: 0;
+    font-size: 0.95rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .showcase-text .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+  .showcase-thumb {
+    flex-shrink: 0;
+    width: 168px;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+  }
+  .showcase-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  /* No thumb.jpg uploaded yet: keep the slot, drop the broken-image icon. */
+  .showcase-thumb.is-empty { border-style: dashed; }
+
+  .showcase .drawer-inner { padding: 0 22px 22px; }
+  .showcase-abstract {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 640px) {
+    .showcase-head { flex-direction: column-reverse; gap: 16px; }
+    .showcase-thumb { width: 100%; aspect-ratio: 16 / 9; }
+  }
 
   /* ===========================================================
      COURSES SECTION
@@ -420,12 +509,15 @@
     gap: 28px;
     align-items: flex-start;
     width: 100%;
-    transition: width 0.3s ease, margin-left 0.3s ease, padding 0.3s ease;
   }
 
   /* Focus mode: when a PDF viewer is open, the whole courses layout (sidebar
      + content) breaks out of the centered column to use the full page width.
-     The sidebar stays visible on the left; the content area takes the rest. */
+     The sidebar stays visible on the left; the content area takes the rest.
+     This snaps instantly rather than animating width/margin/padding — those
+     are layout properties, so animating them forces a reflow on every frame
+     for the full 0.3s instead of once. The content's own opacity crossfade
+     (driven from JS on course switches) is what reads as "smooth" here. */
   .courses-layout.focus-mode {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -461,11 +553,10 @@
   }
   .course-nav button:hover { color: var(--text); background: var(--bg-card); }
   .course-nav button.active {
-    color: var(--teal);
-    background: var(--teal-soft);
-    border-left-color: var(--teal);
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-left-color: var(--accent);
   }
-  #rpNav { width: 180px; }
   .course-content { flex: 1; min-width: 0; }
   .course-content h3.course-title { font-size: 1.45rem; margin: 0 0 4px; }
   .course-content .course-sub {
@@ -474,7 +565,7 @@
     margin: 0 0 24px;
   }
   /* Instructor sits inline in .course-sub and inherits its exact font + muted
-     color. As a link it stays muted by default and only turns teal (with an
+     color. As a link it stays muted by default and only turns accent-colored (with an
      underline) on hover. */
   .course-sub .instructor {
     color: inherit;
@@ -483,7 +574,7 @@
     white-space: nowrap;
   }
   .course-sub a.instructor:hover {
-    color: var(--teal);
+    color: var(--accent);
     text-decoration: underline;
   }
   .course-sub .instructor-icon {
@@ -492,14 +583,20 @@
     vertical-align: -0.08em;
     margin-right: 4px;
   }
+  /* Shared micro-label treatment for the two structural section labels
+     (previously declared twice, independently, at two sizes — see
+     .proj-block-label below, which now only overrides what differs). */
+  .sub-heading, .proj-block-label {
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
   .sub-heading {
     font-size: 0.78rem;
-    text-transform: uppercase;
     letter-spacing: 1.2px;
-    color: var(--coral);
+    color: var(--meta);
     margin: 30px 0 14px;
     font-family: var(--sans);
-    font-weight: 600;
   }
   .sub-heading:first-of-type { margin-top: 8px; }
 
@@ -528,12 +625,12 @@
     transition: all 0.2s ease, flex-grow 0.25s ease;
     overflow: hidden;
   }
-  .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
+  .hw-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
   /* Grows to make room for its own full topic text; its row-mate shrinks
      toward a compact minimum instead (see .hw-card.sibling-open). */
-  .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; flex-grow: 5; }
+  .hw-card.open { border-color: var(--accent); background: var(--bg-card-2); transform: none; flex-grow: 5; }
   .hw-card.sibling-open { flex-grow: 0.3; min-width: 140px; }
-  .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--teal); font-weight: 600; flex-shrink: 0; }
+  .hw-card .hw-num { font-family: var(--serif); font-size: 1.05rem; color: var(--accent); font-weight: 600; flex-shrink: 0; }
   .hw-card .hw-sep { color: var(--text-dim); flex-shrink: 0; }
   .hw-card .hw-topic {
     flex: 1 1 auto;
@@ -555,11 +652,11 @@
     overflow: hidden;
     transition: border-color 0.2s ease;
   }
-  .proj-card.open { border-color: var(--teal); }
+  .proj-card.open { border-color: var(--accent); }
   .proj-head { padding: 18px 20px; cursor: pointer; }
-  .proj-head:hover h4 { color: var(--teal); }
+  .proj-head:hover h4 { color: var(--accent); }
   .proj-head h4 { font-size: 1.1rem; margin: 0 0 6px; transition: color 0.2s ease; }
-  .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; text-align: justify; }
+  .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
   .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
   /* Accordion drawer (shared by HW + projects) */
@@ -590,7 +687,7 @@
     cursor: pointer;
     transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   }
-  .pdf-close:hover { border-color: var(--coral); color: var(--coral); background: var(--bg-card-2); }
+  .pdf-close:hover { border-color: var(--meta); color: var(--meta); background: var(--bg-card-2); }
 
   .pdf-frame {
     width: 100%;
@@ -618,15 +715,16 @@
     padding: 24px;
     gap: 8px;
   }
-  .pdf-placeholder .pp-icon { font-size: 2rem; opacity: 0.6; }
-  .pdf-placeholder code { color: var(--teal); font-size: 0.82rem; background: var(--bg-card); padding: 2px 7px; border-radius: 4px; }
+  .pdf-placeholder .pp-icon { opacity: 0.5; }
+  .pdf-placeholder .pp-icon svg { width: 34px; height: 34px; }
+  .pdf-placeholder code { color: var(--accent); font-size: 0.82rem; background: var(--bg-card); padding: 2px 7px; border-radius: 4px; }
 
   .redaction-notice {
     margin-top: 14px;
     padding: 14px 18px;
     background: var(--bg-soft);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--coral);
+    border-left: 3px solid var(--meta);
     border-radius: 8px;
     display: flex;
     flex-wrap: wrap;
@@ -638,11 +736,8 @@
   .proj-block { margin-top: 22px; }
   .proj-block-label {
     font-size: 0.74rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
     color: var(--text-dim);
     margin: 0 0 10px;
-    font-weight: 600;
   }
   .drawer-close {
     margin-top: 18px;
@@ -662,7 +757,7 @@
     flex-direction: column;
     transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .cert-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
+  .cert-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
   .cert-card.reveal { transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
   .cert-thumb {
     width: 100%;
@@ -679,7 +774,7 @@
   .cert-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .cert-body { padding: 16px 18px; }
   .cert-body h4 { font-size: 1.02rem; margin: 0 0 6px; }
-  .cert-body .cert-meta { font-size: 0.83rem; color: var(--teal); margin: 0 0 8px; }
+  .cert-body .cert-meta { font-size: 0.83rem; color: var(--accent); margin: 0 0 8px; }
   .cert-body .cert-summary { font-size: 0.86rem; color: var(--text-dim); margin: 0; }
 
   /* ===========================================================
@@ -688,7 +783,7 @@
   .teach-group { margin-bottom: 26px; }
   .teach-group h3 {
     font-size: 1rem;
-    color: var(--coral);
+    color: var(--meta);
     margin: 0 0 12px;
     font-family: var(--sans);
     font-weight: 600;
@@ -719,11 +814,11 @@
     border: 1px solid var(--border);
     white-space: nowrap;
   }
-  /* Head TA highlighted in the teal accent */
+  /* Head TA highlighted in the accent color */
   .teach-item .trole.trole-head {
-    background: var(--teal-soft);
-    color: var(--teal);
-    border-color: var(--teal-border);
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent-border);
     font-weight: 600;
   }
   .teach-item .tduties {
@@ -743,7 +838,7 @@
     border-radius: 10px;
     padding: 20px;
   }
-  .skill-col h3 { font-size: 1rem; margin: 0 0 14px; color: var(--teal); }
+  .skill-col h3 { font-size: 1rem; margin: 0 0 14px; color: var(--accent); }
   .skill-col .pill-row { gap: 8px; }
 
   /* ===========================================================
@@ -769,7 +864,14 @@
   .reveal.in-view { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
-    .hero-text, .hero-photo, .topbar::after { animation: none; }
+    .hero-text, .hero-photo { animation: none; }
+    /* Honor the preference for the rest of the page too, not just the reveal
+       animations: smooth scrolling, the page/tab crossfades, and the hover
+       lift on cards are all motion the same setting is asking us to drop. */
+    html { scroll-behavior: auto; }
+    .page.active { animation: none; }
+    .hw-card:hover, .cert-card:hover { transform: none; }
+    .pill:hover, .tag:hover { transform: none; }
   }
 
   /* ===========================================================
@@ -812,11 +914,11 @@
     <div class="brand">R.&nbsp;<span>Pourjafarian</span></div>
     <nav class="nav" id="mainNav">
       <a href="#about" class="active">About</a>
-      <a href="#research">Research &amp; Projects</a>
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
       <a href="#courses">Courses</a>
-      <a href="#certificates">Certificates</a>
-      <a href="#teaching">TA</a>
-      <a href="#skills">Skills</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#skills">Skills &amp; Certificates</a>
       <a href="#contact">Contact</a>
     </nav>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
@@ -870,34 +972,31 @@
     </header>
 
       <h2 class="reveal">About</h2>
-      <p style="text-align: justify;">I'm a structural engineer working at the intersection of agentic AI and structural engineering, building systems where intelligent agents understand engineering problems, retrieve domain knowledge, and produce design solutions autonomously.
+      <p>I'm a structural engineer working at the intersection of agentic AI and structural engineering, building systems where intelligent agents understand engineering problems, retrieve domain knowledge, and produce design solutions autonomously.
 
       I researched and developed a multi-agent LLM framework using CrewAI and RAG pipelines that lets engineers describe mechanical linkage requirements in natural language and receive synthesized designs. In my M.Sc. thesis, I am currently exploring where agentic AI can create the most impact within structural engineering, an area I am deeply interested in and see as one of the most promising frontiers in the field.</p>
 
-      <p style="text-align: justify;">On the structural side, my bachelor thesis developed and validated a piezoelectric sensor framework for early-stage crack detection in metallic plates using wave propagation simulations in Abaqus. I also researched and built an iFEM-based system integrating strain data with acoustic emission signals for real-time structural deformation reconstruction and damage localization.
+      <p>On the structural side, my bachelor thesis developed and validated a piezoelectric sensor framework for early-stage crack detection in metallic plates using wave propagation simulations in Abaqus. I also researched and built an iFEM-based system integrating strain data with acoustic emission signals for real-time structural deformation reconstruction and damage localization.
 
       I'm interested in connecting with researchers, academics, and engineers working at the intersection of AI and structural engineering. Always open to exchanging ideas and exploring collaborations.</p>
       <!-- Upload your CV as assets/cv.pdf to enable this button -->
       <div class="btn-row" style="margin-top: 24px;">
-        <a class="btn btn-cv" href="assets/cv.pdf" download="Rouzbeh_Pourjafarian_CV.pdf">
+        <a class="btn btn-cv" href="assets/cv.pdf" download="Rouzbeh_Pourjafarian_CV.pdf" data-guard>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Download CV
         </a>
       </div>
+
+      <!-- Selected work: generated from the `featured: true` projects in
+           COURSES_DATA, so a visitor meets the strongest evidence on the
+           first screen instead of three clicks into Courses. -->
+      <h2 class="reveal" style="margin-top: 48px;">Selected work</h2>
+      <div class="cproj-grid" id="featuredGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- RESEARCH & PROJECTS ---------- -->
     <section id="research" class="page">
-      <h2 class="reveal">Research &amp; Projects</h2>
-      <div class="courses-layout">
-        <nav class="course-nav" id="rpNav">
-          <button class="active" data-rp="experience">Research Experience</button>
-          <button data-rp="projects">Course Projects</button>
-        </nav>
-        <div class="course-content" id="rpContent">
-
-          <!-- Research experience tab -->
-          <div class="rp-panel active" data-panel="experience">
-            <div class="timeline">
+      <h2 class="reveal">Research experience</h2>
+      <div class="timeline">
 
               <article class="tl-card reveal">
                 <div class="date">10/25 – 04/26</div>
@@ -950,75 +1049,15 @@
                 </div>
               </article>
 
-            </div>
-          </div>
-
-          <!-- Course projects tab (cards use the exact same .tl-card style) -->
-          <div class="rp-panel" data-panel="projects">
-            <div class="cproj-grid">
-
-              <article class="tl-card reveal">
-                <div class="date">Fall 2024 – Spring 2025</div>
-                <h3>Hybrid-Electric STOL Air Taxi</h3>
-                <p class="sub">Aircraft Design I &amp; II</p>
-                <p>Structural design and analysis of a hybrid-electric STOL air taxi with distributed
-                  electric propulsion. Created 3D CAD models in SolidWorks and performed stress,
-                  deformation, and buckling analysis in ABAQUS.</p>
-                <div class="tag-row">
-                  <span class="tag">ABAQUS</span>
-                  <span class="tag">SolidWorks</span>
-                  <span class="tag">FEM</span>
-                  <span class="tag">Structural Analysis</span>
-                </div>
-                <div class="cproj-actions">
-                  <a class="btn btn-sm btn-outline" href="assets/projects/stol-air-taxi/report.pdf" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
-                  </a>
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="date">Spring 2025</div>
-                <h3>Heat Transfer Coefficient Prediction of Nanofluids</h3>
-                <p class="sub">Heat Transfer</p>
-                <p>Developed a machine learning pipeline to predict nanofluid heat transfer coefficients.
-                  Implemented Linear, Polynomial, Random Forest, and Neural Network regression models
-                  evaluated using MAE, MSE, and R².</p>
-                <div class="tag-row">
-                  <span class="tag">Python</span>
-                  <span class="tag">Machine Learning</span>
-                  <span class="tag">Scikit-learn</span>
-                  <span class="tag">Neural Networks</span>
-                </div>
-                <div class="cproj-actions">
-                  <a class="btn btn-sm btn-outline" href="assets/projects/nanofluid-prediction/report.pdf" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>View report
-                  </a>
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="date">Fall 2024</div>
-                <h3>AI Research Assistant</h3>
-                <p class="sub">Foundations of Data Science</p>
-                <p>Designed an AI research assistant to retrieve and summarize scholarly articles.
-                  Crawled 10,000+ AI papers from Semantic Scholar, built a RAG pipeline using FAISS,
-                  LangChain, and OpenAI API for semantic search and automated summaries.</p>
-                <div class="tag-row">
-                  <span class="tag">Python</span>
-                  <span class="tag">RAG</span>
-                  <span class="tag">LangChain</span>
-                  <span class="tag">FAISS</span>
-                  <span class="tag">NLP</span>
-                  <span class="tag">KeyBERT</span>
-                </div>
-              </article>
-
-            </div>
-          </div>
-
-        </div>
       </div>
+    </section>
+
+    <!-- ---------- PROJECTS ----------
+         Every card is generated from data (COURSES_DATA projects marked
+         `featured` + EXTRA_PROJECTS), so nothing here is kept in sync by hand. -->
+    <section id="projects" class="page">
+      <h2 class="reveal">Projects</h2>
+      <div class="cproj-grid" id="courseProjGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- COURSES ---------- -->
@@ -1030,19 +1069,16 @@
       </div>
     </section>
 
-    <!-- ---------- CERTIFICATES ---------- -->
-    <section id="certificates" class="page">
-      <h2 class="reveal">Online certificates</h2>
-      <div class="cert-grid" id="certGrid"><!-- populated by JS --></div>
-    </section>
-
     <!-- ---------- TEACHING ---------- -->
     <section id="teaching" class="page">
       <h2 class="reveal">Teaching Assistant</h2>
       <div id="teachContainer"><!-- populated by JS --></div>
     </section>
 
-    <!-- ---------- SKILLS ---------- -->
+    <!-- ---------- SKILLS & CERTIFICATES ----------
+         Both answer the same question — what this person knows and has been
+         credentialed in — as opposed to Research/Projects/Courses, which
+         answer what they have actually done. -->
     <section id="skills" class="page">
       <h2 class="reveal">Skills</h2>
       <div class="skills-grid">
@@ -1077,6 +1113,9 @@
           </div>
         </div>
       </div>
+
+      <h2 class="reveal" style="margin-top: 48px;">Online certificates</h2>
+      <div class="cert-grid" id="certGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- CONTACT ---------- -->
@@ -1113,6 +1152,17 @@ const CONTACT_EMAIL    = "rouzbeh.pourjafarian@ae.sharif.edu";
 const CONTACT_LINKEDIN = "https://www.linkedin.com/in/rouzbeh-pourjafarian/";
 
 /* =================================================================
+   ICONS  (inline SVGs, one consistent stroke language — see the CV /
+   theme-toggle icons above for the same style. Used in place of raw
+   Unicode glyphs/emoji so every icon on the site is drawn, not typed.)
+   ================================================================= */
+const ICON_CLOSE = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+const ICON_FILE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>`;
+const ICON_MAIL = `<svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>`;
+const ICON_GITHUB = `<svg width="14" height="14" viewBox="0 0 496 512" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/></svg>`;
+const ICON_LINKEDIN = `<svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>`;
+
+/* =================================================================
    SCROLL REVEAL
    -----------------------------------------------------------------
    Fades/slides .reveal elements in the first time they enter the
@@ -1142,7 +1192,7 @@ function observeReveal(root) {
    This is the ONLY thing the owner edits to manage course content.
    - Each top-level key is the course SLUG (kebab-case). It also names
      the asset folder:  assets/courses/<slug>/
-   - homeworks[].id   -> file at assets/courses/<slug>/hw/hw<id>.pdf
+   - homeworks[].id   -> file at assets/courses/<slug>/hw/HW<id>.pdf
    - projects[].slug  -> folder assets/courses/<slug>/projects/<slug>/
         report.pdf, slides.pdf live inside that folder.
    - hasReport / hasSlides / hasCode toggle which blocks render.
@@ -1242,6 +1292,9 @@ const COURSES_DATA = {
       {
         slug: "agentic-llm-wingbox-design",
         kind: "Project",
+        featured: true,
+        period: "Fall 2025 – Spring 2026",
+        summary: "An agentic system that sizes an aircraft wing box — the LLM makes only the engineer's judgment calls, unit-tested Python computes every number. Lands within ~5% of a published design's optimized weight.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
         description: "Abstract: this report presents the architecture and engineering basis of an agentic artificial-intelligence system for the preliminary structural sizing of a transport-aircraft wing box. Rather than a hand or spreadsheet-driven design cycle, the system is organized as a directed graph of specialist computational and decision nodes, built with LangGraph, in which a large language model (LLM) is restricted to exactly the judgment calls a structural engineer would make, such as material family, spar location, stringer catalogue selection, web architecture and joint configuration, while every numerical quantity is produced by a deterministic, unit-tested Python implementation of the classical sizing methods of Niu, Megson and Roskam. This is a project report, not a paper-reproduction study: the system is presented on its own terms, and an external published design is used once, as a validation benchmark, rather than as the report's own subject. The report first reviews the traditional, manual wing-box design process the system's phases are modeled on, then introduces the general concepts of agentic AI, large language models and the LangGraph orchestration framework, and describes how these are combined into the present system: its graph topology, the enforced separation between LLM decisions and Python computations, the material-selection method (an Ashby structural index combined with alloy-family screening and Pareto-front trade-off selection), and the governing equations used at each design phase. Implementation details are discussed next, followed by two verification benchmarks of deliberately different scope. The narrow one, a single cross-section worked by hand in the course lecture material, is reproduced to tabulated precision as an automated acceptance gate and surfaced four notational and arithmetic slips in the reference itself along the way. The broad one runs the complete pipeline, with the live LLM decider in every judgment node, against a real, independently published wing-box design (a Pilatus PC-21/Super Tucano-class trainer wing from a METU MSc thesis) and converges on a wingbox weight within about five percent of that design's own optimized result, corroborated by a real Abaqus finite-element solve of the converged geometry.",
         tags: ["LLM", "Python", "Aircraft Structures"],
@@ -1299,6 +1352,9 @@ const COURSES_DATA = {
       {
         slug: "cdm-neural-network-reproduction",
         kind: "Project",
+        featured: true,
+        period: "Fall 2025",
+        summary: "A published neural-network surrogate for composite damage mechanics, rebuilt from the paper's text and figures alone — its authors released neither code nor data. All five acceptance criteria met.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
         description: "Abstract: this report reproduces Yan, Zou, Ilkhani and Jones (2020), Composites Part B 194:108014, in which three artificial neural networks (ANNs), trained on the response of a mesoscale unit cell, replace a Linde-type continuum damage mechanics (CDM) user subroutine (UMAT) at the macro scale. The original authors released neither code nor data, so every component, including the constitutive model, the periodic unit cell, the training dataset, the three networks, and the macro-scale UMAT, was rebuilt independently from the text and figures of the paper. The reproduction is evaluated against five acceptance criteria spanning the regression network's accuracy, the two classifiers' accuracy, the open-hole plate benchmark, and the reported computational speed-up. All five are met.",
         tags: ["Neural Network"],
@@ -1325,6 +1381,9 @@ const COURSES_DATA = {
       {
         slug: "llm-agent-composite-optimization",
         kind: "Project",
+        featured: true,
+        period: "Spring 2026",
+        summary: "An LLM agent that writes the optimization problem itself, then diagnoses and repairs its own formulation. In a blind test it reproduced a published Pareto front exactly — all 37 designs.",
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
         description: "Abstract: in multi-objective optimization of composite structures, the problem formulation is set by the designer, who decides ahead of the run on suitable objective functions, constraints and design variables, and if the response is unsuitable, revises the problem and repeats the run. This work hands that same loop to a large-language-model-based agent. The agent takes a design description in natural language, extracts the mathematical problem formulation, and passes it to the NSGA-II algorithm through a typed contract; it then diagnoses the cause if the resulting Pareto front is degenerate or any other issue exists, and revises the formulation accordingly. All physical computations are carried out in a deterministic kernel, and the language model never computes any physical quantity; failure detection is likewise deterministic and threshold-based, and the model only selects a single remedial action from a closed list. For evaluation, a problem from a published paper on multi-objective optimization of a composite plate was solved twice, once with a manual formulation and once with the agent's automatic formulation, in a blind test. The agent's search scored a perfect match, and under an equal search budget its formulation produced exactly the same front: all 37 designs with the same number of layers, the same stacking sequence, and zero difference in buckling load. The deterministic kernel also reproduced the paper's analytical numbers with a worst-case error of 0.001 percent. Finally, on a deliberately defective request, the feedback loop found the bug within four iterations, revised the formulation twice, and improved the front's hypervolume by 4.17 and then 36.13 percent.",
         tags: ["NSGA-II", "LLM", "Composite Optimization"],
@@ -1364,6 +1423,54 @@ const COURSES_DATA = {
     ]
   }
 };
+
+/* =================================================================
+   EXTRA_PROJECTS
+   -----------------------------------------------------------------
+   Course projects whose course is NOT in COURSES_DATA (no homework or
+   syllabus page of its own), so they live here instead. They render with
+   the same card as the featured ones.
+     base     -> asset folder; report.pdf and thumb.jpg are read from it
+     summary  -> the two lines shown on the collapsed card
+     abstract -> the longer text revealed when the card is opened (omit
+                 it and the card simply shows the report)
+     hasReport-> whether base + "/report.pdf" should be offered
+   ================================================================= */
+const EXTRA_PROJECTS = [
+  {
+    slug: "stol-air-taxi",
+    base: "assets/projects/stol-air-taxi",
+    course: "Aircraft Design I & II",
+    period: "Fall 2024 – Spring 2025",
+    title: "Hybrid-Electric STOL Air Taxi",
+    summary: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion.",
+    abstract: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion. Created 3D CAD models in SolidWorks and performed stress, deformation, and buckling analysis in ABAQUS.",
+    tags: ["ABAQUS", "SolidWorks", "FEM", "Structural Analysis"],
+    hasReport: true
+  },
+  {
+    slug: "nanofluid-prediction",
+    base: "assets/projects/nanofluid-prediction",
+    course: "Heat Transfer",
+    period: "Spring 2025",
+    title: "Heat Transfer Coefficient Prediction of Nanofluids",
+    summary: "A machine learning pipeline predicting nanofluid heat transfer coefficients across four regression models.",
+    abstract: "Developed a machine learning pipeline to predict nanofluid heat transfer coefficients. Implemented Linear, Polynomial, Random Forest, and Neural Network regression models evaluated using MAE, MSE, and R².",
+    tags: ["Python", "Machine Learning", "Scikit-learn", "Neural Networks"],
+    hasReport: true
+  },
+  {
+    slug: "ai-research-assistant",
+    base: "assets/projects/ai-research-assistant",
+    course: "Foundations of Data Science",
+    period: "Fall 2024",
+    title: "AI Research Assistant",
+    summary: "A RAG pipeline over 10,000+ crawled AI papers that retrieves and summarizes scholarly articles.",
+    abstract: "Designed an AI research assistant to retrieve and summarize scholarly articles. Crawled 10,000+ AI papers from Semantic Scholar, built a RAG pipeline using FAISS, LangChain, and OpenAI API for semantic search and automated summaries.",
+    tags: ["Python", "RAG", "LangChain", "FAISS", "NLP", "KeyBERT"],
+    hasReport: false
+  }
+];
 
 /* =================================================================
    CERTIFICATES_DATA
@@ -1444,6 +1551,17 @@ const TEACHING_DATA = [
    RENDER HELPERS
    ================================================================= */
 
+// Every custom "clickable div" (hw-card, proj-head) is a role="button"
+// tabindex="0" element with an inline onclick for pointer users; this drives
+// the same handler from the keyboard (Enter / Space), matching native
+// <button> behavior.
+function activateOnKey(e, el, fn) {
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+    e.preventDefault();
+    fn(el);
+  }
+}
+
 // Build a PDF viewer block. We render a styled placeholder by default so the
 // layout looks complete even before any files are uploaded. When the drawer
 // opens, loadPdfSlots() does a HEAD request for the file (same-origin on
@@ -1455,11 +1573,11 @@ function pdfViewer(src) {
   return `
     <div class="pdf-wrap">
       <div class="pdf-toolbar">
-        <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">✕ Close</button>
+        <button class="pdf-close" onclick="closePdf(this)" title="Close PDF">${ICON_CLOSE}Close</button>
       </div>
       <div class="pdf-slot" data-src="${src}">
         <div class="pdf-placeholder">
-          <div class="pp-icon">📄</div>
+          <div class="pp-icon">${ICON_FILE}</div>
           <div>PDF will appear here — upload to</div>
           <code>${src}</code>
         </div>
@@ -1490,9 +1608,138 @@ function redactionNotice() {
   return `
     <div class="redaction-notice">
       <p>Some content is redacted for privacy. Need the full version?</p>
-      <a class="btn btn-sm btn-primary" href="mailto:${CONTACT_EMAIL}">✉ Email</a>
-      <a class="btn btn-sm" href="${CONTACT_LINKEDIN}" target="_blank" rel="noopener">in&nbsp;&nbsp;LinkedIn</a>
+      <a class="btn btn-sm btn-primary" href="mailto:${CONTACT_EMAIL}">${ICON_MAIL}Email</a>
+      <a class="btn btn-sm" href="${CONTACT_LINKEDIN}" target="_blank" rel="noopener">${ICON_LINKEDIN}LinkedIn</a>
     </div>`;
+}
+
+/* =================================================================
+   PROJECT SHOWCASE CARDS
+   -----------------------------------------------------------------
+   One card component, fed from two sources, so nothing is written twice:
+     - COURSES_DATA projects marked `featured: true`
+     - EXTRA_PROJECTS (courses that have no page of their own)
+
+   Collapsed, the card shows the title, the course, two lines of summary,
+   and a thumbnail on the right. Opened, it reveals the full abstract and
+   the report itself, using the same PDF viewer and redaction notice the
+   course pages use.
+
+   Thumbnail convention:  <base>/thumb.jpg
+     featured projects -> assets/courses/<course>/projects/<project>/thumb.jpg
+     EXTRA_PROJECTS    -> its own `base` + /thumb.jpg
+   A missing thumbnail collapses to a neutral placeholder, so the layout
+   is complete before any image is uploaded.
+   ================================================================= */
+function showcaseProjects() {
+  const out = [];
+  Object.keys(COURSES_DATA).forEach(slug => {
+    COURSES_DATA[slug].projects.forEach(p => {
+      if (!p.featured) return;
+      out.push({
+        id: `${slug}-${p.slug}`,
+        base: `assets/courses/${slug}/projects/${p.slug}`,
+        course: COURSES_DATA[slug].name,
+        period: p.period,
+        title: p.title,
+        summary: p.summary,
+        abstract: p.description,
+        tags: p.tags,
+        hasReport: p.hasReport,
+        hasSlides: p.hasSlides
+      });
+    });
+  });
+  EXTRA_PROJECTS.forEach(p => out.push({
+    id: p.slug,
+    base: p.base,
+    course: p.course,
+    period: p.period,
+    title: p.title,
+    summary: p.summary,
+    abstract: p.abstract,
+    tags: p.tags,
+    hasReport: p.hasReport,
+    hasSlides: false
+  }));
+  return out;
+}
+
+function showcaseCardHtml(item, prefix) {
+  const drawerId = `${prefix}-${item.id}`;
+  const tags = (item.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const thumb = `${item.base}/thumb.jpg`;
+
+  let blocks = '';
+  if (item.abstract) {
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">Abstract</p>
+        <p class="showcase-abstract">${item.abstract}</p>
+      </div>`;
+  }
+  if (item.hasReport) {
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">Report</p>
+        ${pdfViewer(item.base + '/report.pdf')}
+        ${redactionNotice()}
+      </div>`;
+  }
+  if (item.hasSlides) {
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">Slides</p>
+        ${pdfViewer(item.base + '/slides.pdf')}
+        ${redactionNotice()}
+      </div>`;
+  }
+
+  return `
+    <article class="showcase reveal">
+      <div class="showcase-head" role="button" tabindex="0" aria-expanded="false" aria-controls="${drawerId}"
+           onclick="toggleShowcase(this)" onkeydown="activateOnKey(event, this, toggleShowcase)">
+        <div class="showcase-text">
+          ${item.period ? `<div class="date">${item.period}</div>` : ''}
+          <h3>${item.title}</h3>
+          <p class="sub">${item.course}</p>
+          <p class="showcase-summary">${item.summary || ''}</p>
+          ${tags ? `<div class="tag-row">${tags}</div>` : ''}
+        </div>
+        <div class="showcase-thumb">
+          <img src="${thumb}" alt="" loading="lazy"
+               onerror="this.closest('.showcase-thumb').classList.add('is-empty'); this.remove();" />
+        </div>
+      </div>
+      <div class="drawer" id="${drawerId}">
+        <div class="drawer-inner">
+          ${blocks}
+          <button class="btn btn-sm drawer-close" onclick="closeShowcase(this)">${ICON_CLOSE}Close</button>
+        </div>
+      </div>
+    </article>`;
+}
+
+// Showcase accordion. Kept separate from toggleProj() because these cards
+// live outside the courses layout and must not touch its focus mode.
+function toggleShowcase(head) {
+  const card   = head.parentNode;
+  const drawer = head.nextElementSibling;
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open', !isOpen);
+  drawer.classList.toggle('open', !isOpen);
+  head.setAttribute('aria-expanded', String(!isOpen));
+  if (!isOpen) loadPdfSlots(drawer);
+}
+function closeShowcase(btn) {
+  const card = btn.closest('.showcase');
+  card.classList.remove('open');
+  card.querySelector('.drawer').classList.remove('open');
+  const head = card.querySelector('.showcase-head');
+  if (head) {
+    head.setAttribute('aria-expanded', 'false');
+    head.scrollIntoView({ block: 'nearest' });
+  }
 }
 
 // Instructor chunk appended to the course-sub line: " · <icon> Dr. Name".
@@ -1524,23 +1771,43 @@ function setFocusMode(on) {
 function refreshFocusMode() {
   setFocusMode(!!courseContent.querySelector('.drawer.open'));
 }
-// "✕ Close" button inside a PDF viewer: close its drawer + clear card highlight
+// Keep the URL in sync with which course/project is open, without spending a
+// back-button history entry per accordion click — a link copied at any point
+// still points straight at the open project (see the router section below).
+function setCourseHash(courseSlug, projectSlug) {
+  const hash = '#courses/' + courseSlug + (projectSlug ? '/' + projectSlug : '');
+  if (location.hash !== hash) history.replaceState(null, '', hash);
+}
+
+// Close button inside a PDF viewer: close its drawer + clear card highlight
 function closePdf(btn) {
   const drawer = btn.closest('.drawer');
   if (!drawer) return;
   drawer.classList.remove('open');
   const projCard = drawer.closest('.proj-card');
-  if (projCard) projCard.classList.remove('open');
+  if (projCard) {
+    projCard.classList.remove('open');
+    const head = projCard.querySelector('.proj-head');
+    if (head) head.setAttribute('aria-expanded', 'false');
+    if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
+  }
   const grid = drawer.closest('.hw-grid');           // present only for HW drawers
   if (grid) {
     const card = grid.querySelector(`.hw-card[data-hw="${drawer.dataset.drawer}"]`);
-    if (card) card.classList.remove('open');
+    if (card) { card.classList.remove('open'); card.setAttribute('aria-expanded', 'false'); }
     grid.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
+  }
+  // showcase cards live outside the courses layout and keep their own state
+  const showcase = drawer.closest('.showcase');
+  if (showcase) {
+    showcase.classList.remove('open');
+    const head = showcase.querySelector('.showcase-head');
+    if (head) head.setAttribute('aria-expanded', 'false');
   }
   refreshFocusMode();
 }
 
-function renderCourse(slug, fadeMs) {
+function renderCourse(slug, fadeMs, openProjectSlug) {
   coursesLayout.classList.remove('focus-mode'); // always start a course unfocused
   const c = COURSES_DATA[slug];
 
@@ -1551,7 +1818,7 @@ function renderCourse(slug, fadeMs) {
   for (let i = 0; i < c.homeworks.length; i += 2) {
     const pair = c.homeworks.slice(i, i + 2);
     hwCards += `<div class="hw-row">` + pair.map(hw => `
-      <div class="hw-card" data-hw="${hw.id}" onclick="toggleHw(this)" title="HW ${hw.id} — ${hw.topic}">
+      <div class="hw-card" data-hw="${hw.id}" role="button" tabindex="0" aria-expanded="false" aria-controls="hwdrawer-${slug}-${hw.id}" onclick="toggleHw(this)" onkeydown="activateOnKey(event, this, toggleHw)" title="HW ${hw.id} — ${hw.topic}">
         <span class="hw-num">HW ${hw.id}</span>
         <span class="hw-sep">—</span>
         <span class="hw-topic">${hw.topic}</span>
@@ -1559,7 +1826,7 @@ function renderCourse(slug, fadeMs) {
     hwCards += pair.map(hw => {
       const src = `assets/courses/${slug}/hw/HW${hw.id}.pdf`;
       return `
-      <div class="drawer hw-drawer" data-drawer="${hw.id}">
+      <div class="drawer hw-drawer" id="hwdrawer-${slug}-${hw.id}" data-drawer="${hw.id}">
         <div class="drawer-inner">
           <div style="padding-top:14px">${pdfViewer(src)}</div>
           ${redactionNotice()}
@@ -1593,21 +1860,22 @@ function renderCourse(slug, fadeMs) {
       blocks += `
         <div class="proj-block">
           <p class="proj-block-label">Code</p>
-          <a class="btn btn-primary btn-sm" href="${p.code}" target="_blank" rel="noopener">⌥&nbsp;&nbsp;View on GitHub</a>
+          <a class="btn btn-primary btn-sm" href="${p.code}" target="_blank" rel="noopener">${ICON_GITHUB}View on GitHub</a>
         </div>`;
     }
     const tags = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+    const drawerId = `projdrawer-${slug}-${p.slug}`;
     return `
       <div class="proj-card">
-        <div class="proj-head" onclick="toggleProj(this)">
+        <div class="proj-head" role="button" tabindex="0" aria-expanded="false" aria-controls="${drawerId}" onclick="toggleProj(this)" onkeydown="activateOnKey(event, this, toggleProj)">
           <h4>${p.title}</h4>
           <p class="proj-desc">${p.description}</p>
           <div class="tag-row">${tags}</div>
         </div>
-        <div class="drawer">
+        <div class="drawer" id="${drawerId}" data-course="${slug}" data-project="${p.slug}">
           <div class="drawer-inner">
             ${blocks}
-            <button class="btn btn-sm drawer-close" onclick="closeProj(this)">✕ Close</button>
+            <button class="btn btn-sm drawer-close" onclick="closeProj(this)">${ICON_CLOSE}Close</button>
           </div>
         </div>
       </div>`;
@@ -1646,6 +1914,16 @@ function renderCourse(slug, fadeMs) {
   } else {
     courseContent.style.opacity = '1'; // initial render: fully visible
   }
+
+  // Deep link: a URL naming a specific project (#courses/<slug>/<projectSlug>)
+  // opens that project's drawer once the course markup above exists.
+  if (openProjectSlug) {
+    const drawer = courseContent.querySelector(`.drawer[data-project="${openProjectSlug}"]`);
+    const head = drawer && drawer.previousElementSibling;
+    if (head && head.classList.contains('proj-head')) {
+      requestAnimationFrame(() => toggleProj(head));
+    }
+  }
 }
 
 // HW accordion: open this card's drawer (looked up by data-hw/data-drawer,
@@ -1655,11 +1933,12 @@ function toggleHw(card) {
   const drawer = grid.querySelector(`.hw-drawer[data-drawer="${card.dataset.hw}"]`);
   const isOpen = drawer.classList.contains('open');
   // close whichever HW (in any row) was open before
-  grid.querySelectorAll('.hw-card.open').forEach(el => el.classList.remove('open'));
+  grid.querySelectorAll('.hw-card.open').forEach(el => { el.classList.remove('open'); el.setAttribute('aria-expanded', 'false'); });
   grid.querySelectorAll('.drawer.open').forEach(el => el.classList.remove('open'));
   grid.querySelectorAll('.hw-card.sibling-open').forEach(el => el.classList.remove('sibling-open'));
   if (!isOpen) {
     card.classList.add('open');
+    card.setAttribute('aria-expanded', 'true');
     drawer.classList.add('open');
     // shrink just this card's row-mate (card.parentNode is the .hw-row pair)
     card.parentNode.querySelectorAll('.hw-card').forEach(el => { if (el !== card) el.classList.add('sibling-open'); });
@@ -1676,24 +1955,34 @@ function toggleProj(head) {
   if (isOpen) {
     card.classList.remove('open');
     drawer.classList.remove('open');
+    head.setAttribute('aria-expanded', 'false');
+    if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
   } else {
     card.classList.add('open');
     drawer.classList.add('open');
+    head.setAttribute('aria-expanded', 'true');
     loadPdfSlots(drawer);
+    if (drawer.dataset.course) setCourseHash(drawer.dataset.course, drawer.dataset.project);
   }
   refreshFocusMode();
 }
 function closeProj(btn) {
   const card = btn.closest('.proj-card');
   card.classList.remove('open');
-  card.querySelector('.drawer').classList.remove('open');
+  const drawer = card.querySelector('.drawer');
+  drawer.classList.remove('open');
+  const head = card.querySelector('.proj-head');
+  if (head) head.setAttribute('aria-expanded', 'false');
+  if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
   refreshFocusMode();
 }
 
 /* Switch courses with a smooth transition. If a PDF viewer is open, first
    close it (fade + slide, 0.3s) and collapse the full-width view, THEN swap in
    the new course and fade it in. With no PDF open, just crossfade (0.2s).
-   Nothing ever cuts instantly. */
+   Nothing ever cuts instantly. A course switch is a real "go somewhere else"
+   navigation, so — unlike opening a project drawer — it earns its own entry
+   in the back/forward history. */
 function switchCourse(slug, btn) {
   // highlight the chosen course immediately
   courseNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
@@ -1708,6 +1997,9 @@ function switchCourse(slug, btn) {
     courseContent.querySelectorAll('.hw-card.open, .proj-card.open').forEach(el => el.classList.remove('open'));
     setFocusMode(false);
   }
+  const newHash = '#courses/' + slug;
+  if (location.hash !== newHash) history.pushState(null, '', newHash);
+
   // fade the current content out, then swap + fade the new content in
   courseContent.style.transition = `opacity ${dur}ms ease`;
   courseContent.style.opacity = '0';
@@ -1740,6 +2032,20 @@ document.getElementById('certGrid').innerHTML = CERTIFICATES_DATA.map(cert => `
   </div>
 `).join('');
 
+/* ---------- PROJECT SHOWCASE ----------
+   The same cards render twice: "Selected work" on About shows only the
+   flagship ones, the Course Projects tab shows everything. Drawer ids are
+   prefixed per grid so the two copies never collide. */
+const showcaseItems = showcaseProjects();
+const flagshipIds = new Set();
+Object.keys(COURSES_DATA).forEach(slug => {
+  COURSES_DATA[slug].projects.forEach(p => { if (p.featured) flagshipIds.add(`${slug}-${p.slug}`); });
+});
+document.getElementById('featuredGrid').innerHTML =
+  showcaseItems.filter(i => flagshipIds.has(i.id)).map(i => showcaseCardHtml(i, 'sel')).join('');
+document.getElementById('courseProjGrid').innerHTML =
+  showcaseItems.map(i => showcaseCardHtml(i, 'cp')).join('');
+
 /* ---------- TEACHING ---------- */
 document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
   <div class="teach-group">
@@ -1764,11 +2070,23 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
    Only one .page is visible at a time. Clicking a nav link hides all
    pages and shows the selected one (display none/block via .active),
    fading it in. Default page on load is About.
+
+   Hash shapes (so a course or a specific project/report can be bookmarked
+   or sent to someone directly, and Back actually steps back):
+     #about | #research | #certificates | #teaching | #skills | #contact
+     #courses                             (first course)
+     #courses/<courseSlug>                (that course)
+     #courses/<courseSlug>/<projectSlug>  (that course, that project open)
    ================================================================= */
 const navLinks = document.querySelectorAll('#mainNav a');
 const pages    = document.querySelectorAll('.page');
 
+// Sections that used to exist on their own. Anyone holding an old link (or a
+// bookmark) still lands where that content lives now instead of on About.
+const PAGE_ALIASES = { certificates: 'skills' };
+
 function showPage(id) {
+  if (PAGE_ALIASES[id]) id = PAGE_ALIASES[id];
   // fall back to About if the id is unknown
   if (!document.getElementById(id) || !document.getElementById(id).classList.contains('page')) {
     id = 'about';
@@ -1778,35 +2096,44 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 
+// Apply a full route (everything after '#') on initial load and on Back/Forward.
+function applyRoute(rawHash) {
+  const parts = (rawHash || '').replace(/^#/, '').split('/').filter(Boolean);
+  const id = parts[0] || 'about';
+  showPage(id);
+  if (id === 'courses') {
+    const slug = COURSES_DATA[parts[1]] ? parts[1] : courseSlugs[0];
+    const btn = [...courseNav.querySelectorAll('button')].find(b => b.dataset.slug === slug);
+    if (btn) {
+      courseNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    renderCourse(slug, 0, parts[1] ? parts[2] : undefined);
+  }
+}
+
 navLinks.forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
     const id = a.getAttribute('href').slice(1);
     showPage(id);
-    history.replaceState(null, '', '#' + id);
+    // Courses keeps whichever course is already on screen, so the URL has to
+    // name it — a bare "#courses" would send anyone the link is shared with
+    // to the first course instead of the one actually being looked at.
+    let hash = '#' + id;
+    if (id === 'courses') {
+      const active = courseNav.querySelector('button.active');
+      if (active) hash += '/' + active.dataset.slug;
+    }
+    if (location.hash !== hash) history.pushState(null, '', hash);
   });
 });
 
-// initial page: from URL hash if valid, otherwise About
-showPage((location.hash || '#about').slice(1));
+// Back/Forward: re-apply whatever route the browser now points to.
+window.addEventListener('popstate', () => applyRoute(location.hash || '#about'));
 
-/* =================================================================
-   RESEARCH & PROJECTS  tabs (sidebar switches panels, default Experience)
-   ================================================================= */
-(function () {
-  const rpNav = document.getElementById('rpNav');
-  if (!rpNav) return;
-  const rpPanels = document.querySelectorAll('#rpContent .rp-panel');
-  rpNav.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.classList.contains('active')) return;
-      rpNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const key = btn.dataset.rp;
-      rpPanels.forEach(p => p.classList.toggle('active', p.dataset.panel === key));
-    });
-  });
-})();
+// initial route: from the URL if valid, otherwise About
+applyRoute(location.hash || '#about');
 
 /* =================================================================
    THEME TOGGLE  (light / dark) + persistence in localStorage["theme"]
@@ -1821,6 +2148,28 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 // Bind the scroll-reveal observer to every .reveal element currently in the
 // DOM (static sections + the certificates/teaching lists rendered above).
 observeReveal(document);
+
+/* =================================================================
+   LINK GUARDS  (CV download, standalone "View report" links)
+   -----------------------------------------------------------------
+   Unlike course PDFs, these aren't behind a placeholder drawer — a missing
+   file would otherwise fail silently as a raw browser 404. A same-origin
+   HEAD check greys the link out and disables it instead. Network errors
+   (offline) are treated as "assume it's fine", matching loadPdfSlots().
+   ================================================================= */
+document.querySelectorAll('a[data-guard]').forEach(a => {
+  const href = a.getAttribute('href');
+  fetch(href, { method: 'HEAD' })
+    .then(res => {
+      if (!res.ok) {
+        a.classList.add('link-unavailable');
+        a.setAttribute('aria-disabled', 'true');
+        a.title = 'Not yet uploaded';
+        a.addEventListener('click', e => e.preventDefault());
+      }
+    })
+    .catch(() => { /* offline -> leave the link as-is */ });
+});
 </script>
 </body>
 </html>
