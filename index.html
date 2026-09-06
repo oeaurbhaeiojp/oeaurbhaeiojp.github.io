@@ -509,15 +509,23 @@
     gap: 28px;
     align-items: flex-start;
     width: 100%;
+    /* Opening a report is one gesture — the layout widening to full-bleed
+       and the drawer growing open (see .drawer below) — so both run on the
+       same duration and curve. Snapping this instantly while the drawer
+       eased open smoothly was the mismatch that made opening a homework
+       specifically read as abrupt: the box jumped, then the content grew.
+       Yes, this animates width/margin/padding (real layout properties, so
+       it does force a reflow each frame) — accepted deliberately here since
+       it only runs on an occasional, user-triggered open/close, not on a
+       loop or anything performance-sensitive. */
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                margin-left 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Focus mode: when a PDF viewer is open, the whole courses layout (sidebar
      + content) breaks out of the centered column to use the full page width.
-     The sidebar stays visible on the left; the content area takes the rest.
-     This snaps instantly rather than animating width/margin/padding — those
-     are layout properties, so animating them forces a reflow on every frame
-     for the full 0.3s instead of once. The content's own opacity crossfade
-     (driven from JS on course switches) is what reads as "smooth" here. */
+     The sidebar stays visible on the left; the content area takes the rest. */
   .courses-layout.focus-mode {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -622,7 +630,12 @@
     border-radius: 9px;
     padding: 12px 16px;
     cursor: pointer;
-    transition: all 0.2s ease, flex-grow 0.25s ease;
+    /* The card widening is part of the same "opening" gesture as its drawer,
+       so it rides the same easing and lands with it rather than ahead of it. */
+    transition: border-color 0.2s ease, background-color 0.2s ease,
+                transform 0.2s ease, box-shadow 0.2s ease,
+                flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                min-width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     overflow: hidden;
   }
   .hw-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
@@ -659,14 +672,24 @@
   .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
   .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
-  /* Accordion drawer (shared by HW + projects) */
+  /* Accordion drawer (shared by HW + projects + showcase cards)
+     -----------------------------------------------------------
+     Animates grid-template-rows 0fr -> 1fr, which resolves to the content's
+     REAL height. The old max-height:0 -> 2600px version spent the whole
+     easing curve on a 2600px range while the content only needed ~900px,
+     so the part you could actually see was over in a third of the time and
+     the open read as a snap. This also removes the 2600px ceiling that
+     would have clipped a long drawer. */
   .drawer {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.35s ease;
   }
-  .drawer.open { max-height: 2600px; opacity: 1; }
+  .drawer.open { grid-template-rows: 1fr; opacity: 1; }
+  /* The 0fr row only collapses if the row's own content can be clipped. */
+  .drawer > .drawer-inner { overflow: hidden; min-height: 0; }
   /* the course content area fades during course switches (set inline in JS) */
   .course-content { transition: opacity 0.3s ease; }
   .drawer-inner { padding: 4px 20px 22px; }
