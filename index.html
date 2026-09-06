@@ -16,13 +16,17 @@
 <meta name="twitter:title" content="Rouzbeh Pourjafarian — Structural Engineer & AI Researcher">
 <meta name="twitter:description" content="M.Sc. Structural Engineering at Sharif University of Technology.">
 <meta name="twitter:image" content="https://oeaurbhaeiojp.github.io/assets/photo.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ===========================================================
      THEME TOKENS
      =========================================================== */
   :root {
-    --serif:     Georgia, 'Times New Roman', serif;
-    --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --serif:     'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --maxw:      820px;
   }
 
@@ -38,52 +42,55 @@
     --text-dim:    var(--text-muted);
     --teal:        var(--accent-teal);
     --coral:       var(--accent-coral);
+    --violet:      var(--accent-violet);
     --teal-soft:   var(--accent-teal-soft);
     --coral-soft:  var(--accent-coral-soft);
     --teal-border:  var(--accent-teal-border);
     --coral-border: var(--accent-coral-border);
   }
 
-  /* ---- DARK THEME (default) ---- */
+  /* ---- DARK THEME (default) — cool charcoal-navy, jade + amber + indigo ---- */
   body.dark {
-    --bg-primary:   #1e1e24;
-    --bg-secondary: #2a2a32;
-    --bg-sidebar:   #232329;
-    --bg-elevated:  #30303a;
-    --text-primary: #e8e6df;
-    --text-muted:   #9a9890;
-    --accent-teal:  #1D9E75;
-    --accent-coral: #D85A30;
-    --border-color: #3a3a44;
-    --nav-bg:       #1a1a20;
-    --accent-teal-soft:    rgba(29, 158, 117, 0.14);
-    --accent-coral-soft:   rgba(216, 90, 48, 0.14);
-    --accent-teal-border:  rgba(29, 158, 117, 0.35);
-    --accent-coral-border: rgba(216, 90, 48, 0.35);
-    --accent-teal-hover:   #178a65;
-    --link-hover:          #2bc191;
-    --on-accent:           #ffffff;
+    --bg-primary:   #14161c;
+    --bg-secondary: #1d2029;
+    --bg-sidebar:   #191c24;
+    --bg-elevated:  #262b36;
+    --text-primary: #ecebf0;
+    --text-muted:   #8d92a0;
+    --accent-teal:  #9dabdc;
+    --accent-coral: #e7a23a;
+    --accent-violet: #3ddbd9;
+    --border-color: #2b303c;
+    --nav-bg:       #101217;
+    --accent-teal-soft:    rgba(157, 171, 220, 0.16);
+    --accent-coral-soft:   rgba(231, 162, 58, 0.16);
+    --accent-teal-border:  rgba(157, 171, 220, 0.38);
+    --accent-coral-border: rgba(231, 162, 58, 0.38);
+    --accent-teal-hover:   #7c90d0;
+    --link-hover:          #b9c4e8;
+    --on-accent:           #0e1015;
     --pdf-bg:              #111111;
   }
 
-  /* ---- LIGHT THEME (distill.pub-inspired) ---- */
+  /* ---- LIGHT THEME — cool neutral, jade + amber + indigo (not warm cream) ---- */
   body.light {
     --bg-primary:   #ffffff;
-    --bg-secondary: #f5f4f0;
-    --bg-sidebar:   #f0eeea;
-    --bg-elevated:  #e9e7e1;
-    --text-primary: #1a1a1a;
-    --text-muted:   #666660;
-    --accent-teal:  #0f6e56;
-    --accent-coral: #993c1d;
-    --border-color: #e0deda;
-    --nav-bg:       #fafaf8;
-    --accent-teal-soft:    rgba(15, 110, 86, 0.12);
-    --accent-coral-soft:   rgba(153, 60, 29, 0.12);
-    --accent-teal-border:  rgba(15, 110, 86, 0.32);
-    --accent-coral-border: rgba(153, 60, 29, 0.32);
-    --accent-teal-hover:   #0c5a46;
-    --link-hover:          #0c5a46;
+    --bg-secondary: #eef1f6;
+    --bg-sidebar:   #f2f4f8;
+    --bg-elevated:  #e3e7ef;
+    --text-primary: #171a21;
+    --text-muted:   #5a616f;
+    --accent-teal:  #3d4fce;
+    --accent-coral: #b5750e;
+    --accent-violet: #0c7c82;
+    --border-color: #dee2ea;
+    --nav-bg:       #f3f5fa;
+    --accent-teal-soft:    rgba(61, 79, 206, 0.12);
+    --accent-coral-soft:   rgba(181, 117, 14, 0.12);
+    --accent-teal-border:  rgba(61, 79, 206, 0.32);
+    --accent-coral-border: rgba(181, 117, 14, 0.32);
+    --accent-teal-hover:   #2e3da8;
+    --link-hover:          #2e3da8;
     --on-accent:           #ffffff;
     --pdf-bg:              #ffffff;
   }
@@ -121,6 +128,21 @@
     width: 100%;
     background: var(--nav-bg);
     border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .topbar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--violet), var(--coral), var(--teal));
+    background-size: 200% 100%;
+    opacity: 0.85;
+    animation: gradientShift 9s ease-in-out infinite;
+  }
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
   }
   .topbar-inner {
     max-width: 1100px;
@@ -144,7 +166,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 22px;
     margin: 0 auto; /* brand on the left, nav centered, toggle pushed far right */
   }
 
@@ -169,23 +191,22 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transform: rotate(-90deg) scale(0.5);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
   .theme-toggle .ticon svg { display: block; }
-  body.dark  .theme-toggle .ticon-moon { opacity: 1; }
-  body.light .theme-toggle .ticon-sun  { opacity: 1; }
+  body.dark  .theme-toggle .ticon-moon { opacity: 1; transform: none; }
+  body.light .theme-toggle .ticon-sun  { opacity: 1; transform: none; }
   .nav a {
     color: var(--text-dim);
     font-size: 0.95rem;
-    padding: 7px 13px;
-    border-radius: 6px;
+    padding: 7px 1px;
     border-bottom: 2px solid transparent;
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
   }
-  .nav a:hover { color: var(--text); background: var(--bg-card); }
+  .nav a:hover { color: var(--text); }
   .nav a.active {
     color: var(--teal);
-    background: var(--teal-soft);
     border-bottom-color: var(--teal);
   }
 
@@ -298,7 +319,9 @@
     background: var(--teal-soft);
     color: var(--teal);
     border: 1px solid var(--teal-border);
+    transition: transform 0.15s ease;
   }
+  .pill:hover { transform: scale(1.06); }
   .tag {
     display: inline-block;
     font-size: 0.74rem;
@@ -308,15 +331,25 @@
     color: var(--coral);
     border: 1px solid var(--coral-border);
     letter-spacing: 0.2px;
+    transition: transform 0.15s ease;
   }
+  .tag:hover { transform: scale(1.06); }
   .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
   /* ===========================================================
      HERO
      =========================================================== */
-  .hero { padding-top: 8px; display: flex; gap: 40px; align-items: flex-start; }
-  .hero-text { flex: 1; }
+  @keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .hero {
+    padding: 24px 28px 8px;
+    display: flex; gap: 40px; align-items: flex-start;
+    border-radius: 18px;
+    background:
+      radial-gradient(480px 220px at 8% 0%, var(--teal-soft), transparent 65%),
+      radial-gradient(420px 200px at 96% 10%, var(--coral-soft), transparent 65%);
+  }
+  .hero-text { flex: 1; animation: heroIn 0.6s ease both; }
   .hero h1 { font-size: 2.5rem; margin: 0 0 6px; }
   .hero .role { font-size: 1.15rem; color: var(--teal); margin: 0 0 4px; font-family: var(--serif); }
   .hero .meta { color: var(--text-dim); margin: 0 0 20px; font-size: 0.98rem; }
@@ -329,6 +362,8 @@
     overflow: hidden;
     border: 1px solid var(--border);
     background: var(--bg-card);
+    box-shadow: 0 0 0 4px var(--teal-soft), 0 14px 30px -16px rgba(0, 0, 0, 0.35);
+    animation: heroIn 0.6s ease 0.12s both;
   }
   .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -493,7 +528,7 @@
     transition: all 0.2s ease, flex-grow 0.25s ease;
     overflow: hidden;
   }
-  .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .hw-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
   /* Grows to make room for its own full topic text; its row-mate shrinks
      toward a compact minimum instead (see .hw-card.sibling-open). */
   .hw-card.open { border-color: var(--teal); background: var(--bg-card-2); transform: none; flex-grow: 5; }
@@ -627,7 +662,8 @@
     flex-direction: column;
     transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .cert-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .cert-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
+  .cert-card.reveal { transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
   .cert-thumb {
     width: 100%;
     aspect-ratio: 16 / 10;
@@ -721,6 +757,20 @@
     padding: 26px;
   }
   .contact-box p { margin: 0 0 18px; color: var(--text-dim); }
+
+  /* ===========================================================
+     SCROLL REVEAL
+     -----------------------------------------------------------
+     .reveal starts hidden/offset; JS adds .in-view via
+     IntersectionObserver the first time an element enters the
+     viewport (see observeReveal() in the script below).
+     =========================================================== */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .reveal.in-view { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hero-text, .hero-photo, .topbar::after { animation: none; }
+  }
 
   /* ===========================================================
      RESPONSIVE
@@ -819,7 +869,7 @@
       </div>
     </header>
 
-      <h2>About</h2>
+      <h2 class="reveal">About</h2>
       <p style="text-align: justify;">I'm a structural engineer working at the intersection of agentic AI and structural engineering, building systems where intelligent agents understand engineering problems, retrieve domain knowledge, and produce design solutions autonomously.
 
       I researched and developed a multi-agent LLM framework using CrewAI and RAG pipelines that lets engineers describe mechanical linkage requirements in natural language and receive synthesized designs. In my M.Sc. thesis, I am currently exploring where agentic AI can create the most impact within structural engineering, an area I am deeply interested in and see as one of the most promising frontiers in the field.</p>
@@ -837,7 +887,7 @@
 
     <!-- ---------- RESEARCH & PROJECTS ---------- -->
     <section id="research" class="page">
-      <h2>Research &amp; Projects</h2>
+      <h2 class="reveal">Research &amp; Projects</h2>
       <div class="courses-layout">
         <nav class="course-nav" id="rpNav">
           <button class="active" data-rp="experience">Research Experience</button>
@@ -849,7 +899,7 @@
           <div class="rp-panel active" data-panel="experience">
             <div class="timeline">
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">10/25 – 04/26</div>
                 <h3>LLM-based multi-agent mechanism design</h3>
                 <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
@@ -858,7 +908,7 @@
                   agents for synthesis, evaluation, and refinement.</p>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">07/25 – 08/25</div>
                 <h3>Inverse finite element method &amp; acoustic emission</h3>
                 <p class="sub">Personal Research</p>
@@ -867,7 +917,7 @@
                   (AE) signals to enhance damage localization.</p>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">02/25 – 07/25</div>
                 <h3>Structural health monitoring &amp; damage detection</h3>
                 <p class="sub">Bachelor Thesis · Dr. Abedian</p>
@@ -876,7 +926,7 @@
                   under various damage scenarios.</p>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">01/23 – 07/23</div>
                 <h3>UAV autopilot system development</h3>
                 <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
@@ -885,7 +935,7 @@
                   simulation of control laws.</p>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">06/22 – 08/22</div>
                 <h3>Battery thermal system</h3>
                 <p class="sub">RAeS Competition — Lyrebird Electric STOL Aircraft</p>
@@ -907,7 +957,7 @@
           <div class="rp-panel" data-panel="projects">
             <div class="cproj-grid">
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">Fall 2024 – Spring 2025</div>
                 <h3>Hybrid-Electric STOL Air Taxi</h3>
                 <p class="sub">Aircraft Design I &amp; II</p>
@@ -927,7 +977,7 @@
                 </div>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">Spring 2025</div>
                 <h3>Heat Transfer Coefficient Prediction of Nanofluids</h3>
                 <p class="sub">Heat Transfer</p>
@@ -947,7 +997,7 @@
                 </div>
               </article>
 
-              <article class="tl-card">
+              <article class="tl-card reveal">
                 <div class="date">Fall 2024</div>
                 <h3>AI Research Assistant</h3>
                 <p class="sub">Foundations of Data Science</p>
@@ -973,7 +1023,7 @@
 
     <!-- ---------- COURSES ---------- -->
     <section id="courses" class="page">
-      <h2>Courses</h2>
+      <h2 class="reveal">Courses</h2>
       <div class="courses-layout">
         <nav class="course-nav" id="courseNav"><!-- populated by JS --></nav>
         <div class="course-content" id="courseContent"><!-- populated by JS --></div>
@@ -982,21 +1032,21 @@
 
     <!-- ---------- CERTIFICATES ---------- -->
     <section id="certificates" class="page">
-      <h2>Online certificates</h2>
+      <h2 class="reveal">Online certificates</h2>
       <div class="cert-grid" id="certGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- TEACHING ---------- -->
     <section id="teaching" class="page">
-      <h2>Teaching Assistant</h2>
+      <h2 class="reveal">Teaching Assistant</h2>
       <div id="teachContainer"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- SKILLS ---------- -->
     <section id="skills" class="page">
-      <h2>Skills</h2>
+      <h2 class="reveal">Skills</h2>
       <div class="skills-grid">
-        <div class="skill-col">
+        <div class="skill-col reveal">
           <h3>Software</h3>
           <div class="pill-row">
             <span class="pill">ABAQUS</span>
@@ -1007,7 +1057,7 @@
             <span class="pill">AAA</span>
           </div>
         </div>
-        <div class="skill-col">
+        <div class="skill-col reveal">
           <h3>Programming</h3>
           <div class="pill-row">
             <span class="pill">Python</span>
@@ -1015,7 +1065,7 @@
             <span class="pill">SQL</span>
           </div>
         </div>
-        <div class="skill-col">
+        <div class="skill-col reveal">
           <h3>Tools</h3>
           <div class="pill-row">
             <span class="pill">CrewAI</span>
@@ -1031,8 +1081,8 @@
 
     <!-- ---------- CONTACT ---------- -->
     <section id="contact" class="page">
-      <h2>Contact</h2>
-      <div class="contact-box">
+      <h2 class="reveal">Contact</h2>
+      <div class="contact-box reveal">
         <p>Feel free to reach out for academic collaborations, research discussions, or to request full versions of course materials. I am always open to exchanging ideas with researchers and engineers.</p>
         <div class="btn-row">
           <a class="btn btn-outline contact-btn" data-tip="rouzbeh.pourjafarian@ae.sharif.edu" href="mailto:rouzbeh.pourjafarian@ae.sharif.edu">
@@ -1061,6 +1111,30 @@
    ================================================================= */
 const CONTACT_EMAIL    = "rouzbeh.pourjafarian@ae.sharif.edu";
 const CONTACT_LINKEDIN = "https://www.linkedin.com/in/rouzbeh-pourjafarian/";
+
+/* =================================================================
+   SCROLL REVEAL
+   -----------------------------------------------------------------
+   Fades/slides .reveal elements in the first time they enter the
+   viewport (once each), with a small stagger between neighbors.
+   Call observeReveal() again after adding new .reveal elements to
+   the DOM at runtime.
+   ================================================================= */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+function observeReveal(root) {
+  (root || document).querySelectorAll('.reveal:not(.reveal-bound)').forEach((el, i) => {
+    el.classList.add('reveal-bound');
+    el.style.transitionDelay = (i % 6) * 60 + 'ms';
+    revealObserver.observe(el);
+  });
+}
 
 /* =================================================================
    COURSES_DATA
@@ -1653,7 +1727,7 @@ renderCourse(courseSlugs[0]); // initial
 
 /* ---------- CERTIFICATES ---------- */
 document.getElementById('certGrid').innerHTML = CERTIFICATES_DATA.map(cert => `
-  <div class="cert-card">
+  <div class="cert-card reveal">
     <div class="cert-thumb">
       <img src="assets/certificates/${cert.slug}.jpg" alt="${cert.name} certificate"
         onerror="this.style.display='none'; this.parentNode.textContent='Thumbnail: assets/certificates/${cert.slug}.jpg';" />
@@ -1672,7 +1746,7 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
     <h3>${group.semester}</h3>
     <div class="teach-list">
       ${group.entries.map(e => `
-        <div class="teach-item">
+        <div class="teach-item reveal">
           <div class="teach-row">
             <span class="tname">${e.course}</span>
             <span class="tprof">${e.professor}</span>
@@ -1743,6 +1817,10 @@ document.getElementById('themeToggle').addEventListener('click', () => {
   document.body.classList.add(next);
   try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
 });
+
+// Bind the scroll-reveal observer to every .reveal element currently in the
+// DOM (static sections + the certificates/teaching lists rendered above).
+observeReveal(document);
 </script>
 </body>
 </html>
