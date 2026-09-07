@@ -1,0 +1,8 @@
+Project files for the "nanofluid-prediction" showcase card
+(EXTRA_PROJECTS in index.html):
+
+  report.pdf      -> shown when hasReport: true
+  notebook.ipynb  -> offered as a download when hasCode: true
+  thumb.jpg       -> card thumbnail (correlation matrix of nanofluid properties)
+
+Folder name must match the project "slug" in EXTRA_PROJECTS.

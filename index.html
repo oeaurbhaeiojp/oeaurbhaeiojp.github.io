@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Rouzbeh Pourjafarian — Structural Engineer &amp; AI Researcher</title>
+<title>Rouzbeh Pourjafarian: Structural Engineer &amp; AI Researcher</title>
 <meta name="description" content="Personal academic website of Rouzbeh Pourjafarian, M.Sc. Structural Engineering at Sharif University of Technology." />
 
 <!-- Open Graph / social link previews -->
-<meta property="og:title" content="Rouzbeh Pourjafarian — Structural Engineer & AI Researcher">
+<meta property="og:title" content="Rouzbeh Pourjafarian: Structural Engineer & AI Researcher">
 <meta property="og:description" content="M.Sc. Structural Engineering at Sharif University of Technology. Research in composite materials, structural health monitoring, and agentic AI.">
 <meta property="og:image" content="https://oeaurbhaeiojp.github.io/assets/photo.jpg">
 <meta property="og:url" content="https://oeaurbhaeiojp.github.io/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Rouzbeh Pourjafarian — Structural Engineer & AI Researcher">
+<meta name="twitter:title" content="Rouzbeh Pourjafarian: Structural Engineer & AI Researcher">
 <meta name="twitter:description" content="M.Sc. Structural Engineering at Sharif University of Technology.">
 <meta name="twitter:image" content="https://oeaurbhaeiojp.github.io/assets/photo.jpg">
 
@@ -113,7 +113,12 @@
      RESET / BASE
      =========================================================== */
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  /* scroll-padding-top keeps the sticky topbar from covering whatever a
+     native fragment scroll (a #hash in the address bar, a shared link,
+     even scrollIntoView) lands on — without it, the target's top few dozen
+     pixels render right under the topbar instead of below it. --topbar-h is
+     measured in JS; the fallback is the desktop topbar height. */
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h, 65px) + 12px); }
   body {
     margin: 0;
     background: var(--bg);
@@ -139,7 +144,9 @@
     width: 100%;
     background: var(--nav-bg);
     border-bottom: 1px solid var(--border);
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 50;
   }
   /* Static gradient underline — ties the palette together without running
      forever and unprompted; motion here did no rhetorical work for the
@@ -178,8 +185,11 @@
     margin: 0 auto; /* brand on the left, nav centered, toggle pushed far right */
   }
 
-  /* Light/dark theme toggle — icon only, far right of the nav bar */
-  .theme-toggle {
+  .topbar-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+
+  /* Light/dark theme toggle, and (mobile only) the hamburger nav toggle —
+     both are icon-only buttons that crossfade between two SVG states. */
+  .theme-toggle, .nav-toggle {
     position: relative;
     width: 22px;
     height: 22px;
@@ -191,8 +201,8 @@
     flex-shrink: 0;
     transition: color 0.2s ease;
   }
-  .theme-toggle:hover { color: var(--indigo); }
-  .theme-toggle .ticon {
+  .theme-toggle:hover, .nav-toggle:hover { color: var(--indigo); }
+  .theme-toggle .ticon, .nav-toggle .ticon {
     position: absolute;
     inset: 0;
     display: flex;
@@ -202,9 +212,14 @@
     transform: rotate(-90deg) scale(0.5);
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
-  .theme-toggle .ticon svg { display: block; }
+  .theme-toggle .ticon svg, .nav-toggle .ticon svg { display: block; }
   body.dark  .theme-toggle .ticon-moon { opacity: 1; transform: none; }
   body.light .theme-toggle .ticon-sun  { opacity: 1; transform: none; }
+  /* Hidden on desktop entirely — the mobile breakpoint below turns it on. */
+  .nav-toggle { display: none; }
+  .nav-toggle .ticon-menu { opacity: 1; transform: none; }
+  .nav-toggle.open .ticon-menu { opacity: 0; transform: rotate(90deg) scale(0.5); }
+  .nav-toggle.open .ticon-x { opacity: 1; transform: none; }
   .nav a {
     color: var(--text-dim);
     font-size: 0.95rem;
@@ -509,15 +524,23 @@
     gap: 28px;
     align-items: flex-start;
     width: 100%;
+    /* Opening a report is one gesture — the layout widening to full-bleed
+       and the drawer growing open (see .drawer below) — so both run on the
+       same duration and curve. Snapping this instantly while the drawer
+       eased open smoothly was the mismatch that made opening a homework
+       specifically read as abrupt: the box jumped, then the content grew.
+       Yes, this animates width/margin/padding (real layout properties, so
+       it does force a reflow each frame) — accepted deliberately here since
+       it only runs on an occasional, user-triggered open/close, not on a
+       loop or anything performance-sensitive. */
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                margin-left 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Focus mode: when a PDF viewer is open, the whole courses layout (sidebar
      + content) breaks out of the centered column to use the full page width.
-     The sidebar stays visible on the left; the content area takes the rest.
-     This snaps instantly rather than animating width/margin/padding — those
-     are layout properties, so animating them forces a reflow on every frame
-     for the full 0.3s instead of once. The content's own opacity crossfade
-     (driven from JS on course switches) is what reads as "smooth" here. */
+     The sidebar stays visible on the left; the content area takes the rest. */
   .courses-layout.focus-mode {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -526,9 +549,13 @@
 
   .course-nav {
     flex-shrink: 0;
-    width: 200px;
+    width: 280px;
     position: sticky;
-    top: 24px;
+    /* Stop just below the now-fixed topbar rather than under it. --topbar-h
+       is measured in JS (its height changes at the mobile breakpoint, where
+       the topbar wraps to multiple rows) with a same-desktop-height fallback
+       for the instant before that first measurement runs. */
+    top: calc(var(--topbar-h, 65px) + 24px);
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -559,7 +586,10 @@
   }
   .course-content { flex: 1; min-width: 0; }
   .course-content h3.course-title { font-size: 1.45rem; margin: 0 0 4px; }
-  .course-content .course-sub {
+  /* Shared "N of these · M of those" summary line style — used under a
+     section heading wherever a count is worth surfacing (course homework/
+     project counts, and the Projects/Teaching page totals below). */
+  .course-sub {
     color: var(--text-dim);
     font-size: 0.9rem;
     margin: 0 0 24px;
@@ -622,7 +652,12 @@
     border-radius: 9px;
     padding: 12px 16px;
     cursor: pointer;
-    transition: all 0.2s ease, flex-grow 0.25s ease;
+    /* The card widening is part of the same "opening" gesture as its drawer,
+       so it rides the same easing and lands with it rather than ahead of it. */
+    transition: border-color 0.2s ease, background-color 0.2s ease,
+                transform 0.2s ease, box-shadow 0.2s ease,
+                flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                min-width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     overflow: hidden;
   }
   .hw-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.4); }
@@ -659,14 +694,24 @@
   .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
   .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
 
-  /* Accordion drawer (shared by HW + projects) */
+  /* Accordion drawer (shared by HW + projects + showcase cards)
+     -----------------------------------------------------------
+     Animates grid-template-rows 0fr -> 1fr, which resolves to the content's
+     REAL height. The old max-height:0 -> 2600px version spent the whole
+     easing curve on a 2600px range while the content only needed ~900px,
+     so the part you could actually see was over in a third of the time and
+     the open read as a snap. This also removes the 2600px ceiling that
+     would have clipped a long drawer. */
   .drawer {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.35s ease;
   }
-  .drawer.open { max-height: 2600px; opacity: 1; }
+  .drawer.open { grid-template-rows: 1fr; opacity: 1; }
+  /* The 0fr row only collapses if the row's own content can be clipped. */
+  .drawer > .drawer-inner { overflow: hidden; min-height: 0; }
   /* the course content area fades during course switches (set inline in JS) */
   .course-content { transition: opacity 0.3s ease; }
   .drawer-inner { padding: 4px 20px 22px; }
@@ -876,12 +921,42 @@
 
   /* ===========================================================
      RESPONSIVE
+     -----------------------------------------------------------
+     Below 760px: the link row becomes a hamburger-triggered dropdown
+     (brand + hamburger + theme-toggle stay on one row via the `order`
+     values below; .nav is display:none until .open, then takes its own
+     full-width row). Everything past the nav is the rest of the mobile
+     pass: touch targets, grids that would otherwise force horizontal
+     scroll at phone widths, and a couple of desktop-scaled numbers.
      =========================================================== */
   @media (max-width: 760px) {
-    .topbar-inner { padding: 14px 22px; gap: 12px; flex-direction: column; align-items: flex-start; }
-    .nav { margin-left: 0; }
-    .content { padding: 0 22px 100px; }
+    .topbar-inner { padding: 12px 18px; gap: 12px; }
+    .topbar-actions { order: 1; margin-left: auto; }
+    .nav-toggle { display: block; }
+    .nav {
+      display: none;
+      order: 2;
+      width: 100%;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .nav.open { display: flex; }
+    /* Full-width, generously padded rows read as a mobile menu, not a
+       squeezed copy of the desktop link row — and clear the ~44px touch
+       target guideline the desktop underline-on-hover version doesn't
+       need to. */
+    .nav a { padding: 12px 6px; border-bottom: 1px solid var(--border); }
+    .nav a:last-child { border-bottom: none; }
+    .theme-toggle, .nav-toggle { width: 26px; height: 26px; }
+
+    .content { padding: 0 18px 100px; }
     .hero { flex-direction: column-reverse; align-items: flex-start; gap: 22px; padding-top: 4px; }
+    .hero h1 { font-size: 1.9rem; }
+    .hero-photo { width: 128px; height: 128px; }
+
     .courses-layout { flex-direction: column; }
     .course-nav {
       width: 100%;
@@ -890,8 +965,19 @@
       flex-wrap: wrap;
       overflow-x: auto;
     }
+    /* The full-bleed PDF/report view still breaks out to 100vw on mobile,
+       but 40px of side padding is too much to give up on a ~360px phone. */
+    .courses-layout.focus-mode { padding: 0 16px; }
+
     .skills-grid { grid-template-columns: 1fr; }
     .cert-grid { grid-template-columns: 1fr; }
+    /* Two 220px-min cards side by side force horizontal squeeze/scroll
+       well before 760px; one per row avoids it entirely. */
+    .hw-row { flex-direction: column; }
+    .hw-card.open { flex-grow: 1; }
+    .hw-card.sibling-open { flex-grow: 1; min-width: 0; }
+    /* minmax(360px, 1fr) is wider than the viewport itself on a phone. */
+    .proj-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -921,14 +1007,26 @@
       <a href="#skills">Skills &amp; Certificates</a>
       <a href="#contact">Contact</a>
     </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
-      <span class="ticon ticon-moon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      </span>
-      <span class="ticon ticon-sun">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-      </span>
-    </button>
+    <div class="topbar-actions">
+      <!-- Mobile only (see the 760px breakpoint): .nav is hidden and this
+           toggles it open as a full-width dropdown instead. -->
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mainNav">
+        <span class="ticon ticon-menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </span>
+        <span class="ticon ticon-x">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </span>
+      </button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
+        <span class="ticon ticon-moon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </span>
+        <span class="ticon ticon-sun">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -999,7 +1097,7 @@
       <div class="timeline">
 
               <article class="tl-card reveal">
-                <div class="date">10/25 – 04/26</div>
+                <div class="date">10/25 to 04/26</div>
                 <h3>LLM-based multi-agent mechanism design</h3>
                 <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
                 <p>Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG)
@@ -1008,7 +1106,7 @@
               </article>
 
               <article class="tl-card reveal">
-                <div class="date">07/25 – 08/25</div>
+                <div class="date">07/25 to 08/25</div>
                 <h3>Inverse finite element method &amp; acoustic emission</h3>
                 <p class="sub">Personal Research</p>
                 <p>Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of
@@ -1017,7 +1115,7 @@
               </article>
 
               <article class="tl-card reveal">
-                <div class="date">02/25 – 07/25</div>
+                <div class="date">02/25 to 07/25</div>
                 <h3>Structural health monitoring &amp; damage detection</h3>
                 <p class="sub">Bachelor Thesis · Dr. Abedian</p>
                 <p>Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural
@@ -1026,7 +1124,7 @@
               </article>
 
               <article class="tl-card reveal">
-                <div class="date">01/23 – 07/23</div>
+                <div class="date">01/23 to 07/23</div>
                 <h3>UAV autopilot system development</h3>
                 <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
                 <p>Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission
@@ -1035,9 +1133,9 @@
               </article>
 
               <article class="tl-card reveal">
-                <div class="date">06/22 – 08/22</div>
+                <div class="date">06/22 to 08/22</div>
                 <h3>Battery thermal system</h3>
-                <p class="sub">RAeS Competition — Lyrebird Electric STOL Aircraft</p>
+                <p class="sub">RAeS Competition: Lyrebird Electric STOL Aircraft</p>
                 <p>Designed and simulated a battery cooling system for an electric STOL aircraft using
                   COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow
                   in compact wing-mounted ducts. Validated the thermal design maintaining battery
@@ -1057,6 +1155,7 @@
          `featured` + EXTRA_PROJECTS), so nothing here is kept in sync by hand. -->
     <section id="projects" class="page">
       <h2 class="reveal">Projects</h2>
+      <p class="course-sub" id="projectsCount"><!-- populated by JS --></p>
       <div class="cproj-grid" id="courseProjGrid"><!-- populated by JS --></div>
     </section>
 
@@ -1072,13 +1171,14 @@
     <!-- ---------- TEACHING ---------- -->
     <section id="teaching" class="page">
       <h2 class="reveal">Teaching Assistant</h2>
+      <p class="course-sub" id="teachCount"><!-- populated by JS --></p>
       <div id="teachContainer"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- SKILLS & CERTIFICATES ----------
-         Both answer the same question — what this person knows and has been
-         credentialed in — as opposed to Research/Projects/Courses, which
-         answer what they have actually done. -->
+         Both answer the same question: what this person knows and has been
+         credentialed in. This is different from Research/Projects/Courses,
+         which answer what they have actually done. -->
     <section id="skills" class="page">
       <h2 class="reveal">Skills</h2>
       <div class="skills-grid">
@@ -1293,8 +1393,8 @@ const COURSES_DATA = {
         slug: "agentic-llm-wingbox-design",
         kind: "Project",
         featured: true,
-        period: "Fall 2025 – Spring 2026",
-        summary: "An agentic system that sizes an aircraft wing box — the LLM makes only the engineer's judgment calls, unit-tested Python computes every number. Lands within ~5% of a published design's optimized weight.",
+        period: "Fall 2025 to Spring 2026",
+        summary: "An agentic system that sizes an aircraft wing box: the LLM makes only the engineer's judgment calls, and unit-tested Python computes every number. Lands within ~5% of a published design's optimized weight.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
         description: "Abstract: this report presents the architecture and engineering basis of an agentic artificial-intelligence system for the preliminary structural sizing of a transport-aircraft wing box. Rather than a hand or spreadsheet-driven design cycle, the system is organized as a directed graph of specialist computational and decision nodes, built with LangGraph, in which a large language model (LLM) is restricted to exactly the judgment calls a structural engineer would make, such as material family, spar location, stringer catalogue selection, web architecture and joint configuration, while every numerical quantity is produced by a deterministic, unit-tested Python implementation of the classical sizing methods of Niu, Megson and Roskam. This is a project report, not a paper-reproduction study: the system is presented on its own terms, and an external published design is used once, as a validation benchmark, rather than as the report's own subject. The report first reviews the traditional, manual wing-box design process the system's phases are modeled on, then introduces the general concepts of agentic AI, large language models and the LangGraph orchestration framework, and describes how these are combined into the present system: its graph topology, the enforced separation between LLM decisions and Python computations, the material-selection method (an Ashby structural index combined with alloy-family screening and Pareto-front trade-off selection), and the governing equations used at each design phase. Implementation details are discussed next, followed by two verification benchmarks of deliberately different scope. The narrow one, a single cross-section worked by hand in the course lecture material, is reproduced to tabulated precision as an automated acceptance gate and surfaced four notational and arithmetic slips in the reference itself along the way. The broad one runs the complete pipeline, with the live LLM decider in every judgment node, against a real, independently published wing-box design (a Pilatus PC-21/Super Tucano-class trainer wing from a METU MSc thesis) and converges on a wingbox weight within about five percent of that design's own optimized result, corroborated by a real Abaqus finite-element solve of the converged geometry.",
         tags: ["LLM", "Python", "Aircraft Structures"],
@@ -1354,7 +1454,7 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Fall 2025",
-        summary: "A published neural-network surrogate for composite damage mechanics, rebuilt from the paper's text and figures alone — its authors released neither code nor data. All five acceptance criteria met.",
+        summary: "A published neural-network surrogate for composite damage mechanics, rebuilt from the paper's text and figures alone; its authors released neither code nor data. All five acceptance criteria met.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
         description: "Abstract: this report reproduces Yan, Zou, Ilkhani and Jones (2020), Composites Part B 194:108014, in which three artificial neural networks (ANNs), trained on the response of a mesoscale unit cell, replace a Linde-type continuum damage mechanics (CDM) user subroutine (UMAT) at the macro scale. The original authors released neither code nor data, so every component, including the constitutive model, the periodic unit cell, the training dataset, the three networks, and the macro-scale UMAT, was rebuilt independently from the text and figures of the paper. The reproduction is evaluated against five acceptance criteria spanning the regression network's accuracy, the two classifiers' accuracy, the open-hole plate benchmark, and the reported computational speed-up. All five are met.",
         tags: ["Neural Network"],
@@ -1383,7 +1483,7 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Spring 2026",
-        summary: "An LLM agent that writes the optimization problem itself, then diagnoses and repairs its own formulation. In a blind test it reproduced a published Pareto front exactly — all 37 designs.",
+        summary: "An LLM agent that writes the optimization problem itself, then diagnoses and repairs its own formulation. In a blind test it reproduced a published Pareto front exactly: all 37 designs.",
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
         description: "Abstract: in multi-objective optimization of composite structures, the problem formulation is set by the designer, who decides ahead of the run on suitable objective functions, constraints and design variables, and if the response is unsuitable, revises the problem and repeats the run. This work hands that same loop to a large-language-model-based agent. The agent takes a design description in natural language, extracts the mathematical problem formulation, and passes it to the NSGA-II algorithm through a typed contract; it then diagnoses the cause if the resulting Pareto front is degenerate or any other issue exists, and revises the formulation accordingly. All physical computations are carried out in a deterministic kernel, and the language model never computes any physical quantity; failure detection is likewise deterministic and threshold-based, and the model only selects a single remedial action from a closed list. For evaluation, a problem from a published paper on multi-objective optimization of a composite plate was solved twice, once with a manual formulation and once with the agent's automatic formulation, in a blind test. The agent's search scored a perfect match, and under an equal search budget its formulation produced exactly the same front: all 37 designs with the same number of layers, the same stacking sequence, and zero difference in buckling load. The deterministic kernel also reproduced the paper's analytical numbers with a worst-case error of 0.001 percent. Finally, on a deliberately defective request, the feedback loop found the bug within four iterations, revised the formulation twice, and improved the front's hypervolume by 4.17 and then 36.13 percent.",
         tags: ["NSGA-II", "LLM", "Composite Optimization"],
@@ -1421,6 +1521,46 @@ const COURSES_DATA = {
         code: ""
       }
     ]
+  },
+
+  "foundations-of-data-science": {
+    name: "Foundations of Data Science",
+    instructor: "Dr. Khalaj",
+    instructorUrl: "https://sharif.edu",
+    // These homeworks link a notebook (.ipynb), not a PDF: `notebook: true`
+    // renders a summary + a direct download link instead of the PDF viewer.
+    homeworks: [
+      { id: 1, topic: "Pandas data wrangling &amp; visualization", notebook: true,
+        summary: "Cleaned and queried e-commerce, Canadian cheese, and Glassdoor job-listing datasets with Pandas, and reproduced FiveThirtyEight's COVID-19 polling graphs from public data." },
+      { id: 2, topic: "Web scraping &amp; statistical hypothesis testing", notebook: true,
+        summary: "Scraped current NBA season-leader and player stats from the league's own site, then tested attribute-ranking relationships on a 1950 to 2022 dataset with t-tests, ANOVA, and Pearson/Spearman correlation." },
+      { id: 3, topic: "Classification, dimensionality reduction &amp; graph community detection", notebook: true,
+        summary: "Built Naive Bayes/SVM/KNN classifiers on IMDB review sentiment, ran PCA/MDS/t-SNE on breast-cancer and fruit data, and detected communities in the Zachary's Karate Club and Marvel Universe networks via hierarchical, Louvain, Girvan Newman, and spectral clustering." },
+      { id: 4, topic: "CNN transfer learning &amp; generative models (VQ-VAE)", notebook: true,
+        summary: "Trained a CNN and fine-tuned pretrained models (transfer learning) to classify chest X-rays for pneumonia, then implemented a VQ-VAE from scratch to generate CIFAR-10 images." },
+      { id: 5, topic: "NLP embeddings, spaCy pipelines &amp; AutoML deployment", notebook: true,
+        summary: "Ran POS tagging and NER with spaCy over arXiv abstracts, compared BoW/TF-IDF/GloVe embeddings for a citation-year regression, explored embedding-space orthogonality, and deployed a model with H2O AutoML tracked via DVC." }
+    ],
+    projects: [
+      {
+        slug: "ai-research-assistant",
+        kind: "Project",
+        featured: true,
+        period: "Fall 2024 to Winter 2025",
+        summary: "A multi-part pipeline over a scholarly-citation dataset (network analysis, author-community detection, and citation regression) feeding a retrieval-augmented research assistant.",
+        title: "Research Assistant",
+        description: "Built on a dataset of scholarly articles through 2017, combined with papers crawled from Semantic Scholar across five AI subfields as a held-out test set. Beyond exploratory and network analysis (citation, co-authorship, and venue networks, including PageRank and centrality measures over time), the project detects author communities via graph clustering (Louvain, Label Propagation, Girvan Newman), names them from extracted keywords, and clusters papers by embedding similarity. A citation-count regressor (RandomForestRegressor, tuned via GridSearchCV) predicts citations from text and publication-year features, with a bonus Graph Neural Network variant over the co-authorship network. The final product is a retrieval-augmented assistant: a FAISS vector index over paper embeddings supports topic queries (expanded via KeyBERT) and author queries (via spaCy named-entity recognition), with an optional LLM-generated summary of the retrieved papers.",
+        tags: ["Network Analysis", "Clustering", "RAG", "FAISS"],
+        reports: [
+          { label: "Report: Phase 0 (Data Crawling)", file: "phase0.pdf" },
+          { label: "Report: Phase 1 (Final Project)", file: "phase1.pdf" }
+        ],
+        hasReport: false,
+        hasSlides: false,
+        hasCode: false,
+        code: ""
+      }
+    ]
   }
 };
 
@@ -1435,13 +1575,15 @@ const COURSES_DATA = {
      abstract -> the longer text revealed when the card is opened (omit
                  it and the card simply shows the report)
      hasReport-> whether base + "/report.pdf" should be offered
+     hasCode  -> whether base + "/notebook.ipynb" should be offered as a
+                 download (for projects whose deliverable is a notebook)
    ================================================================= */
 const EXTRA_PROJECTS = [
   {
     slug: "stol-air-taxi",
     base: "assets/projects/stol-air-taxi",
     course: "Aircraft Design I & II",
-    period: "Fall 2024 – Spring 2025",
+    period: "Fall 2024 to Spring 2025",
     title: "Hybrid-Electric STOL Air Taxi",
     summary: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion.",
     abstract: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion. Created 3D CAD models in SolidWorks and performed stress, deformation, and buckling analysis in ABAQUS.",
@@ -1454,21 +1596,11 @@ const EXTRA_PROJECTS = [
     course: "Heat Transfer",
     period: "Spring 2025",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
-    summary: "A machine learning pipeline predicting nanofluid heat transfer coefficients across four regression models.",
-    abstract: "Developed a machine learning pipeline to predict nanofluid heat transfer coefficients. Implemented Linear, Polynomial, Random Forest, and Neural Network regression models evaluated using MAE, MSE, and R².",
-    tags: ["Python", "Machine Learning", "Scikit-learn", "Neural Networks"],
-    hasReport: true
-  },
-  {
-    slug: "ai-research-assistant",
-    base: "assets/projects/ai-research-assistant",
-    course: "Foundations of Data Science",
-    period: "Fall 2024",
-    title: "AI Research Assistant",
-    summary: "A RAG pipeline over 10,000+ crawled AI papers that retrieves and summarizes scholarly articles.",
-    abstract: "Designed an AI research assistant to retrieve and summarize scholarly articles. Crawled 10,000+ AI papers from Semantic Scholar, built a RAG pipeline using FAISS, LangChain, and OpenAI API for semantic search and automated summaries.",
-    tags: ["Python", "RAG", "LangChain", "FAISS", "NLP", "KeyBERT"],
-    hasReport: false
+    summary: "A regression pipeline that predicts the convective heat transfer coefficient of nanofluids from their physical and chemical properties.",
+    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models — linear, degree-2 polynomial, random forest, and an MLP neural network — are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction. Random forest gave the best accuracy on the held-out set.",
+    tags: ["Python", "scikit-learn", "Regression", "Random Forest", "Neural Networks"],
+    hasReport: true,
+    hasCode: true
   }
 ];
 
@@ -1503,7 +1635,7 @@ const TEACHING_DATA = [
   {
     semester: "Fall 2025",
     entries: [
-      { course: "Aircraft Structures", professor: "Dr. Kouchakzadeh", role: "TA",
+      { course: "Aircraft Structures", professor: "Dr. Kouchakzadeh", role: "Head TA",
         duties: "Conducted TA sessions, designed and graded assignments and quizzes" },
       { course: "Mechanics of Materials", professor: "Dr. Hosseini Kordkheili", role: "Head TA",
         duties: "Prepared TA session slides, designed exercises, coordinated TA team, evaluated performance" },
@@ -1578,10 +1710,23 @@ function pdfViewer(src) {
       <div class="pdf-slot" data-src="${src}">
         <div class="pdf-placeholder">
           <div class="pp-icon">${ICON_FILE}</div>
-          <div>PDF will appear here — upload to</div>
+          <div>PDF will appear here once uploaded to</div>
           <code>${src}</code>
         </div>
       </div>
+    </div>`;
+}
+
+// For a homework whose work is a Jupyter notebook rather than a PDF: the
+// summary of what was done, plus a direct download link (browsers have no
+// built-in .ipynb viewer, so linking it is the honest option — no iframe to
+// fake a preview with).
+function notebookBlock(hw, src) {
+  const filename = src.split('/').pop();
+  return `
+    <div style="padding-top:14px">
+      ${hw.summary ? `<p>${hw.summary}</p>` : ''}
+      <a class="btn btn-sm btn-outline" href="${src}" download data-guard>${ICON_FILE}Download notebook (${filename})</a>
     </div>`;
 }
 
@@ -1646,7 +1791,8 @@ function showcaseProjects() {
         abstract: p.description,
         tags: p.tags,
         hasReport: p.hasReport,
-        hasSlides: p.hasSlides
+        hasSlides: p.hasSlides,
+        reports: p.reports
       });
     });
   });
@@ -1660,7 +1806,9 @@ function showcaseProjects() {
     abstract: p.abstract,
     tags: p.tags,
     hasReport: p.hasReport,
-    hasSlides: false
+    hasSlides: false,
+    hasCode: p.hasCode,
+    reports: p.reports
   }));
   return out;
 }
@@ -1678,7 +1826,18 @@ function showcaseCardHtml(item, prefix) {
         <p class="showcase-abstract">${item.abstract}</p>
       </div>`;
   }
-  if (item.hasReport) {
+  if (item.reports && item.reports.length) {
+    // Multiple named reports (e.g. one per project phase) instead of the
+    // single default report.pdf — each gets its own labeled viewer.
+    item.reports.forEach(rep => {
+      blocks += `
+        <div class="proj-block">
+          <p class="proj-block-label">${rep.label}</p>
+          ${pdfViewer(item.base + '/' + rep.file)}
+          ${redactionNotice()}
+        </div>`;
+    });
+  } else if (item.hasReport) {
     blocks += `
       <div class="proj-block">
         <p class="proj-block-label">Report</p>
@@ -1692,6 +1851,15 @@ function showcaseCardHtml(item, prefix) {
         <p class="proj-block-label">Slides</p>
         ${pdfViewer(item.base + '/slides.pdf')}
         ${redactionNotice()}
+      </div>`;
+  }
+  if (item.hasCode) {
+    // Deliverable is a Jupyter notebook — browsers have no viewer for it,
+    // so a download link is the honest option (same as the homework pages).
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">Code</p>
+        <a class="btn btn-sm btn-outline" href="${item.base}/notebook.ipynb" download data-guard>${ICON_FILE}Download notebook (notebook.ipynb)</a>
       </div>`;
   }
 
@@ -1818,18 +1986,19 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
   for (let i = 0; i < c.homeworks.length; i += 2) {
     const pair = c.homeworks.slice(i, i + 2);
     hwCards += `<div class="hw-row">` + pair.map(hw => `
-      <div class="hw-card" data-hw="${hw.id}" role="button" tabindex="0" aria-expanded="false" aria-controls="hwdrawer-${slug}-${hw.id}" onclick="toggleHw(this)" onkeydown="activateOnKey(event, this, toggleHw)" title="HW ${hw.id} — ${hw.topic}">
+      <div class="hw-card" data-hw="${hw.id}" role="button" tabindex="0" aria-expanded="false" aria-controls="hwdrawer-${slug}-${hw.id}" onclick="toggleHw(this)" onkeydown="activateOnKey(event, this, toggleHw)" title="HW ${hw.id}: ${hw.topic}">
         <span class="hw-num">HW ${hw.id}</span>
-        <span class="hw-sep">—</span>
+        <span class="hw-sep">·</span>
         <span class="hw-topic">${hw.topic}</span>
       </div>`).join('') + `</div>`;
     hwCards += pair.map(hw => {
-      const src = `assets/courses/${slug}/hw/HW${hw.id}.pdf`;
+      const inner = hw.notebook
+        ? notebookBlock(hw, `assets/courses/${slug}/hw/HW${hw.id}.ipynb`)
+        : `<div style="padding-top:14px">${pdfViewer(`assets/courses/${slug}/hw/HW${hw.id}.pdf`)}</div>${redactionNotice()}`;
       return `
       <div class="drawer hw-drawer" id="hwdrawer-${slug}-${hw.id}" data-drawer="${hw.id}">
         <div class="drawer-inner">
-          <div style="padding-top:14px">${pdfViewer(src)}</div>
-          ${redactionNotice()}
+          ${inner}
         </div>
       </div>`;
     }).join('');
@@ -1840,7 +2009,18 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
   function projCardHtml(p) {
     const base = `assets/courses/${slug}/projects/${p.slug}`;
     let blocks = '';
-    if (p.hasReport) {
+    if (p.reports && p.reports.length) {
+      // Multiple named reports (e.g. one per project phase) instead of the
+      // single default report.pdf — each gets its own labeled viewer.
+      p.reports.forEach(rep => {
+        blocks += `
+          <div class="proj-block">
+            <p class="proj-block-label">${rep.label}</p>
+            ${pdfViewer(base + '/' + rep.file)}
+            ${redactionNotice()}
+          </div>`;
+      });
+    } else if (p.hasReport) {
       blocks += `
         <div class="proj-block">
           <p class="proj-block-label">Report</p>
@@ -2045,6 +2225,8 @@ document.getElementById('featuredGrid').innerHTML =
   showcaseItems.filter(i => flagshipIds.has(i.id)).map(i => showcaseCardHtml(i, 'sel')).join('');
 document.getElementById('courseProjGrid').innerHTML =
   showcaseItems.map(i => showcaseCardHtml(i, 'cp')).join('');
+document.getElementById('projectsCount').textContent =
+  `${showcaseItems.length} project${showcaseItems.length !== 1 ? 's' : ''}`;
 
 /* ---------- TEACHING ---------- */
 document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
@@ -2064,6 +2246,15 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
   </div>
 `).join('');
 
+// Total appointments, broken down by role — the same "N of these · M of
+// those" summary the course pages already give homeworks/projects.
+const allTeachEntries = TEACHING_DATA.flatMap(g => g.entries);
+const headTaCount = allTeachEntries.filter(e => e.role === 'Head TA').length;
+const taCount = allTeachEntries.length - headTaCount;
+document.getElementById('teachCount').textContent =
+  `${allTeachEntries.length} appointment${allTeachEntries.length !== 1 ? 's' : ''}: `
+  + `${taCount} as TA` + (headTaCount ? ` · ${headTaCount} as Head TA` : '');
+
 /* =================================================================
    SPA PAGE ROUTER
    -----------------------------------------------------------------
@@ -2078,6 +2269,7 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
      #courses/<courseSlug>                (that course)
      #courses/<courseSlug>/<projectSlug>  (that course, that project open)
    ================================================================= */
+const mainNav  = document.getElementById('mainNav');
 const navLinks = document.querySelectorAll('#mainNav a');
 const pages    = document.querySelectorAll('.page');
 
@@ -2112,11 +2304,31 @@ function applyRoute(rawHash) {
   }
 }
 
+/* =================================================================
+   MOBILE NAV  (hamburger dropdown, <760px — see the breakpoint in <style>)
+   ================================================================= */
+const navToggle = document.getElementById('navToggle');
+function setMobileNavOpen(open) {
+  mainNav.classList.toggle('open', open);
+  navToggle.classList.toggle('open', open);
+  navToggle.setAttribute('aria-expanded', String(open));
+}
+navToggle.addEventListener('click', () => setMobileNavOpen(!mainNav.classList.contains('open')));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mainNav.classList.contains('open')) setMobileNavOpen(false);
+});
+// A resize past the breakpoint (rotating a tablet, widening a browser
+// window) shouldn't leave the dropdown stuck open with nowhere to hide.
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 760) setMobileNavOpen(false);
+});
+
 navLinks.forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
     const id = a.getAttribute('href').slice(1);
     showPage(id);
+    setMobileNavOpen(false);
     // Courses keeps whichever course is already on screen, so the URL has to
     // name it — a bare "#courses" would send anyone the link is shared with
     // to the first course instead of the one actually being looked at.
@@ -2148,6 +2360,22 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 // Bind the scroll-reveal observer to every .reveal element currently in the
 // DOM (static sections + the certificates/teaching lists rendered above).
 observeReveal(document);
+
+/* =================================================================
+   TOPBAR HEIGHT
+   -----------------------------------------------------------------
+   The topbar is sticky now (stays put while scrolling). Feeds --topbar-h
+   so the sticky course sidebar (see .course-nav) stops just below it
+   instead of sliding underneath. Re-measured on resize because the
+   topbar wraps to multiple rows — and grows taller — at the mobile
+   breakpoint.
+   ================================================================= */
+function syncTopbarHeight() {
+  const h = document.querySelector('.topbar').offsetHeight;
+  document.documentElement.style.setProperty('--topbar-h', h + 'px');
+}
+syncTopbarHeight();
+window.addEventListener('resize', syncTopbarHeight);
 
 /* =================================================================
    LINK GUARDS  (CV download, standalone "View report" links)
