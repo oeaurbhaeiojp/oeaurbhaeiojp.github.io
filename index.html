@@ -1299,6 +1299,7 @@ const COURSES_DATA = {
         summary: "An agentic system that sizes an aircraft wing box: the LLM makes only the engineer's judgment calls, and unit-tested Python computes every number. Lands within ~5% of a published design's optimized weight.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
         description: "Abstract: this report presents the architecture and engineering basis of an agentic artificial-intelligence system for the preliminary structural sizing of a transport-aircraft wing box. Rather than a hand or spreadsheet-driven design cycle, the system is organized as a directed graph of specialist computational and decision nodes, built with LangGraph, in which a large language model (LLM) is restricted to exactly the judgment calls a structural engineer would make, such as material family, spar location, stringer catalogue selection, web architecture and joint configuration, while every numerical quantity is produced by a deterministic, unit-tested Python implementation of the classical sizing methods of Niu, Megson and Roskam. This is a project report, not a paper-reproduction study: the system is presented on its own terms, and an external published design is used once, as a validation benchmark, rather than as the report's own subject. The report first reviews the traditional, manual wing-box design process the system's phases are modeled on, then introduces the general concepts of agentic AI, large language models and the LangGraph orchestration framework, and describes how these are combined into the present system: its graph topology, the enforced separation between LLM decisions and Python computations, the material-selection method (an Ashby structural index combined with alloy-family screening and Pareto-front trade-off selection), and the governing equations used at each design phase. Implementation details are discussed next, followed by two verification benchmarks of deliberately different scope. The narrow one, a single cross-section worked by hand in the course lecture material, is reproduced to tabulated precision as an automated acceptance gate and surfaced four notational and arithmetic slips in the reference itself along the way. The broad one runs the complete pipeline, with the live LLM decider in every judgment node, against a real, independently published wing-box design (a Pilatus PC-21/Super Tucano-class trainer wing from a METU MSc thesis) and converges on a wingbox weight within about five percent of that design's own optimized result, corroborated by a real Abaqus finite-element solve of the converged geometry.",
+        achievements: "Run end to end with the live model making every judgment call, it settled on a wing-box weight within about 5% of a published METU master's design, and a full Abaqus solve of the converged geometry backed that up. The hand-worked cross-section it checks itself against is matched to the last tabulated digit — and reproducing it turned up four arithmetic and notation errors in the reference itself.",
         tags: ["LLM", "Python", "Aircraft Structures"],
         hasReport: true,
         hasSlides: false,
@@ -1359,6 +1360,7 @@ const COURSES_DATA = {
         summary: "A published neural-network surrogate for composite damage mechanics, rebuilt from the paper's text and figures alone; its authors released neither code nor data. All five acceptance criteria met.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
         description: "Abstract: this report reproduces Yan, Zou, Ilkhani and Jones (2020), Composites Part B 194:108014, in which three artificial neural networks (ANNs), trained on the response of a mesoscale unit cell, replace a Linde-type continuum damage mechanics (CDM) user subroutine (UMAT) at the macro scale. The original authors released neither code nor data, so every component, including the constitutive model, the periodic unit cell, the training dataset, the three networks, and the macro-scale UMAT, was rebuilt independently from the text and figures of the paper. The reproduction is evaluated against five acceptance criteria spanning the regression network's accuracy, the two classifiers' accuracy, the open-hole plate benchmark, and the reported computational speed-up. All five are met.",
+        achievements: "With no code or data from the original authors, the whole chain — damage model, periodic unit cell, training set, the three networks, and the macro-scale UMAT — was rebuilt from the paper's text and figures alone. Held against the five acceptance criteria fixed at the start (regression accuracy, both classifier accuracies, the open-hole plate benchmark, and the reported speed-up), it clears all five.",
         tags: ["Neural Network"],
         hasReport: true,
         hasSlides: false,
@@ -1388,6 +1390,7 @@ const COURSES_DATA = {
         summary: "An LLM agent that writes the optimization problem itself, then diagnoses and repairs its own formulation. In a blind test it reproduced a published Pareto front exactly: all 37 designs.",
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
         description: "Abstract: in multi-objective optimization of composite structures, the problem formulation is set by the designer, who decides ahead of the run on suitable objective functions, constraints and design variables, and if the response is unsuitable, revises the problem and repeats the run. This work hands that same loop to a large-language-model-based agent. The agent takes a design description in natural language, extracts the mathematical problem formulation, and passes it to the NSGA-II algorithm through a typed contract; it then diagnoses the cause if the resulting Pareto front is degenerate or any other issue exists, and revises the formulation accordingly. All physical computations are carried out in a deterministic kernel, and the language model never computes any physical quantity; failure detection is likewise deterministic and threshold-based, and the model only selects a single remedial action from a closed list. For evaluation, a problem from a published paper on multi-objective optimization of a composite plate was solved twice, once with a manual formulation and once with the agent's automatic formulation, in a blind test. The agent's search scored a perfect match, and under an equal search budget its formulation produced exactly the same front: all 37 designs with the same number of layers, the same stacking sequence, and zero difference in buckling load. The deterministic kernel also reproduced the paper's analytical numbers with a worst-case error of 0.001 percent. Finally, on a deliberately defective request, the feedback loop found the bug within four iterations, revised the formulation twice, and improved the front's hypervolume by 4.17 and then 36.13 percent.",
+        achievements: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one — all 37 designs, the same stacking sequences, no difference in buckling load — while the deterministic kernel matched the paper's analytical figures to within 0.001%. Given a deliberately broken problem, the feedback loop located the fault within four iterations and raised the front's hypervolume by about 4% and then a further 36%.",
         tags: ["NSGA-II", "LLM", "Composite Optimization"],
         hasReport: true,
         hasSlides: false,
@@ -1452,6 +1455,7 @@ const COURSES_DATA = {
         summary: "A multi-part pipeline over a scholarly-citation dataset (network analysis, author-community detection, and citation regression) feeding a retrieval-augmented research assistant.",
         title: "Research Assistant",
         description: "Built on a dataset of scholarly articles through 2017, combined with papers crawled from Semantic Scholar across five AI subfields as a held-out test set. Beyond exploratory and network analysis (citation, co-authorship, and venue networks, including PageRank and centrality measures over time), the project detects author communities via graph clustering (Louvain, Label Propagation, Girvan Newman), names them from extracted keywords, and clusters papers by embedding similarity. A citation-count regressor (RandomForestRegressor, tuned via GridSearchCV) predicts citations from text and publication-year features, with a bonus Graph Neural Network variant over the co-authorship network. The final product is a retrieval-augmented assistant: a FAISS vector index over paper embeddings supports topic queries (expanded via KeyBERT) and author queries (via spaCy named-entity recognition), with an optional LLM-generated summary of the retrieved papers.",
+        achievements: "The graph clustering pulls out author communities that map onto recognisable research groups once they are named from their own keywords, and the citation regressor, trained on pre-2017 papers, carries over to the freshly crawled test set. It comes together in a working assistant that takes either a topic or an author name, retrieves the relevant papers through the FAISS index, and can hand back an LLM summary of what it found.",
         tags: ["Network Analysis", "Clustering", "RAG", "FAISS"],
         reports: [
           { label: "Report: Phase 0 (Data Crawling)", file: "phase0.pdf" },
@@ -1472,13 +1476,13 @@ const COURSES_DATA = {
    Course projects whose course is NOT in COURSES_DATA (no homework or
    syllabus page of its own), so they live here instead. They render with
    the same card as the featured ones.
-     base     -> asset folder; report.pdf and thumb.jpg are read from it
-     summary  -> the two lines shown on the collapsed card
-     abstract -> the longer text revealed when the card is opened (omit
-                 it and the card simply shows the report)
-     hasReport-> whether base + "/report.pdf" should be offered
-     hasCode  -> whether base + "/notebook.ipynb" should be offered as a
-                 download (for projects whose deliverable is a notebook)
+     base        -> asset folder; thumb.jpg (and open.jpg) are read from it
+     summary     -> the two lines shown on the collapsed card
+     abstract    -> the longer text revealed when the card is opened
+     achievements-> a short "how it turned out" note under the abstract
+     hasCode     -> whether base + "/notebook.ipynb" should be offered as a
+                    download (for projects whose deliverable is a notebook)
+   No report PDF: the showcase cards are text-only by design.
    ================================================================= */
 const EXTRA_PROJECTS = [
   {
@@ -1489,8 +1493,7 @@ const EXTRA_PROJECTS = [
     title: "Hybrid-Electric STOL Air Taxi",
     summary: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion.",
     abstract: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion. Created 3D CAD models in SolidWorks and performed stress, deformation, and buckling analysis in ABAQUS.",
-    tags: ["ABAQUS", "SolidWorks", "FEM", "Structural Analysis"],
-    hasReport: true
+    tags: ["ABAQUS", "SolidWorks", "FEM", "Structural Analysis"]
   },
   {
     slug: "nanofluid-prediction",
@@ -1499,9 +1502,9 @@ const EXTRA_PROJECTS = [
     period: "Spring 2025",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
     summary: "A regression pipeline that predicts the convective heat transfer coefficient of nanofluids from their physical and chemical properties.",
-    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models (linear, degree-2 polynomial, random forest, and an MLP neural network) are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction. Random forest gave the best accuracy on the held-out set.",
+    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models (linear, degree-2 polynomial, random forest, and an MLP neural network) are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction.",
+    achievements: "Of the four models, the random forest came out ahead on every measure (MAE, MSE, R²) on the held-out data. The correlation study made the reason clear — nanoparticle concentration, density and thermal conductivity move almost in lockstep with the heat-transfer coefficient (about 0.97) — and a permutation-importance check pointed at the same few features.",
     tags: ["Python", "scikit-learn", "Regression", "Random Forest", "Neural Networks"],
-    hasReport: true,
     hasCode: true
   }
 ];
@@ -1515,9 +1518,10 @@ const EXTRA_PROJECTS = [
    `course` doubles as the role/lab line shown under the title.
    thumbnail -> assets/research/<id>/thumb.jpg   (collapsed card)
    Optional, same as the Projects showcase cards:
-     reports       -> [{label, file}] labeled PDF viewers, files under base/
-     hasFigure     -> render base/open.jpg as a figure under the abstract
+     achievements  -> a short "how it turned out" note under the abstract
+     hasFigure     -> render base/open.jpg as a figure under the text
      figureCaption -> caption under that figure
+   No report PDF: the cards are text-only by design.
    ================================================================= */
 const RESEARCH_DATA = [
   {
@@ -1547,6 +1551,7 @@ const RESEARCH_DATA = [
     summary: "One continuous line of work — a survey of SHM methods, an ABAQUS piezoelectric Lamb-wave model that detects a crack from sensor signals, and a four-transducer network that then localizes it to within ~10 mm.",
     abstract: "One continuous body of work on piezoelectric guided-wave structural health monitoring (SHM), begun as a bachelor thesis under Dr. Ali Abedian and carried forward afterwards. It runs in three stages. <strong>Method survey:</strong> vibration-based methods, acoustic emission, ultrasonic guided (Lamb) waves, fibre-optic and distributed sensing, vision-based inspection, electromechanical impedance, machine-learning diagnosis and infrared thermography were reviewed and compared, and bonded piezoelectric (PZT) transducers with Lamb-wave excitation were chosen as the sensing approach. <strong>Damage detection:</strong> a verified ABAQUS finite-element model of an aluminium plate with bonded PZT patches was built for a healthy and a cracked state, driven with a Hann-windowed tone burst, and the electrode voltages compared — the crack produces a clear, repeatable signature (peak-amplitude drop, shifted S0 arrival, changed waveform shape) that works as a reliable damage index. <strong>Damage localization:</strong> the model was grown to a four-PZT network with six independent propagation paths, and a probability-based diagnostic imaging (PDI) algorithm was implemented that places the crack within about 10 mm of its true position on a 400 mm plate. That result was cross-checked against an independent time-of-flight delay-and-sum image and validated against the full-field simulated wavefield, which shows the crack radiating as a point scatterer exactly where it was placed.",
     tags: ["ABAQUS", "Lamb waves", "Piezoelectric (PZT)", "Guided-wave SHM", "Crack localization", "Python"],
+    achievements: "The healthy and cracked models were built to be element-for-element identical (about 1.04 million each), so the crack is the only thing that differs between them, and Abaqus datacheck ran clean. The path that passes through the crack loses 23% of its S0 amplitude while paths well away from it barely change — a clean damage signal. Feeding six of those paths into the PDI algorithm put the crack within 10 mm of its true position on a 400 mm plate; a separate time-of-flight image and the full simulated wavefield both agree on where it sits.",
     hasFigure: true,
     figureCaption: "Probability-based diagnostic imaging (PDI) map from the four-PZT network. Green cross: true crack location; cyan cross: the algorithm's estimate — a 10 mm error on a 400 mm plate, from four sensors and six paths."
   },
@@ -1558,6 +1563,7 @@ const RESEARCH_DATA = [
     title: "Battery thermal system",
     summary: "A battery cooling system for an electric STOL aircraft, simulated in COMSOL and validated against a 25°C limit.",
     abstract: "Designed and simulated a battery cooling system for an electric STOL aircraft using COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow in compact wing-mounted ducts. Validated the thermal design maintaining battery temperature below 25°C.",
+    achievements: "With altitude-dependent air properties and turbulent flow through the tight wing-mounted ducts modelled in COMSOL, the design held the pack below its 25 °C target across the flight profile.",
     tags: ["COMSOL", "Thermal Analysis", "CFD"]
   }
 ];
@@ -1731,9 +1737,9 @@ function redactionNotice() {
      - EXTRA_PROJECTS (courses that have no page of their own)
 
    Collapsed, the card shows the title, the course, two lines of summary,
-   and a thumbnail on the right. Opened, it reveals the full abstract and
-   the report itself, using the same PDF viewer and redaction notice the
-   course pages use.
+   and a thumbnail on the right. Opened, it reveals the full abstract and a
+   short "how it turned out" note — text only. The report and slide PDFs
+   stay on the course pages; the showcase never embeds one.
 
    Thumbnail convention:  <base>/thumb.jpg
      featured projects -> assets/courses/<course>/projects/<project>/thumb.jpg
@@ -1754,10 +1760,8 @@ function showcaseProjects() {
         title: p.title,
         summary: p.summary,
         abstract: p.description,
-        tags: p.tags,
-        hasReport: p.hasReport,
-        hasSlides: p.hasSlides,
-        reports: p.reports
+        achievements: p.achievements,
+        tags: p.tags
       });
     });
   });
@@ -1769,11 +1773,9 @@ function showcaseProjects() {
     title: p.title,
     summary: p.summary,
     abstract: p.abstract,
+    achievements: p.achievements,
     tags: p.tags,
-    hasReport: p.hasReport,
-    hasSlides: false,
-    hasCode: p.hasCode,
-    reports: p.reports
+    hasCode: p.hasCode
   }));
   return out;
 }
@@ -1783,6 +1785,9 @@ function showcaseCardHtml(item, prefix) {
   const tags = (item.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const thumb = `${item.base}/thumb.jpg`;
 
+  // The showcase cards deliberately carry no report/slide PDFs — they say
+  // what the work was and how it turned out, in text. The full documents
+  // live on the course pages, not here.
   let blocks = '';
   if (item.abstract) {
     blocks += `
@@ -1791,43 +1796,23 @@ function showcaseCardHtml(item, prefix) {
         <p class="showcase-abstract">${item.abstract}</p>
       </div>`;
   }
+  if (item.achievements) {
+    blocks += `
+      <div class="proj-block">
+        <p class="proj-block-label">How it turned out</p>
+        <p class="showcase-abstract">${item.achievements}</p>
+      </div>`;
+  }
   if (item.hasFigure) {
-    // One figure under the abstract — the expanded counterpart to the
-    // collapsed thumbnail. Reads <base>/open.jpg; if it is missing the whole
-    // figure removes itself, same pattern as the thumbnail.
+    // One figure under the text — the expanded counterpart to the collapsed
+    // thumbnail. Reads <base>/open.jpg; if it is missing the whole figure
+    // removes itself, same pattern as the thumbnail.
     blocks += `
       <figure class="showcase-figure">
         <img src="${item.base}/open.jpg" alt="" loading="lazy"
              onerror="this.closest('.showcase-figure').remove()" />
         ${item.figureCaption ? `<figcaption>${item.figureCaption}</figcaption>` : ''}
       </figure>`;
-  }
-  if (item.reports && item.reports.length) {
-    // Multiple named reports (e.g. one per project phase) instead of the
-    // single default report.pdf — each gets its own labeled viewer.
-    item.reports.forEach(rep => {
-      blocks += `
-        <div class="proj-block">
-          <p class="proj-block-label">${rep.label}</p>
-          ${pdfViewer(item.base + '/' + rep.file)}
-          ${redactionNotice()}
-        </div>`;
-    });
-  } else if (item.hasReport) {
-    blocks += `
-      <div class="proj-block">
-        <p class="proj-block-label">Report</p>
-        ${pdfViewer(item.base + '/report.pdf')}
-        ${redactionNotice()}
-      </div>`;
-  }
-  if (item.hasSlides) {
-    blocks += `
-      <div class="proj-block">
-        <p class="proj-block-label">Slides</p>
-        ${pdfViewer(item.base + '/slides.pdf')}
-        ${redactionNotice()}
-      </div>`;
   }
   if (item.hasCode) {
     // Deliverable is a Jupyter notebook — browsers have no viewer for it,
