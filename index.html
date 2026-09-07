@@ -1309,18 +1309,7 @@ const COURSES_DATA = {
       { id: 3, topic: "Unsymmetric bending &amp; shear flow in open sections" },
       { id: 4, topic: "Torsion &amp; shear flow in thin-walled sections" }
     ],
-    projects: [
-      {
-        slug: "wing-structural-analysis",
-        title: "Wing structural analysis",
-        description: "Finite element stress and buckling analysis of a wing box structure under aerodynamic loads.",
-        tags: ["ABAQUS", "FEM", "SolidWorks"],
-        hasReport: true,
-        hasSlides: true,
-        hasCode: false,
-        code: ""
-      }
-    ]
+    projects: []
   },
 
   "advanced-engineering-mathematics": {
@@ -1334,18 +1323,7 @@ const COURSES_DATA = {
       { id: 4, topic: "Lagrangian mechanics &amp; calculus of variations" },
       { id: 5, topic: "Perturbation methods" }
     ],
-    projects: [
-      {
-        slug: "numerical-pde-solver",
-        title: "Numerical PDE solver",
-        description: "Implementation and comparison of finite-difference schemes for the heat and wave equations.",
-        tags: ["Python", "NumPy", "PDE"],
-        hasReport: true,
-        hasSlides: false,
-        hasCode: true,
-        code: "https://github.com/rouzbeh-pourjafarian"
-      }
-    ]
+    projects: []
   },
 
   "continuum-mechanics": {
@@ -1358,18 +1336,7 @@ const COURSES_DATA = {
       { id: 3, topic: "Vector calculus theorems &amp; curvilinear coordinates" },
       { id: 4, topic: "Finite strain &amp; deformation gradient" }
     ],
-    projects: [
-      {
-        slug: "hyperelastic-material-model",
-        title: "Hyperelastic material modeling",
-        description: "Calibration of a Neo-Hookean material model against experimental uniaxial tension data.",
-        tags: ["MATLAB", "Constitutive Modeling"],
-        hasReport: true,
-        hasSlides: false,
-        hasCode: false,
-        code: ""
-      }
-    ]
+    projects: []
   },
 
   "advanced-structural-analysis-design": {
@@ -2077,9 +2044,9 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     <p class="sub-heading">Presentations</p>
     <div class="proj-grid">${presentationCards}</div>` : ''}
 
-    ${(projectItems.length || !presentationItems.length) ? `
+    ${projectItems.length ? `
     <p class="sub-heading">Projects</p>
-    <div class="proj-grid">${projectCards || '<p style="color:var(--text-dim)">No projects yet.</p>'}</div>` : ''}
+    <div class="proj-grid">${projectCards}</div>` : ''}
   `;
 
   // Fade the freshly rendered content in (when switching courses). Start at 0
