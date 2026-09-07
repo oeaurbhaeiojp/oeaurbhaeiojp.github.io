@@ -1,1 +1,8 @@
-Place thumb.jpg here (roughly 4:3, e.g. 600x450px) to show a thumbnail for this research entry on the Research page.
+Files for the "structural-health-monitoring" research card (RESEARCH_DATA in index.html):
+
+  thumb.jpg  -> collapsed-card thumbnail (full-field wavefield-difference map)
+  open.jpg   -> figure shown at the top of the drawer (PDI crack-localization map)
+
+No report PDF for this card by choice. The drawer shows the figure and the
+abstract only.
+Folder name must match the entry "id" in RESEARCH_DATA.

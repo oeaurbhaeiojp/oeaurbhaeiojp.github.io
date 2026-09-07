@@ -477,6 +477,25 @@
     color: var(--text-dim);
     line-height: 1.65;
   }
+  /* Figure inside the drawer, under the abstract — the expanded counterpart
+     to the collapsed thumbnail. */
+  .showcase-figure {
+    margin: 22px 0 4px;
+    padding: 0;
+  }
+  .showcase-figure img {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+  }
+  .showcase-figure figcaption {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
 
   @media (max-width: 640px) {
     .showcase-head { flex-direction: column-reverse; gap: 16px; }
@@ -1496,7 +1515,11 @@ const EXTRA_PROJECTS = [
    pages read as one card model: full title, thumbnail, a clamped
    summary when collapsed, the full write-up behind a click.
    `course` doubles as the role/lab line shown under the title.
-   thumbnail -> assets/research/<id>/thumb.jpg
+   thumbnail -> assets/research/<id>/thumb.jpg   (collapsed card)
+   Optional, same as the Projects showcase cards:
+     reports       -> [{label, file}] labeled PDF viewers, files under base/
+     hasFigure     -> render base/open.jpg as a figure under the abstract
+     figureCaption -> caption under that figure
    ================================================================= */
 const RESEARCH_DATA = [
   {
@@ -1520,20 +1543,14 @@ const RESEARCH_DATA = [
   {
     id: "structural-health-monitoring",
     base: "assets/research/structural-health-monitoring",
-    course: "Bachelor Thesis · Dr. Abedian",
-    period: "02/25 to 07/25",
-    title: "Structural health monitoring & damage detection",
-    summary: "FEM models with embedded piezoelectric sensors in ABAQUS for structural health monitoring and damage detection.",
-    abstract: "Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural health monitoring and damage detection, evaluating sensor placement and signal response under various damage scenarios."
-  },
-  {
-    id: "uav-autopilot",
-    base: "assets/research/uav-autopilot",
-    course: "Research Assistant · CNAV Lab · Dr. Sharifi",
-    period: "01/23 to 07/23",
-    title: "UAV autopilot system development",
-    summary: "A Pixhawk-based autopilot pipeline for a quadrotor platform, from flight controller configuration to control-law simulation.",
-    abstract: "Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and simulation of control laws."
+    course: "Bachelor Thesis · Dr. Ali Abedian",
+    period: "02/25 to 08/25",
+    title: "Structural health monitoring: crack detection and localization",
+    summary: "One continuous line of work — a survey of SHM methods, an ABAQUS piezoelectric Lamb-wave model that detects a crack from sensor signals, and a four-transducer network that then localizes it to within ~10 mm.",
+    abstract: "One continuous body of work on piezoelectric guided-wave structural health monitoring (SHM), begun as a bachelor thesis under Dr. Ali Abedian and carried forward afterwards. It runs in three stages. <strong>Method survey:</strong> vibration-based methods, acoustic emission, ultrasonic guided (Lamb) waves, fibre-optic and distributed sensing, vision-based inspection, electromechanical impedance, machine-learning diagnosis and infrared thermography were reviewed and compared, and bonded piezoelectric (PZT) transducers with Lamb-wave excitation were chosen as the sensing approach. <strong>Damage detection:</strong> a verified ABAQUS finite-element model of an aluminium plate with bonded PZT patches was built for a healthy and a cracked state, driven with a Hann-windowed tone burst, and the electrode voltages compared — the crack produces a clear, repeatable signature (peak-amplitude drop, shifted S0 arrival, changed waveform shape) that works as a reliable damage index. <strong>Damage localization:</strong> the model was grown to a four-PZT network with six independent propagation paths, and a probability-based diagnostic imaging (PDI) algorithm was implemented that places the crack within about 10 mm of its true position on a 400 mm plate. That result was cross-checked against an independent time-of-flight delay-and-sum image and validated against the full-field simulated wavefield, which shows the crack radiating as a point scatterer exactly where it was placed.",
+    tags: ["ABAQUS", "Lamb waves", "Piezoelectric (PZT)", "Guided-wave SHM", "Crack localization", "Python"],
+    hasFigure: true,
+    figureCaption: "Probability-based diagnostic imaging (PDI) map from the four-PZT network. Green cross: true crack location; cyan cross: the algorithm's estimate — a 10 mm error on a 400 mm plate, from four sensors and six paths."
   },
   {
     id: "battery-thermal-system",
@@ -1775,6 +1792,17 @@ function showcaseCardHtml(item, prefix) {
         <p class="proj-block-label">Abstract</p>
         <p class="showcase-abstract">${item.abstract}</p>
       </div>`;
+  }
+  if (item.hasFigure) {
+    // One figure under the abstract — the expanded counterpart to the
+    // collapsed thumbnail. Reads <base>/open.jpg; if it is missing the whole
+    // figure removes itself, same pattern as the thumbnail.
+    blocks += `
+      <figure class="showcase-figure">
+        <img src="${item.base}/open.jpg" alt="" loading="lazy"
+             onerror="this.closest('.showcase-figure').remove()" />
+        ${item.figureCaption ? `<figcaption>${item.figureCaption}</figcaption>` : ''}
+      </figure>`;
   }
   if (item.reports && item.reports.length) {
     // Multiple named reports (e.g. one per project phase) instead of the
