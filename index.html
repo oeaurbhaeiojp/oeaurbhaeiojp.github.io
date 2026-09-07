@@ -412,67 +412,12 @@
   .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
 
   /* ===========================================================
-     RESEARCH TIMELINE
-     =========================================================== */
-  .timeline { position: relative; padding-left: 26px; }
-  .timeline::before {
-    content: "";
-    position: absolute;
-    left: 6px; top: 6px; bottom: 6px;
-    width: 2px;
-    background: var(--border);
-  }
-  .tl-card {
-    position: relative;
-    display: flex;
-    gap: 22px;
-    align-items: flex-start;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 22px;
-    margin-bottom: 20px;
-  }
-  .tl-card::before {
-    content: "";
-    position: absolute;
-    left: -26px; top: 24px;
-    width: 11px; height: 11px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
-  }
-  .tl-text { flex: 1; min-width: 0; }
-  .tl-card .date { font-size: 0.8rem; color: var(--meta); letter-spacing: 0.4px; text-transform: uppercase; }
-  .tl-card h3 { font-size: 1.15rem; margin: 6px 0 4px; }
-  .tl-card .sub { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 10px; }
-  .tl-card p { margin: 0; font-size: 0.95rem; }
-  .tl-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
-
-  .tl-thumb {
-    flex-shrink: 0;
-    width: 168px;
-    aspect-ratio: 4 / 3;
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--bg-soft);
-    border: 1px solid var(--border);
-  }
-  .tl-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  /* No thumb.jpg uploaded yet: keep the slot, drop the broken-image icon. */
-  .tl-thumb.is-empty { border-style: dashed; }
-
-  @media (max-width: 640px) {
-    .tl-card { flex-direction: column-reverse; gap: 16px; }
-    .tl-thumb { width: 100%; aspect-ratio: 16 / 9; }
-  }
-
-  /* ===========================================================
      PROJECT SHOWCASE CARDS
      -----------------------------------------------------------
      Collapsed: title + course + two lines of summary, thumbnail on the
      right. Opened: the full abstract and the report's PDF viewer.
-     Used by "Selected work" on About and by the Course Projects tab.
+     Used by "Selected work" on About, the Course Projects tab, and
+     Research experience: one card model for all three.
      =========================================================== */
   .cproj-grid { display: flex; flex-direction: column; gap: 16px; }
 
@@ -1114,93 +1059,13 @@
       <div class="cproj-grid" id="featuredGrid"><!-- populated by JS --></div>
     </section>
 
-    <!-- ---------- RESEARCH & PROJECTS ---------- -->
+    <!-- ---------- RESEARCH & PROJECTS ----------
+         Cards are generated from RESEARCH_DATA using the same showcase-card
+         model as Projects: full title, thumbnail, a clamped summary when
+         collapsed, and the full write-up behind a click. -->
     <section id="research" class="page">
       <h2 class="reveal">Research experience</h2>
-      <div class="timeline">
-
-              <article class="tl-card reveal">
-                <div class="tl-text">
-                  <div class="date">10/25 to 04/26</div>
-                  <h3>LLM-based multi-agent mechanism design</h3>
-                  <p class="sub">Junior AI Developer · Intelligent Design Office · Dr. Dehghani</p>
-                  <p>Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG)
-                    to automate the conceptual design of mechanical linkages, coordinating specialized
-                    agents for synthesis, evaluation, and refinement.</p>
-                </div>
-                <div class="tl-thumb">
-                  <img src="assets/research/llm-multiagent-mechanism-design/thumb.jpg" alt="" loading="lazy"
-                       onerror="this.closest('.tl-thumb').classList.add('is-empty'); this.remove();" />
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="tl-text">
-                  <div class="date">07/25 to 08/25</div>
-                  <h3>Inverse finite element method &amp; acoustic emission</h3>
-                  <p class="sub">Personal Research</p>
-                  <p>Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of
-                    structural deformation from sparse strain measurements, integrating acoustic emission
-                    (AE) signals to enhance damage localization.</p>
-                </div>
-                <div class="tl-thumb">
-                  <img src="assets/research/ifem-acoustic-emission/thumb.jpg" alt="" loading="lazy"
-                       onerror="this.closest('.tl-thumb').classList.add('is-empty'); this.remove();" />
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="tl-text">
-                  <div class="date">02/25 to 07/25</div>
-                  <h3>Structural health monitoring &amp; damage detection</h3>
-                  <p class="sub">Bachelor Thesis · Dr. Abedian</p>
-                  <p>Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural
-                    health monitoring and damage detection, evaluating sensor placement and signal response
-                    under various damage scenarios.</p>
-                </div>
-                <div class="tl-thumb">
-                  <img src="assets/research/structural-health-monitoring/thumb.jpg" alt="" loading="lazy"
-                       onerror="this.closest('.tl-thumb').classList.add('is-empty'); this.remove();" />
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="tl-text">
-                  <div class="date">01/23 to 07/23</div>
-                  <h3>UAV autopilot system development</h3>
-                  <p class="sub">Research Assistant · CNAV Lab · Dr. Sharifi</p>
-                  <p>Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission
-                    Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and
-                    simulation of control laws.</p>
-                </div>
-                <div class="tl-thumb">
-                  <img src="assets/research/uav-autopilot/thumb.jpg" alt="" loading="lazy"
-                       onerror="this.closest('.tl-thumb').classList.add('is-empty'); this.remove();" />
-                </div>
-              </article>
-
-              <article class="tl-card reveal">
-                <div class="tl-text">
-                  <div class="date">06/22 to 08/22</div>
-                  <h3>Battery thermal system</h3>
-                  <p class="sub">RAeS Competition: Lyrebird Electric STOL Aircraft</p>
-                  <p>Designed and simulated a battery cooling system for an electric STOL aircraft using
-                    COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow
-                    in compact wing-mounted ducts. Validated the thermal design maintaining battery
-                    temperature below 25°C.</p>
-                  <div class="tag-row">
-                    <span class="tag">COMSOL</span>
-                    <span class="tag">Thermal Analysis</span>
-                    <span class="tag">CFD</span>
-                  </div>
-                </div>
-                <div class="tl-thumb">
-                  <img src="assets/research/battery-thermal-system/thumb.jpg" alt="" loading="lazy"
-                       onerror="this.closest('.tl-thumb').classList.add('is-empty'); this.remove();" />
-                </div>
-              </article>
-
-      </div>
+      <div class="cproj-grid" id="researchGrid"><!-- populated by JS --></div>
     </section>
 
     <!-- ---------- PROJECTS ----------
@@ -1617,10 +1482,68 @@ const EXTRA_PROJECTS = [
     period: "Spring 2025",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
     summary: "A regression pipeline that predicts the convective heat transfer coefficient of nanofluids from their physical and chemical properties.",
-    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models — linear, degree-2 polynomial, random forest, and an MLP neural network — are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction. Random forest gave the best accuracy on the held-out set.",
+    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models (linear, degree-2 polynomial, random forest, and an MLP neural network) are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction. Random forest gave the best accuracy on the held-out set.",
     tags: ["Python", "scikit-learn", "Regression", "Random Forest", "Neural Networks"],
     hasReport: true,
     hasCode: true
+  }
+];
+
+/* =================================================================
+   RESEARCH_DATA
+   -----------------------------------------------------------------
+   Renders through the same showcaseCardHtml() as Projects, so the two
+   pages read as one card model: full title, thumbnail, a clamped
+   summary when collapsed, the full write-up behind a click.
+   `course` doubles as the role/lab line shown under the title.
+   thumbnail -> assets/research/<id>/thumb.jpg
+   ================================================================= */
+const RESEARCH_DATA = [
+  {
+    id: "llm-multiagent-mechanism-design",
+    base: "assets/research/llm-multiagent-mechanism-design",
+    course: "Junior AI Developer · Intelligent Design Office · Dr. Dehghani",
+    period: "10/25 to 04/26",
+    title: "LLM-based multi-agent mechanism design",
+    summary: "A multi-agent system using CrewAI and retrieval-augmented generation (RAG) to automate the conceptual design of mechanical linkages.",
+    abstract: "Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG) to automate the conceptual design of mechanical linkages, coordinating specialized agents for synthesis, evaluation, and refinement."
+  },
+  {
+    id: "ifem-acoustic-emission",
+    base: "assets/research/ifem-acoustic-emission",
+    course: "Personal Research",
+    period: "07/25 to 08/25",
+    title: "Inverse finite element method & acoustic emission",
+    summary: "Real-time reconstruction of structural deformation from sparse strain measurements using the inverse Finite Element Method (iFEM).",
+    abstract: "Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of structural deformation from sparse strain measurements, integrating acoustic emission (AE) signals to enhance damage localization."
+  },
+  {
+    id: "structural-health-monitoring",
+    base: "assets/research/structural-health-monitoring",
+    course: "Bachelor Thesis · Dr. Abedian",
+    period: "02/25 to 07/25",
+    title: "Structural health monitoring & damage detection",
+    summary: "FEM models with embedded piezoelectric sensors in ABAQUS for structural health monitoring and damage detection.",
+    abstract: "Built FEM models with embedded piezoelectric sensors in ABAQUS to study structural health monitoring and damage detection, evaluating sensor placement and signal response under various damage scenarios."
+  },
+  {
+    id: "uav-autopilot",
+    base: "assets/research/uav-autopilot",
+    course: "Research Assistant · CNAV Lab · Dr. Sharifi",
+    period: "01/23 to 07/23",
+    title: "UAV autopilot system development",
+    summary: "A Pixhawk-based autopilot pipeline for a quadrotor platform, from flight controller configuration to control-law simulation.",
+    abstract: "Developed a Pixhawk-based autopilot pipeline for a quadrotor platform using Mission Planner and MATLAB/Simulink, covering flight controller configuration, tuning, and simulation of control laws."
+  },
+  {
+    id: "battery-thermal-system",
+    base: "assets/research/battery-thermal-system",
+    course: "RAeS Competition: Lyrebird Electric STOL Aircraft",
+    period: "06/22 to 08/22",
+    title: "Battery thermal system",
+    summary: "A battery cooling system for an electric STOL aircraft, simulated in COMSOL and validated against a 25°C limit.",
+    abstract: "Designed and simulated a battery cooling system for an electric STOL aircraft using COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow in compact wing-mounted ducts. Validated the thermal design maintaining battery temperature below 25°C.",
+    tags: ["COMSOL", "Thermal Analysis", "CFD"]
   }
 ];
 
@@ -2254,6 +2177,12 @@ document.getElementById('courseProjGrid').innerHTML =
   showcaseItems.map(i => showcaseCardHtml(i, 'cp')).join('');
 document.getElementById('projectsCount').textContent =
   `${showcaseItems.length} project${showcaseItems.length !== 1 ? 's' : ''}`;
+
+/* ---------- RESEARCH ----------
+   Same showcaseCardHtml() renderer as Projects, prefixed 'res' so its
+   drawer ids never collide with the 'sel'/'cp' project copies above. */
+document.getElementById('researchGrid').innerHTML =
+  RESEARCH_DATA.map(r => showcaseCardHtml(r, 'res')).join('');
 
 /* ---------- TEACHING ---------- */
 document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
