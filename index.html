@@ -427,12 +427,23 @@
     border-radius: 10px;
     overflow: hidden;
     transition: border-color 0.2s ease;
+    /* toggleShowcase() already keeps the clicked card in place frame by
+       frame while a card above it collapses (see collapseKeepingPut). The
+       browser's own scroll anchoring tries to do the same job on its own
+       and reacts a step out of phase with that loop, so the two fight and
+       the page visibly judders. Opting every showcase card out of being an
+       anchor candidate leaves ours as the only correction running. */
+    overflow-anchor: none;
   }
   .showcase.open { border-color: var(--accent); }
   .showcase-head {
     display: flex;
     gap: 22px;
-    align-items: flex-start;
+    /* Stretch (not flex-start) so .showcase-side spans the same height as
+       the text column; that lets the More/Less button sit at its bottom via
+       justify-content below, level with the tag row instead of floating
+       just under the thumbnail. */
+    align-items: stretch;
     padding: 20px 22px;
     cursor: pointer;
   }
@@ -446,20 +457,31 @@
   }
   .showcase-text h3 { font-size: 1.15rem; margin: 6px 0 4px; transition: color 0.2s ease; }
   .showcase-text .sub { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 10px; }
-  /* Exactly two lines when collapsed; the rest lives behind the card. */
+  /* One sentence stating the goal. It takes two lines on a desktop and up to
+     four on a phone; the clamp only guards against a summary that runs long. */
   .showcase-summary {
     margin: 0;
     font-size: 0.95rem;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
   .showcase-text .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 
-  .showcase-thumb {
+  /* Right column of the card head: the thumbnail, with More/Less pinned to
+     the bottom of the column (see justify-content) so it lines up with the
+     tag row at the bottom of the text column beside it. */
+  .showcase-side {
     flex-shrink: 0;
     width: 168px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .showcase-thumb {
+    width: 100%;
     aspect-ratio: 4 / 3;
     border-radius: 8px;
     overflow: hidden;
@@ -470,12 +492,69 @@
   /* No thumb.jpg uploaded yet: keep the slot, drop the broken-image icon. */
   .showcase-thumb.is-empty { border-style: dashed; }
 
+  /* Drawn as a small outline button, but it is only a label: the whole head
+     is already the button (role="button" + aria-expanded), and a real
+     <button> nested inside it would be invalid. A click on it lands on the
+     head like a click anywhere else on the card. */
+  .showcase-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.2;
+    user-select: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .showcase-head:hover .showcase-more { background: var(--accent-soft); border-color: var(--accent); }
+  .showcase-more svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .showcase.open .showcase-more svg { transform: rotate(180deg); }
+  .showcase-more .less,
+  .showcase.open .showcase-more .more { display: none; }
+  .showcase.open .showcase-more .less { display: inline; }
+
   .showcase .drawer-inner { padding: 0 22px 22px; }
+  /* Same paragraph treatment as the About page: justified, hyphenated, and
+     set apart from its neighbour rather than run together. */
   .showcase-abstract {
     margin: 0;
     font-size: 0.92rem;
     color: var(--text-dim);
     line-height: 1.65;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+  .showcase-abstract + .showcase-abstract { margin-top: 0.9em; }
+  /* Thesis timeline: the term on the left, the work for that term beside it. */
+  .showcase-schedule { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .showcase-schedule li {
+    display: grid;
+    grid-template-columns: 10.5rem 1fr;
+    gap: 16px;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .showcase-schedule .term {
+    font-size: 0.78rem;
+    color: var(--meta);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding-top: 0.15em;
+  }
+  @media (max-width: 640px) {
+    .showcase-schedule li { grid-template-columns: 1fr; gap: 2px; }
   }
   /* Figure inside the drawer, under the abstract — the expanded counterpart
      to the collapsed thumbnail. */
@@ -483,9 +562,13 @@
     margin: 22px 0 4px;
     padding: 0;
   }
+  /* Fill the column, but never upscale a figure past its own resolution —
+     a small plot centred at native size reads better than a blurry wide one. */
   .showcase-figure img {
     display: block;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+    margin-inline: auto;
     border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--bg-soft);
@@ -498,8 +581,11 @@
   }
 
   @media (max-width: 640px) {
-    .showcase-head { flex-direction: column-reverse; gap: 16px; }
-    .showcase-thumb { width: 100%; aspect-ratio: 16 / 9; }
+    /* Stacked: the picture on top, then the text, then More at the bottom. */
+    .showcase-head { flex-direction: column; gap: 16px; }
+    .showcase-side { display: contents; }
+    .showcase-thumb { order: -1; aspect-ratio: 16 / 9; }
+    .showcase-more { align-self: flex-start; }
   }
 
   /* ===========================================================
@@ -893,7 +979,56 @@
      =========================================================== */
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
   .reveal.in-view { opacity: 1; transform: none; }
+
+  /* ===========================================================
+     BACK TO TOP
+     -----------------------------------------------------------
+     Fixed in the bottom-right corner and hidden until the visitor has
+     scrolled down (the script toggles .show). Same vocabulary as
+     .btn-outline: accent border and icon on the card surface, filled
+     with the accent on hover. The hidden state uses visibility so the
+     button also leaves the tab order; the visibility change is delayed
+     on the way out so the fade still plays.
+     =========================================================== */
+  .to-top {
+    position: fixed;
+    right: max(24px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+    z-index: 40;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--accent-border);
+    background: var(--bg-card);
+    color: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px) scale(0.9);
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                visibility 0s linear 0.4s,
+                background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  body.light .to-top { box-shadow: 0 8px 20px -10px rgba(23, 26, 33, 0.35); }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .to-top:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .to-top svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .to-top:hover svg { transform: translateY(-2px); }
+  @media print { .to-top { display: none; } }
+
   @media (prefers-reduced-motion: reduce) {
+    .to-top, .to-top.show, .to-top:hover svg { transform: none; }
+    .showcase-more svg { transition: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
     .hero-text, .hero-photo { animation: none; }
     /* Honor the preference for the rest of the page too, not just the reveal
@@ -903,6 +1038,7 @@
     .page.active { animation: none; }
     .hw-card:hover, .cert-card:hover { transform: none; }
     .pill:hover, .tag:hover { transform: none; }
+    .drawer { transition: none; }
   }
 
   /* ===========================================================
@@ -964,6 +1100,11 @@
     .hw-card.sibling-open { flex-grow: 1; min-width: 0; }
     /* minmax(360px, 1fr) is wider than the viewport itself on a phone. */
     .proj-grid { grid-template-columns: 1fr; }
+    /* Closer to the corner on a phone, where 24px is a lot of screen. */
+    .to-top {
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+    }
   }
 </style>
 </head>
@@ -1048,7 +1189,7 @@
 
       <h2 class="reveal">About</h2>
       <p>
-        I'm a structural engineer interested in how agentic AI can support structural engineering work. What interests me most is whether AI systems can understand engineering problems on their own, pull in the right domain knowledge, and help generate design solutions. I'm particularly curious about applications like structural health monitoring, early damage detection, and real-time deformation analysis. Combining AI with structural engineering could change a fair amount about how the field operates day to day. I'd like to connect with researchers, academics, and engineers working on similar problems.
+        I'm a structural engineer interested in how agentic AI can support structural engineering work. Mostly I want to know whether an AI system can understand an engineering problem on its own, bring in the domain knowledge it needs, and help produce a design. The applications I care about most are structural health monitoring, early damage detection and real-time deformation analysis. I think bringing AI into structural engineering could change a good deal of the field's day-to-day work, and I'd like to connect with researchers and engineers working on similar problems.
       </p>
 
 
@@ -1142,7 +1283,7 @@
     <section id="contact" class="page">
       <h2 class="reveal">Contact</h2>
       <div class="contact-box reveal">
-        <p>Feel free to reach out for academic collaborations, research discussions, or to request full versions of course materials. I am always open to exchanging ideas with researchers and engineers.</p>
+        <p>You can reach me about academic collaboration or research questions, or to ask for the full versions of the course materials. I'm glad to talk with researchers and engineers working on related problems.</p>
         <div class="btn-row">
           <a class="btn btn-outline contact-btn" data-tip="rouzbeh.pourjafarian@ae.sharif.edu" href="mailto:rouzbeh.pourjafarian@ae.sharif.edu">
             <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>Email
@@ -1162,6 +1303,11 @@
 
   </div>
 </main>
+
+<!-- Back to top: hidden until the page is scrolled down (see the script). -->
+<button class="to-top" id="toTop" type="button" aria-label="Back to top" title="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+</button>
 
 <!-- ============================ SCRIPT ============================ -->
 <script>
@@ -1269,7 +1415,7 @@ const COURSES_DATA = {
         slug: "project-proposal",
         kind: "Presentation",
         title: "Intelligent Material Selection Using Particle Swarm Optimization and Ashby Indices for Aerospace Structures",
-        description: "The original project proposal: an automated system for selecting aerospace structural materials that combines a structured material database, mathematical Ashby performance indices, a constraint-filtering module, Particle Swarm Optimization, and a language-model-based coordinator, so an engineer can go from a natural-language design requirement to a ranked, justified shortlist of candidate materials with minimal manual effort. The project's scope was later carried forward into the wing-box sizing system covered by the final report below.",
+        description: "The original project proposal. It describes an automated system for choosing aerospace structural materials that combines a structured material database, Ashby performance indices, a constraint filter, particle swarm optimization and a language-model coordinator, so an engineer can start from a design requirement written in plain language and get back a ranked, justified shortlist of candidate materials. The project later grew into the wing-box sizing system in the final report below.",
         tags: [],
         hasReport: false,
         hasSlides: true,
@@ -1281,11 +1427,20 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Fall 2025 to Spring 2026",
-        summary: "An agentic system that sizes an aircraft wing box: the LLM makes only the engineer's judgment calls, and unit-tested Python computes every number. Lands within ~5% of a published design's optimized weight.",
+        summary: "Sizing an aircraft wing box with an LLM that makes the engineer's judgment calls while tested Python code computes every number.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
+        problem: "Sizing an aircraft wing box is a long hand calculation that loops: bending material in the covers, a spar web that buckles before it shears, ribs, joints, every margin pushed toward zero from above while the load envelope keeps moving with the structure's own weight. The procedure is documented and standardized, but choosing the alloy, the spar positions and the catalogue stringers is left to the structural engineer's judgment.",
+        approach: [
+          "One rule governs the system, and the code itself enforces it: the model never does arithmetic and Python never makes a judgment call. Decision schemas carry no numeric field an LLM could write a thickness into, numbers enter the shared state only as a tool's return value, and every quantity carries a provenance record. An audit walks the finished design and reports it infeasible if any number lacks one. The sizing underneath is a deterministic, unit-tested Python implementation of Niu, Megson and Roskam.",
+          "The nine classical design phases become a LangGraph StateGraph over one shared, typed dossier. The backbone is a prompt chain, since the order is documented and has to stay reviewable step by step; spar web, ribs and joints fan out in parallel once the covers are sized; and a deterministic checker with a rule-based router sends a failing design back to whichever node can fix its worst margin. Material selection runs an Ashby structural index with alloy-family screening and a Pareto trade-off, once per cover position."
+        ],
+        results: "The course's own hand-worked cross-section is reproduced to tabulated precision as an automated acceptance gate, and rebuilding it surfaced four notation and arithmetic slips in the reference itself, each now pinned by a test. Run live against a published METU master's design of a PC-21 class trainer wing, the pipeline converged on 131.9 to 132.4 kg against that thesis's own optimized 125.9 kg, about 5% high, with the gap traced to the discrete stringer catalogue used here against the thesis's continuous search. An Abaqus 2024 model built from the converged geometry balanced the root reaction against the applied shear.",
+        figures: [
+          { file: "out1.jpg", caption: "The lecture cross-section as the live model converged it: NACA 2412 silhouette, box between the spar stations it chose, and every stringer drawn at its real catalogue profile." },
+          { file: "out2.jpg", caption: "The converged METU wing box solved in Abaqus 2024, contoured on displacement magnitude, root encastred at bottom left." }
+        ],
         description: "Abstract: this report presents the architecture and engineering basis of an agentic artificial-intelligence system for the preliminary structural sizing of a transport-aircraft wing box. Rather than a hand or spreadsheet-driven design cycle, the system is organized as a directed graph of specialist computational and decision nodes, built with LangGraph, in which a large language model (LLM) is restricted to exactly the judgment calls a structural engineer would make, such as material family, spar location, stringer catalogue selection, web architecture and joint configuration, while every numerical quantity is produced by a deterministic, unit-tested Python implementation of the classical sizing methods of Niu, Megson and Roskam. This is a project report, not a paper-reproduction study: the system is presented on its own terms, and an external published design is used once, as a validation benchmark, rather than as the report's own subject. The report first reviews the traditional, manual wing-box design process the system's phases are modeled on, then introduces the general concepts of agentic AI, large language models and the LangGraph orchestration framework, and describes how these are combined into the present system: its graph topology, the enforced separation between LLM decisions and Python computations, the material-selection method (an Ashby structural index combined with alloy-family screening and Pareto-front trade-off selection), and the governing equations used at each design phase. Implementation details are discussed next, followed by two verification benchmarks of deliberately different scope. The narrow one, a single cross-section worked by hand in the course lecture material, is reproduced to tabulated precision as an automated acceptance gate and surfaced four notational and arithmetic slips in the reference itself along the way. The broad one runs the complete pipeline, with the live LLM decider in every judgment node, against a real, independently published wing-box design (a Pilatus PC-21/Super Tucano-class trainer wing from a METU MSc thesis) and converges on a wingbox weight within about five percent of that design's own optimized result, corroborated by a real Abaqus finite-element solve of the converged geometry.",
-        achievements: "Run end to end with the live model making every judgment call, it settled on a wing-box weight within about 5% of a published METU master's design, and a full Abaqus solve of the converged geometry backed that up. The hand-worked cross-section it checks itself against is matched to the last tabulated digit — and reproducing it turned up four arithmetic and notation errors in the reference itself.",
-        tags: ["LLM", "Python", "Aircraft Structures"],
+        tags: ["Python", "LangGraph", "LangChain", "Pydantic", "DeepSeek-V3.2", "Abaqus 2024", "Agentic LLM", "Ashby index", "Aircraft structures"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1319,7 +1474,7 @@ const COURSES_DATA = {
         slug: "hill-yield-criterion",
         kind: "Presentation",
         title: "Anisotropic Yield Criterion of Hill",
-        description: "An examination of the Hill anisotropic yield criterion, where it comes from and the assumptions it is derived from.",
+        description: "Where the Hill anisotropic yield criterion comes from, and the assumptions it rests on.",
         tags: [],
         hasReport: false,
         hasSlides: true,
@@ -1330,7 +1485,7 @@ const COURSES_DATA = {
         slug: "continuum-damage-mechanics-overview",
         kind: "Presentation",
         title: "Continuum Damage Mechanics",
-        description: "A theoretical overview of continuum damage mechanics, covering damage measures and definitions, thermodynamic aspects, damage growth equations, and life prediction in structures, presented as background for the course project.",
+        description: "A theoretical overview of continuum damage mechanics, prepared as background for the course project: damage measures and definitions, thermodynamics, damage growth equations and life prediction in structures.",
         tags: [],
         hasReport: false,
         hasSlides: true,
@@ -1342,11 +1497,20 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Fall 2025",
-        summary: "A published neural-network surrogate for composite damage mechanics, rebuilt from the paper's text and figures alone; its authors released neither code nor data. All five acceptance criteria met.",
+        summary: "Testing whether a published neural-network replacement for a composite damage model holds up when rebuilt from the paper alone.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
+        problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small neural networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution. They published no code and no data.",
+        approach: [
+          "Everything was rebuilt from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, the three networks, the macro-scale UMAT and the open-hole tension benchmark. Quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, were taken from an independent source or calibrated against its own curves, and each is marked in the report with where it came from.",
+          "The three networks were ported to PyTorch one for one, with layer widths, activations, losses and optimisers matching the paper's tables and epoch counts read straight off the horizontal axes of its own training plots. The first predicts homogenised stress, the second damage onset and the third the failure mode. They run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. Five acceptance criteria were written down before any of it was run."
+        ],
+        results: "All five criteria pass. The regression network reaches R² = 0.9997 on the paper's own held-out load path against a 0.99 target, the two classifiers reach 98.0% and 99.0%, and the speed-up lands between 5.2 and 8.6 times depending on how the CPU counts are matched. On the open-hole plate the surrogate peaks at 12.8043 kN against the paper's 12.8170 kN, a difference of 0.10%. The initiation network, never shown a plate or a stress concentration, calls damage onset within 3.3% of the reference model's own.",
+        figures: [
+          { file: "out1.jpg", width: 860, caption: "The three networks, ported one for one from the paper: stress regression (3-60-50-3, tanh), damage initiation (3-8-10-2, ReLU) and failure mode (3-12-20-4, ReLU), each with its loss and optimiser." },
+          { file: "out2.jpg", width: 680, caption: "Fibre damage (left) and matrix damage (right) around the hole. The top two rows are this reproduction at u = 0.9828 and 1.0568 mm; underneath are the paper's own contours from its Figures 13 and 14. Contour limits fixed between 0 and 1." }
+        ],
         description: "Abstract: this report reproduces Yan, Zou, Ilkhani and Jones (2020), Composites Part B 194:108014, in which three artificial neural networks (ANNs), trained on the response of a mesoscale unit cell, replace a Linde-type continuum damage mechanics (CDM) user subroutine (UMAT) at the macro scale. The original authors released neither code nor data, so every component, including the constitutive model, the periodic unit cell, the training dataset, the three networks, and the macro-scale UMAT, was rebuilt independently from the text and figures of the paper. The reproduction is evaluated against five acceptance criteria spanning the regression network's accuracy, the two classifiers' accuracy, the open-hole plate benchmark, and the reported computational speed-up. All five are met.",
-        achievements: "With no code or data from the original authors, the whole chain — damage model, periodic unit cell, training set, the three networks, and the macro-scale UMAT — was rebuilt from the paper's text and figures alone. Held against the five acceptance criteria fixed at the start (regression accuracy, both classifier accuracies, the open-hole plate benchmark, and the reported speed-up), it clears all five.",
-        tags: ["Neural Network"],
+        tags: ["Abaqus 2024", "Fortran UMAT", "PyTorch", "Python", "Continuum damage mechanics", "Periodic unit cell", "Neural network surrogate"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1372,11 +1536,19 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Spring 2026",
-        summary: "An LLM agent that writes the optimization problem itself, then diagnoses and repairs its own formulation. In a blind test it reproduced a published Pareto front exactly: all 37 designs.",
+        summary: "Handing the formulation of a multi-objective composite optimization problem, and its repair when it fails, to an LLM agent.",
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
+        problem: "In multi-objective optimization of composite structures the designer writes the problem before the run: objectives, constraints, design variables. If the Pareto front comes back degenerate, the designer reads the output, works out what went wrong, rewrites the formulation and runs it again. This work hands that loop to an agent.",
+        approach: [
+          "The agent takes a design description in plain language and extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract. The language model handles the formulation, and a deterministic kernel built on classical laminated plate theory computes every physical quantity. The graph runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself before anything is diagnosed.",
+          "After the run, failure detection is deterministic and threshold-based. When a front is degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. Model use is split by node, with a lighter model on intake and reporting and a stronger one on formulation, repair and explanation."
+        ],
+        results: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one under an equal search budget: all 37 designs, the same layer counts and stacking sequences, and no difference in buckling load. The deterministic kernel reproduced the paper's analytical numbers to a worst case of 0.001%. Given a deliberately broken request, the feedback loop found the fault within four iterations, revised the formulation twice, and raised the front's hypervolume by 4.17% and then by 36.13%.",
+        figures: [
+          { file: "out1.jpg", caption: "Buckling load factor against laminate thickness. The human formulation's front, the agent's own formulation as written, and the agent's formulation under a matched search budget, which lands on the same 37 designs." }
+        ],
         description: "Abstract: in multi-objective optimization of composite structures, the problem formulation is set by the designer, who decides ahead of the run on suitable objective functions, constraints and design variables, and if the response is unsuitable, revises the problem and repeats the run. This work hands that same loop to a large-language-model-based agent. The agent takes a design description in natural language, extracts the mathematical problem formulation, and passes it to the NSGA-II algorithm through a typed contract; it then diagnoses the cause if the resulting Pareto front is degenerate or any other issue exists, and revises the formulation accordingly. All physical computations are carried out in a deterministic kernel, and the language model never computes any physical quantity; failure detection is likewise deterministic and threshold-based, and the model only selects a single remedial action from a closed list. For evaluation, a problem from a published paper on multi-objective optimization of a composite plate was solved twice, once with a manual formulation and once with the agent's automatic formulation, in a blind test. The agent's search scored a perfect match, and under an equal search budget its formulation produced exactly the same front: all 37 designs with the same number of layers, the same stacking sequence, and zero difference in buckling load. The deterministic kernel also reproduced the paper's analytical numbers with a worst-case error of 0.001 percent. Finally, on a deliberately defective request, the feedback loop found the bug within four iterations, revised the formulation twice, and improved the front's hypervolume by 4.17 and then 36.13 percent.",
-        achievements: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one — all 37 designs, the same stacking sequences, no difference in buckling load — while the deterministic kernel matched the paper's analytical figures to within 0.001%. Given a deliberately broken problem, the feedback loop located the fault within four iterations and raised the front's hypervolume by about 4% and then a further 36%.",
-        tags: ["NSGA-II", "LLM", "Composite Optimization"],
+        tags: ["Python", "LangGraph", "LangChain", "pymoo", "NSGA-II", "DeepSeek-V4-Flash", "Qwen-Flash", "Classical laminated plate theory", "Composite optimization"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1437,11 +1609,20 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Fall 2024 to Winter 2025",
-        summary: "A multi-part pipeline over a scholarly-citation dataset (network analysis, author-community detection, and citation regression) feeding a retrieval-augmented research assistant.",
+        summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
         title: "Research Assistant",
-        description: "Built on a dataset of scholarly articles through 2017, combined with papers crawled from Semantic Scholar across five AI subfields as a held-out test set. Beyond exploratory and network analysis (citation, co-authorship, and venue networks, including PageRank and centrality measures over time), the project detects author communities via graph clustering (Louvain, Label Propagation, Girvan Newman), names them from extracted keywords, and clusters papers by embedding similarity. A citation-count regressor (RandomForestRegressor, tuned via GridSearchCV) predicts citations from text and publication-year features, with a bonus Graph Neural Network variant over the co-authorship network. The final product is a retrieval-augmented assistant: a FAISS vector index over paper embeddings supports topic queries (expanded via KeyBERT) and author queries (via spaCy named-entity recognition), with an optional LLM-generated summary of the retrieved papers.",
-        achievements: "The graph clustering pulls out author communities that map onto recognisable research groups once they are named from their own keywords, and the citation regressor, trained on pre-2017 papers, carries over to the freshly crawled test set. It comes together in a working assistant that takes either a topic or an author name, retrieves the relevant papers through the FAISS index, and can hand back an LLM summary of what it found.",
-        tags: ["Network Analysis", "Clustering", "RAG", "FAISS"],
+        problem: "Finding the right papers in an unfamiliar field is slow, and keyword search returns too much. A scholarly dataset also records who cites whom and who writes with whom, and that network says a lot about which authors and papers belong together. This project analyses those links, predicts how many citations a paper will get, and builds a research assistant that finds papers by topic or by author.",
+        approach: [
+          "The dataset is scholarly articles published through 2017, with papers crawled from Semantic Scholar across five AI subfields held back as a test set. Exploratory analysis came first, then network analysis over the citation, co-authorship and venue graphs, including PageRank, degree centrality and how network density moves across decades. Author communities were detected with greedy modularity, label propagation and Girvan-Newman, compared on average clustering coefficient, and then named from keywords pulled out of their own papers.",
+          "A citation-count regressor was trained on title and abstract embeddings plus publication year, using a RandomForestRegressor tuned through GridSearchCV, with a graph neural network over the co-authorship network in PyTorch Geometric as a second route to the same target. The product on top is a retrieval-augmented assistant: paper embeddings indexed in FAISS, topic queries expanded with KeyBERT, author names lifted out of a question by spaCy named-entity recognition, and an optional LLM pass that summarises what came back."
+        ],
+        results: "Girvan-Newman scored the highest average clustering coefficient, 0.7771, with greedy modularity at 0.7770 and label propagation at 0.7757. The citation regressor did not carry over to the 2,350 crawled test papers: test R² came out at -0.26 with a mean absolute error of 1,217 citations, which the report puts down to the time gap and the new topics and authors in recent papers. The assistant answers both topic and author queries, returning matching papers with their authors and abstracts and an LLM summary on request.",
+        figures: [
+          { file: "out1.jpg", caption: "Total citations against number of publications for each author, with the fitted regression line (R² = 0.34) used to predict the citation count for a given author." },
+          { file: "out2.jpg", caption: "The assistant answering an author query. spaCy lifts the name out of the question, and the matching papers come back with their authors and abstracts." }
+        ],
+        description: "The project uses a dataset of scholarly articles published up to 2017, with papers crawled from Semantic Scholar in five AI subfields held back as a test set. After exploratory analysis it studies the citation, co-authorship and venue networks over time with PageRank and centrality measures, finds author communities with greedy modularity, label propagation and Girvan-Newman, names them from keywords, and clusters papers by embedding similarity. A citation-count regressor, a random forest tuned with GridSearchCV, works from the text and publication year, and a bonus graph neural network uses the co-authorship network. The final product is a retrieval-augmented assistant: a FAISS index of paper embeddings answers topic queries expanded with KeyBERT and author queries parsed with spaCy named-entity recognition, and can add an LLM summary of the papers it finds.",
+        tags: ["Python", "pandas", "scikit-learn", "PyTorch Geometric", "SentenceTransformers", "FAISS", "KeyBERT", "spaCy", "Selenium", "OpenAI API", "Network analysis", "RAG"],
         reports: [
           { label: "Report: Phase 0 (Data Crawling)", file: "phase0.pdf" },
           { label: "Report: Phase 1 (Final Project)", file: "phase1.pdf" }
@@ -1461,13 +1642,13 @@ const COURSES_DATA = {
    Course projects whose course is NOT in COURSES_DATA (no homework or
    syllabus page of its own), so they live here instead. They render with
    the same card as the featured ones.
-     base        -> asset folder; thumb.jpg (and open.jpg) are read from it
+     base        -> asset folder; thumb.jpg, out1.jpg, out2.jpg are read from it
      summary     -> the two lines shown on the collapsed card
-     abstract    -> the longer text revealed when the card is opened
-     achievements-> a short "how it turned out" note under the abstract
-     hasCode     -> whether base + "/notebook.ipynb" should be offered as a
-                    download (for projects whose deliverable is a notebook)
-   No report PDF: the showcase cards are text-only by design.
+     problem     -> "The problem" paragraph in the open card
+     approach    -> ["para", "para"] under "How it was solved"
+     results     -> "What came out" paragraph
+     figures     -> [{ file, caption }] shown under the results
+   No report PDF and no code download: the showcase cards offer no files.
    ================================================================= */
 const EXTRA_PROJECTS = [
   {
@@ -1476,9 +1657,9 @@ const EXTRA_PROJECTS = [
     course: "Aircraft Design I & II",
     period: "Fall 2024 to Spring 2025",
     title: "Hybrid-Electric STOL Air Taxi",
-    summary: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion.",
-    abstract: "Structural design and analysis of a hybrid-electric STOL air taxi with distributed electric propulsion. Created 3D CAD models in SolidWorks and performed stress, deformation, and buckling analysis in ABAQUS.",
-    tags: ["ABAQUS", "SolidWorks", "FEM", "Structural Analysis"]
+    summary: "Designing and analysing the structure of a hybrid-electric STOL air taxi with distributed electric propulsion.",
+    abstract: "Created 3D CAD models in SolidWorks and ran stress, deformation and buckling analyses in ABAQUS for a hybrid-electric STOL air taxi with distributed electric propulsion.",
+    tags: ["SolidWorks", "ABAQUS", "CAD", "FEM", "Stress analysis", "Buckling analysis"]
   },
   {
     slug: "nanofluid-prediction",
@@ -1486,11 +1667,18 @@ const EXTRA_PROJECTS = [
     course: "Heat Transfer",
     period: "Spring 2025",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
-    summary: "A regression pipeline that predicts the convective heat transfer coefficient of nanofluids from their physical and chemical properties.",
-    abstract: "Team project for Dr. Javadi's Heat Transfer course. Starting from a nanofluid dataset (flow rate, inlet temperature, nanoparticle concentration, viscosity, density, thermal conductivity), the work covers exploratory analysis and a correlation study, then one-hot encoding and MinMax / standard scaling of the features. Four regression models (linear, degree-2 polynomial, random forest, and an MLP neural network) are trained and compared on MAE, MSE, and R²; a permutation-importance analysis identifies which properties drive the prediction.",
-    achievements: "Of the four models, the random forest came out ahead on every measure (MAE, MSE, R²) on the held-out data. The correlation study made the reason clear — nanoparticle concentration, density and thermal conductivity move almost in lockstep with the heat-transfer coefficient (about 0.97) — and a permutation-importance check pointed at the same few features.",
-    tags: ["Python", "scikit-learn", "Regression", "Random Forest", "Neural Networks"],
-    hasCode: true
+    summary: "Predicting the heat transfer coefficient of nanofluids from their physical properties with machine learning, and finding which properties matter most.",
+    problem: "Team project for Dr. Javadi's Heat Transfer course. The convective heat transfer coefficient of a nanofluid depends on how the fluid flows and what is suspended in it, and measuring it for every combination is not practical. The brief was to predict it with machine learning from a synthetic dataset of 10,000 samples, using flow rate, inlet temperature, nanoparticle concentration, viscosity, density and thermal conductivity, then compare models and explain which properties drive the prediction.",
+    approach: [
+      "The data was checked first. It has no missing values, no outliers by the 1.5 IQR rule and no categorical columns, so the one-hot encoding step had nothing to convert. A correlation matrix showed concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target. MinMax and standard scaling were compared on the feature distributions, and an 80/20 split gave 8,000 training and 2,000 test samples.",
+      "Four regressors were trained with scikit-learn and scored on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons. A second round tuned the random forest and the MLP with GridSearchCV, added ridge regression, pairwise interaction terms, 5-fold cross-validation and a voting ensemble, then ran permutation importance and SHAP on the random forest to see which inputs it leans on."
+    ],
+    results: "All four models predict the coefficient almost exactly, with R² between 0.9972 and 0.9978 and a mean absolute error of 4.1 to 4.6 W/m²K on a target spanning about 200 to 690. Linear regression was best on all three measures, with MSE 25.8 against 32.9 for the random forest, and tuning the forest and the MLP did not change that ranking. Permutation importance puts thermal conductivity, concentration and density first and flow rate fourth, while viscosity scores almost zero despite its 0.70 correlation with the target.",
+    figures: [
+      { file: "out1.jpg", width: 760, caption: "Predicted against actual heat transfer coefficient on the 2,000 test samples for all four models, each lying along the ideal-fit line." },
+      { file: "out2.jpg", width: 620, caption: "Correlation matrix of the six properties and the target. Concentration, density and thermal conductivity are perfectly correlated with each other, and each correlates at 0.97 with the heat transfer coefficient." }
+    ],
+    tags: ["Python", "Jupyter Notebook", "pandas", "NumPy", "scikit-learn", "SHAP", "Matplotlib", "Seaborn", "Random forest", "MLP regression", "GridSearchCV", "Permutation importance"]
   }
 ];
 
@@ -1502,21 +1690,50 @@ const EXTRA_PROJECTS = [
    summary when collapsed, the full write-up behind a click.
    `course` doubles as the role/lab line shown under the title.
    thumbnail -> assets/research/<id>/thumb.jpg   (collapsed card)
-   Optional, same as the Projects showcase cards:
-     achievements  -> a short "how it turned out" note under the abstract
-     hasFigure     -> render base/open.jpg as a figure under the text
-     figureCaption -> caption under that figure
+   Write-up, same fields as the Projects showcase cards:
+     problem       -> "The problem"
+     approach      -> "How it was solved" (string or array of paragraphs)
+     results       -> "What came out", with `figures` [{ file, caption, width }]
+   For work still in progress:
+     approachLabel -> renames the approach block (e.g. "Proposed solution")
+     plan          -> "Planned work" (string or array), used instead of results
+     schedule      -> [{ term, work }] shown as a timeline under "Schedule"
+   Older entries may still use abstract / achievements / hasFigure instead.
    No report PDF: the cards are text-only by design.
    ================================================================= */
 const RESEARCH_DATA = [
+  {
+    id: "msc-thesis-agentic-composite-design",
+    base: "assets/research/msc-thesis-agentic-composite-design",
+    course: "M.Sc. Thesis · Dr. Kouchakzadeh",
+    period: "In progress",
+    title: "Optimal design of stiffened composite laminates using LLM-based agentic AI",
+    summary: "Building a multi-agent LLM system for the preliminary design of stiffened composite laminates, with every number computed by a validated core.",
+    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with neural networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, and needs hundreds of finite element runs.",
+    approachLabel: "Proposed solution",
+    approach: "The proposal is a multi-agent system in which LLM agents lead the design: they plan, pull in design knowledge and requirements, call computational modules and check every result, following the analytical framework of a reference text on composite structures. Language models alone are not reliable enough for engineering, so every number comes from a deterministic, validated computational core. The agents need no prior training and the system grows by adding tools. For a composite, the agent must also reason about the layup, mechanical prerequisites and each theory's range of validity before calling an equation.",
+    plan: [
+      "Two tracks run in parallel. The first completes and validates the deterministic computational core, from basic laminate analysis up to more complex structures checked against reference examples. The second designs the agent architecture: a knowledge layer holding computational knowledge and interpretive design requirements, tool interfaces, and a design decision graph. The scope is classical laminate theory, linear elastic behaviour and static or quasi-static load, with material properties as inputs; when the data is missing, the system reports the problem as unsolvable.",
+      "The tracks are then integrated and run end to end on design scenarios such as sandwich panels and stiffened shells, compared with manual design and classical optimization on accuracy and efficiency, and checked against standard references for shells, stiffened cylinders, sandwich panels and laminates. The expected outcome is a working prototype, a computational library that also runs without the agent, and at least one scientific paper. The known risks are sensitivity to prompt phrasing, assumptions drifting over long chains, and the nondeterminism of LLMs."
+    ],
+    schedule: [
+      { term: "Year 1 · Semester 2", work: "Literature review, problem definition, and completing and validating the computational core for basic composite analysis." },
+      { term: "Year 1 · Summer",     work: "Extending the core to more complex analysis and validating it against examples from the references." },
+      { term: "Year 2 · Semester 1", work: "Completing the structural scope of the core, and designing the agent architecture: knowledge layer, tool interfaces and design decision graph." },
+      { term: "Year 2 · Semester 2", work: "Integrating the architecture with the core, running end-to-end design scenarios, and comparing them with manual design and classical optimization." },
+      { term: "Year 2 · Summer",     work: "Analysing the results, fixing shortcomings, writing the thesis and preparing the defence." }
+    ],
+    tags: ["LLM agents", "Multi-agent systems", "Agentic AI", "Composite structures", "Classical laminate theory", "Sandwich panels", "Stiffened shells", "Preliminary design"]
+  },
   {
     id: "llm-multiagent-mechanism-design",
     base: "assets/research/llm-multiagent-mechanism-design",
     course: "Junior AI Developer · Intelligent Design Office · Dr. Dehghani",
     period: "10/25 to 04/26",
     title: "LLM-based multi-agent mechanism design",
-    summary: "A multi-agent system using CrewAI and retrieval-augmented generation (RAG) to automate the conceptual design of mechanical linkages.",
-    abstract: "Developing a multi-agent system using CrewAI and retrieval-augmented generation (RAG) to automate the conceptual design of mechanical linkages, coordinating specialized agents for synthesis, evaluation, and refinement."
+    summary: "Automating the conceptual design of mechanical linkages with a team of LLM agents built on CrewAI and RAG.",
+    abstract: "Worked on a multi-agent system, built with CrewAI and retrieval-augmented generation (RAG), that automates the conceptual design of mechanical linkages, with separate agents for synthesis, evaluation and refinement.",
+    tags: ["CrewAI", "Python", "RAG", "Multi-agent systems", "LLM", "Mechanism design"]
   },
   {
     id: "ifem-acoustic-emission",
@@ -1524,8 +1741,9 @@ const RESEARCH_DATA = [
     course: "Personal Research",
     period: "07/25 to 08/25",
     title: "Inverse finite element method & acoustic emission",
-    summary: "Real-time reconstruction of structural deformation from sparse strain measurements using the inverse Finite Element Method (iFEM).",
-    abstract: "Implemented the inverse Finite Element Method (iFEM) for real-time reconstruction of structural deformation from sparse strain measurements, integrating acoustic emission (AE) signals to enhance damage localization."
+    summary: "Reconstructing structural deformation in real time from sparse strain sensors, and using acoustic emission to locate damage more accurately.",
+    abstract: "Implemented the inverse Finite Element Method (iFEM) to reconstruct structural deformation in real time from sparse strain measurements, and combined it with acoustic emission (AE) signals to improve damage localization.",
+    tags: ["iFEM", "Acoustic emission", "Strain sensing", "Shape sensing", "Damage localization", "Structural health monitoring"]
   },
   {
     id: "structural-health-monitoring",
@@ -1533,12 +1751,18 @@ const RESEARCH_DATA = [
     course: "Bachelor Thesis · Dr. Ali Abedian",
     period: "02/25 to 08/25",
     title: "Structural health monitoring: crack detection and localization",
-    summary: "One continuous line of work — a survey of SHM methods, an ABAQUS piezoelectric Lamb-wave model that detects a crack from sensor signals, and a four-transducer network that then localizes it to within ~10 mm.",
-    abstract: "One continuous body of work on piezoelectric guided-wave structural health monitoring (SHM), begun as a bachelor thesis under Dr. Ali Abedian and carried forward afterwards. It runs in three stages. <strong>Method survey:</strong> vibration-based methods, acoustic emission, ultrasonic guided (Lamb) waves, fibre-optic and distributed sensing, vision-based inspection, electromechanical impedance, machine-learning diagnosis and infrared thermography were reviewed and compared, and bonded piezoelectric (PZT) transducers with Lamb-wave excitation were chosen as the sensing approach. <strong>Damage detection:</strong> a verified ABAQUS finite-element model of an aluminium plate with bonded PZT patches was built for a healthy and a cracked state, driven with a Hann-windowed tone burst, and the electrode voltages compared — the crack produces a clear, repeatable signature (peak-amplitude drop, shifted S0 arrival, changed waveform shape) that works as a reliable damage index. <strong>Damage localization:</strong> the model was grown to a four-PZT network with six independent propagation paths, and a probability-based diagnostic imaging (PDI) algorithm was implemented that places the crack within about 10 mm of its true position on a 400 mm plate. That result was cross-checked against an independent time-of-flight delay-and-sum image and validated against the full-field simulated wavefield, which shows the crack radiating as a point scatterer exactly where it was placed.",
-    tags: ["ABAQUS", "Lamb waves", "Piezoelectric (PZT)", "Guided-wave SHM", "Crack localization", "Python"],
-    achievements: "The healthy and cracked models were built to be element-for-element identical (about 1.04 million each), so the crack is the only thing that differs between them, and Abaqus datacheck ran clean. The path that passes through the crack loses 23% of its S0 amplitude while paths well away from it barely change — a clean damage signal. Feeding six of those paths into the PDI algorithm put the crack within 10 mm of its true position on a 400 mm plate; a separate time-of-flight image and the full simulated wavefield both agree on where it sits.",
-    hasFigure: true,
-    figureCaption: "Probability-based diagnostic imaging (PDI) map from the four-PZT network. Green cross: true crack location; cyan cross: the algorithm's estimate — a 10 mm error on a 400 mm plate, from four sensors and six paths."
+    summary: "Detecting and locating cracks in thin aluminium plates from the ultrasonic signals picked up by bonded piezoelectric sensors.",
+    problem: "Aircraft skin panels crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. Before that is worth building, two questions need answers: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
+    approach: [
+      "A survey came first: vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis, compared on what each one can resolve. Bonded PZT transducers driven with Lamb waves came out of that comparison. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
+      "Stage one bonded two PZT discs to a plate in Abaqus, the discs solved in Standard and the plate in Explicit through a surface-based co-execution, comparing sensor voltage healthy against cracked. Stage two grew that to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, and modelled the crack as a zero-thickness seam so both meshes stay identical element for element. Wavelet energy per path becomes a damage index, and the six feed a probability-based diagnostic imaging algorithm."
+    ],
+    results: "On the two-transducer path the crack drops peak amplitude by 19.5% and gives a signal difference coefficient of 0.989, which settles detection and says nothing about position. With four transducers the path through the crack loses 23.4% of its S0 amplitude while the two paths 110 mm away register nothing to four decimal places. PDI places the crack 10 mm from where it was put, about 2.5% of the plate span, against 75 mm for delay-and-sum on the same signals; the full-field wavefield difference shows it radiating from the right point.",
+    tags: ["Abaqus/Explicit", "Abaqus/Standard", "Abaqus co-simulation", "Python", "Lamb waves", "Piezoelectric (PZT)", "Morlet wavelet transform", "PDI imaging", "Delay-and-sum", "Crack localization"],
+    figures: [
+      { file: "out1.jpg", caption: "Damage-probability map from the four-transducer network. Green cross: the true crack. Cyan cross: the peak of the map, 10 mm away on a 400 mm plate." },
+      { file: "out2.jpg", caption: "Peak S0 amplitude drop on each of the six sensing paths, annotated with how far that path passes from the crack." }
+    ]
   },
   {
     id: "battery-thermal-system",
@@ -1546,9 +1770,9 @@ const RESEARCH_DATA = [
     course: "RAeS Competition: Lyrebird Electric STOL Aircraft",
     period: "06/22 to 08/22",
     title: "Battery thermal system",
-    summary: "A battery cooling system for an electric STOL aircraft, simulated in COMSOL and validated against a 25°C limit.",
-    abstract: "Designed and simulated a battery cooling system for an electric STOL aircraft using COMSOL Multiphysics, incorporating altitude-dependent air properties and turbulent flow in compact wing-mounted ducts. Validated the thermal design maintaining battery temperature below 25°C.",
-    achievements: "With altitude-dependent air properties and turbulent flow through the tight wing-mounted ducts modelled in COMSOL, the design held the pack below its 25 °C target across the flight profile.",
+    summary: "Keeping the battery of an electric STOL aircraft below 25 °C with a cooling system designed and simulated in COMSOL.",
+    abstract: "Designed a battery cooling system for an electric STOL aircraft and simulated it in COMSOL Multiphysics, with altitude-dependent air properties and turbulent flow through compact ducts in the wing.",
+    achievements: "The simulated design kept the battery below its 25 °C limit across the flight profile.",
     tags: ["COMSOL", "Thermal Analysis", "CFD"]
   }
 ];
@@ -1564,14 +1788,14 @@ const CERTIFICATES_DATA = [
     name: "LLM Applications Development",
     issuer: "Quera College",
     date: "09/25",
-    summary: "Hands-on course on building applications with large language models, covering RAG, prompting patterns, and agent workflows."
+    summary: "A practical course on building applications with large language models: RAG, prompting patterns and agent workflows."
   },
   {
     slug: "prompt-engineering",
     name: "Prompt Engineering",
     issuer: "Quera College",
     date: "09/25",
-    summary: "Techniques for designing, structuring, and evaluating prompts to reliably steer large language models."
+    summary: "How to design, structure and evaluate prompts that steer large language models reliably."
   }
 ];
 
@@ -1744,6 +1968,10 @@ function showcaseProjects() {
         period: p.period,
         title: p.title,
         summary: p.summary,
+        problem: p.problem,
+        approach: p.approach,
+        results: p.results,
+        figures: p.figures,
         abstract: p.description,
         achievements: p.achievements,
         tags: p.tags
@@ -1757,10 +1985,13 @@ function showcaseProjects() {
     period: p.period,
     title: p.title,
     summary: p.summary,
+    problem: p.problem,
+    approach: p.approach,
+    results: p.results,
+    figures: p.figures,
     abstract: p.abstract,
     achievements: p.achievements,
-    tags: p.tags,
-    hasCode: p.hasCode
+    tags: p.tags
   }));
   return out;
 }
@@ -1770,43 +2001,62 @@ function showcaseCardHtml(item, prefix) {
   const tags = (item.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const thumb = `${item.base}/thumb.jpg`;
 
-  // The showcase cards deliberately carry no report/slide PDFs — they say
+  // The showcase cards deliberately carry no report/slide PDFs or code — they say
   // what the work was and how it turned out, in text. The full documents
   // live on the course pages, not here.
+  //
+  // Preferred shape is the three-part write-up: problem / approach / results,
+  // with the result figures under the last block. Entries that have not been
+  // written up that way yet fall back to the older abstract + achievements
+  // pair, so nothing goes blank while the text is still being filled in.
   let blocks = '';
-  if (item.abstract) {
-    blocks += `
+  const paras = t => (Array.isArray(t) ? t : [t])
+    .map(p => `<p class="showcase-abstract">${p}</p>`).join('');
+  const block = (label, text) => `
       <div class="proj-block">
-        <p class="proj-block-label">Abstract</p>
-        <p class="showcase-abstract">${item.abstract}</p>
+        <p class="proj-block-label">${label}</p>
+        ${paras(text)}
       </div>`;
-  }
-  if (item.achievements) {
-    blocks += `
+
+  // Work still in progress swaps the past-tense labels: `approachLabel`
+  // renames the middle block, and `plan` adds a "Planned work" block in
+  // place of results that do not exist yet.
+  if (item.problem)  blocks += block('The problem', item.problem);
+  if (item.approach) blocks += block(item.approachLabel || 'How it was solved', item.approach);
+  if (item.plan)     blocks += block('Planned work', item.plan);
+  if (item.schedule) blocks += `
       <div class="proj-block">
-        <p class="proj-block-label">How it turned out</p>
-        <p class="showcase-abstract">${item.achievements}</p>
+        <p class="proj-block-label">Schedule</p>
+        <ol class="showcase-schedule">
+          ${item.schedule.map(r => `<li><span class="term">${r.term}</span><span>${r.work}</span></li>`).join('')}
+        </ol>
       </div>`;
-  }
+  if (item.results)  blocks += block('What came out', item.results);
+
+  if (!item.problem && item.abstract)     blocks += block('Abstract', item.abstract);
+  if (!item.results && item.achievements) blocks += block('How it turned out', item.achievements);
+
+  // Result figures, read from <base>/<file>. A missing file takes its own
+  // figure out of the drawer, same self-healing pattern as the thumbnail, so
+  // a card is never left with a broken image while assets are still coming in.
+  // Optional `width` (px) shows a large or tall figure smaller than the column;
+  // max-width: 100% in the CSS still shrinks it further on a phone.
+  (item.figures || []).forEach(f => {
+    blocks += `
+      <figure class="showcase-figure">
+        <img src="${item.base}/${f.file}" alt="" loading="lazy"${f.width ? ` style="width:${f.width}px"` : ''}
+             onerror="this.closest('.showcase-figure').remove()" />
+        ${f.caption ? `<figcaption>${f.caption}</figcaption>` : ''}
+      </figure>`;
+  });
   if (item.hasFigure) {
-    // One figure under the text — the expanded counterpart to the collapsed
-    // thumbnail. Reads <base>/open.jpg; if it is missing the whole figure
-    // removes itself, same pattern as the thumbnail.
+    // Older single-figure entries: <base>/open.jpg under the text.
     blocks += `
       <figure class="showcase-figure">
         <img src="${item.base}/open.jpg" alt="" loading="lazy"
              onerror="this.closest('.showcase-figure').remove()" />
         ${item.figureCaption ? `<figcaption>${item.figureCaption}</figcaption>` : ''}
       </figure>`;
-  }
-  if (item.hasCode) {
-    // Deliverable is a Jupyter notebook — browsers have no viewer for it,
-    // so a download link is the honest option (same as the homework pages).
-    blocks += `
-      <div class="proj-block">
-        <p class="proj-block-label">Code</p>
-        <a class="btn btn-sm btn-outline" href="${item.base}/notebook.ipynb" download data-guard>${ICON_FILE}Download notebook (notebook.ipynb)</a>
-      </div>`;
   }
 
   return `
@@ -1820,9 +2070,12 @@ function showcaseCardHtml(item, prefix) {
           <p class="showcase-summary">${item.summary || ''}</p>
           ${tags ? `<div class="tag-row">${tags}</div>` : ''}
         </div>
-        <div class="showcase-thumb">
-          <img src="${thumb}" alt="" loading="lazy"
-               onerror="this.closest('.showcase-thumb').classList.add('is-empty'); this.remove();" />
+        <div class="showcase-side">
+          <div class="showcase-thumb">
+            <img src="${thumb}" alt="" loading="lazy"
+                 onerror="this.closest('.showcase-thumb').classList.add('is-empty'); this.remove();" />
+          </div>
+          <span class="showcase-more" aria-hidden="true"><span class="more">More</span><span class="less">Less</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
         </div>
       </div>
       <div class="drawer" id="${drawerId}">
@@ -1836,24 +2089,70 @@ function showcaseCardHtml(item, prefix) {
 
 // Showcase accordion. Kept separate from toggleProj() because these cards
 // live outside the courses layout and must not touch its focus mode.
+// Only one card per list is open at a time: opening a card closes the one
+// that was open, playing the same collapse animation the drawer always uses
+// (no shortcut to an instant close). When the closing card sits above the
+// one just clicked, that collapse would otherwise drag the clicked card up
+// the screen mid-animation, so a rAF loop runs for the length of the
+// transition and scrolls by whatever the clicked head moved each frame —
+// the clicked card stays put while the card above it visibly folds shut.
+function setShowcase(card, open) {
+  card.classList.toggle('open', open);
+  card.querySelector('.drawer').classList.toggle('open', open);
+  const head = card.querySelector('.showcase-head');
+  if (head) head.setAttribute('aria-expanded', String(open));
+}
+const DRAWER_MS = 520; // a hair past the drawer's own 0.5s collapse
+// Runs `close`, which collapses zero or more drawers above `anchor`, and
+// keeps anchor's on-screen position fixed while that happens. `target` is
+// read once, before anything collapses, and every correction measures
+// against that same fixed value rather than the previous frame's reading —
+// re-basing to the last (already-drifted) frame is what turned this into a
+// feedback loop that overshot and corrected back past itself each frame,
+// which is what actually read as a shake; anchoring every frame to one
+// fixed target converges instead of oscillating. With motion enabled the
+// collapse is a CSS transition, so getBoundingClientRect() moves gradually —
+// a rAF loop re-measures the drift from target every frame, for as long as
+// the transition runs. With reduced motion the CSS transition is switched
+// off (see the media query above), so the layout change is instant and one
+// before/after measurement is enough; the "after" read is also what forces
+// that change to actually happen. Every correction passes behavior:
+// 'instant' explicitly — html has scroll-behavior: smooth for anchor-link
+// scrolling, and the two-argument scrollBy(x, y) form has no way to opt out
+// of that and inherits it, so each nudge here would otherwise itself
+// animate over several hundred milliseconds instead of landing immediately.
+function collapseKeepingPut(anchor, close) {
+  const target = anchor.getBoundingClientRect().top;
+  if (reduceMotion.matches) {
+    close();
+    const drift = anchor.getBoundingClientRect().top - target;
+    if (drift) window.scrollBy({ top: drift, behavior: 'instant' });
+    return;
+  }
+  const start = performance.now();
+  close();
+  (function step(now) {
+    const drift = anchor.getBoundingClientRect().top - target;
+    if (drift) window.scrollBy({ top: drift, behavior: 'instant' });
+    if (now - start < DRAWER_MS) requestAnimationFrame(step);
+  })(start);
+}
 function toggleShowcase(head) {
   const card   = head.parentNode;
   const drawer = head.nextElementSibling;
   const isOpen = card.classList.contains('open');
-  card.classList.toggle('open', !isOpen);
-  drawer.classList.toggle('open', !isOpen);
-  head.setAttribute('aria-expanded', String(!isOpen));
+  if (!isOpen) {
+    const others = [...card.parentNode.querySelectorAll('.showcase.open')].filter(c => c !== card);
+    if (others.length) collapseKeepingPut(head, () => others.forEach(other => setShowcase(other, false)));
+  }
+  setShowcase(card, !isOpen);
   if (!isOpen) loadPdfSlots(drawer);
 }
 function closeShowcase(btn) {
   const card = btn.closest('.showcase');
-  card.classList.remove('open');
-  card.querySelector('.drawer').classList.remove('open');
+  setShowcase(card, false);
   const head = card.querySelector('.showcase-head');
-  if (head) {
-    head.setAttribute('aria-expanded', 'false');
-    head.scrollIntoView({ block: 'nearest' });
-  }
+  if (head) head.scrollIntoView({ block: 'nearest' });
 }
 
 // Instructor chunk appended to the course-sub line: " · <icon> Dr. Name".
@@ -2342,6 +2641,30 @@ document.querySelectorAll('a[data-guard]').forEach(a => {
     })
     .catch(() => { /* offline -> leave the link as-is */ });
 });
+
+/* ---------- Back to top ----------
+   Shown once the page is scrolled past 60% of a screen (400px at least),
+   hidden again near the top. Scroll events are folded into one check per
+   frame. The click scrolls smoothly unless reduced motion is requested,
+   then moves focus to the current page's nav link so a keyboard user is
+   not left on a button that has just faded out. */
+const toTop = document.getElementById('toTop');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let toTopQueued = false;
+function syncToTop() {
+  toTopQueued = false;
+  toTop.classList.toggle('show', window.scrollY > Math.max(400, window.innerHeight * 0.6));
+}
+window.addEventListener('scroll', () => {
+  if (!toTopQueued) { toTopQueued = true; requestAnimationFrame(syncToTop); }
+}, { passive: true });
+window.addEventListener('resize', syncToTop);
+toTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  const here = document.querySelector('.nav a.active');
+  if (here && here.offsetParent) here.focus({ preventScroll: true });
+});
+syncToTop();
 </script>
 </body>
 </html>

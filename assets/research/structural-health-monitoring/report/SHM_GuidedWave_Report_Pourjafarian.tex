@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variant A -- plain article class (same format as the course reports)
+% Body, references and abstract are shared with the elsarticle variant.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{microtype}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[font=small,labelfont=bf]{caption}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{{figures/}}
+\setlength{\parskip}{4pt}
+% Shrink a table to \linewidth only if it would otherwise overflow; never stretch a narrow one.
+\newsavebox{\fitbox}
+\newcommand{\fitwidth}[1]{%
+  \sbox{\fitbox}{#1}%
+  \ifdim\wd\fitbox>\linewidth
+    \resizebox{\linewidth}{!}{\usebox{\fitbox}}%
+  \else
+    \usebox{\fitbox}%
+  \fi
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhead[LO,L]{Guided-Wave SHM of Metallic Plates}
+\fancyhead[CO,C]{}
+\fancyhead[RO,R]{Rouzbeh Pourjafarian}
+\fancyfoot[LO,L]{}
+\fancyfoot[CO,C]{\thepage/\pageref{LastPage}}
+\fancyfoot[RO,R]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\setlength{\headheight}{15pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+{\Large\bfseries Guided-Wave Structural Health Monitoring of Metallic Plates:}\\[4pt]
+{\Large\bfseries Method Review, Finite-Element Crack Detection,}\\[4pt]
+{\Large\bfseries and Four-Transducer Crack Localisation}\\[16pt]
+{\large Rouzbeh Pourjafarian}\\[6pt]
+Department of Aerospace Engineering, Sharif University of Technology\\[2pt]
+Supervisor: Dr.~Ali Abedian\\[2pt]
+Bachelor's thesis, 2025
+\end{center}
+
+\begin{center}
+\rule{\linewidth}{0.4pt}
+\end{center}
+
+\vspace{4pt}
+\noindent\textbf{Abstract.}
+\input{abstract}
+
+\vspace{4pt}
+\noindent\textbf{Keywords:} structural health monitoring, Lamb waves, piezoelectric transducers, finite element
+modelling, damage index, crack localisation, probability-based diagnostic imaging, Abaqus.
+
+\vspace{6pt}
+\begin{center}
+\rule{\linewidth}{0.4pt}
+\end{center}
+
+\tableofcontents
+\newpage
+
+\input{body}
+
+\input{refs}
+
+\end{document}

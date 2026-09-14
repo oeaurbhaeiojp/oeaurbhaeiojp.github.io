@@ -1,0 +1,9 @@
+Files for the "msc-thesis-agentic-composite-design" research card (RESEARCH_DATA in index.html):
+
+  thumb.jpg  -> collapsed-card thumbnail, roughly 4:3 (not added yet)
+
+The thesis is in progress, so the card has "The problem", "Proposed solution"
+and "Planned work" and no results or result figures. When results exist, add
+`results` and `figures` to the entry (out1.jpg, out2.jpg here) and drop `plan`.
+The text is drawn from Pourjafarian_MScThesis.docx (the thesis proposal).
+Folder name must match the entry "id" in RESEARCH_DATA.

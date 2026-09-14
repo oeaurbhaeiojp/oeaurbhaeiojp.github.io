@@ -1,4 +1,12 @@
-Upload the project report here as report.pdf:
-  assets/projects/stol-air-taxi/report.pdf
+Nothing has been uploaded for this project yet.
 
-The "View report" button in the Research & Projects section links to this file.
+To give the card the same treatment as the other showcase cards, add:
+  report.pdf  -> the project report, which the write-up is drawn from
+  thumb.jpg   -> collapsed-card thumbnail, roughly 4:3
+  out1.jpg    -> first figure under "What came out"
+  out2.jpg    -> second figure under "What came out"
+
+The card currently shows the two-sentence abstract only. The showcase cards
+carry no PDF of their own, so report.pdf here is source material for the
+write-up and the figures, not something the card links to.
+Folder name must match the project "slug" in EXTRA_PROJECTS in index.html.

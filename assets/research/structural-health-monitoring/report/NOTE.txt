@@ -1,0 +1,18 @@
+English report for the "structural-health-monitoring" research card.
+
+  SHM_GuidedWave_Report_Pourjafarian.tex  -> LaTeX source (article, 12pt, 1in margins)
+  SHM_GuidedWave_Report_Pourjafarian.pdf  -> compiled output, 29 pages
+  figures/                                -> all figures used by the .tex
+
+Sources the report was assembled from:
+  - Bachelor thesis (Persian), Sharif University of Technology, Spring 2025
+      Sections 1-2: SHM method review; Sections 4-6: two-PZT Abaqus model
+      figures/p2_*.png are extracted from that document
+  - Four-PZT Abaqus study, Aug 2025
+      figures/p3_*.png come from that package's figures/ and results/ folders
+
+Rebuild:
+  latexmk -pdf SHM_GuidedWave_Report_Pourjafarian.tex
+  latexmk -c    (removes .aux/.log/.toc etc; only .tex, .pdf and figures/ are tracked)
+
+Not linked from index.html yet.

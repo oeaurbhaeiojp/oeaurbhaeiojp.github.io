@@ -1,0 +1,14 @@
+This report documents a project on structural health monitoring (SHM) of thin metallic plates using
+piezoelectric transducers and ultrasonic guided waves, carried out in three phases. The project opens with a
+survey of the available monitoring methods, from vibration-based techniques through acoustic emission,
+fibre-optic sensing, electromechanical impedance and thermography, which ends in a justification for
+choosing the guided-wave route. It then builds a finite-element model of an aluminium plate carrying two
+bonded PZT discs, in which the piezoelectric patches are solved implicitly and the plate explicitly through an
+Abaqus co-execution. Comparing the sensor voltage from a healthy plate against a plate with a 25\,mm crack
+gives a signal difference coefficient of $0.989$ and a peak-amplitude drop of $19.5\%$, which establishes that
+the crack is detectable but says nothing about where it is. The project's final phase extends the model to a
+four-transducer network on a $400\times400$\,mm plate, which yields six independent sensing paths. Damage indices built
+from the continuous wavelet energy of each path are fed to a probability-based diagnostic imaging (PDI)
+algorithm, and the crack is located to within $10$\,mm of its true position, about $2.5\%$ of the plate span. A
+time-of-flight delay-and-sum image built from the same signals is also reported, together with a full-field
+wavefield-difference check that confirms the crack is represented correctly in the model itself.

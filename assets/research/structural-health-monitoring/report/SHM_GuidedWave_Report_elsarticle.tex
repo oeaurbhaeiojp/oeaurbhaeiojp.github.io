@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variant B -- Elsevier elsarticle (journal manuscript look)
+% Body, references and abstract are shared with the article variant.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[preprint,12pt]{elsarticle}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{microtype}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[font=small,labelfont=bf]{caption}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{{figures/}}
+% Replace the class footer ("Preprint submitted to ... <date>") with a plain page number.
+\makeatletter
+\def\ps@pprintTitle{%
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \def\@oddfoot{\centerline{\thepage}}%
+  \let\@evenfoot\@oddfoot}
+\makeatother
+% Shrink a table to \linewidth only if it would otherwise overflow; never stretch a narrow one.
+\newsavebox{\fitbox}
+\newcommand{\fitwidth}[1]{%
+  \sbox{\fitbox}{#1}%
+  \ifdim\wd\fitbox>\linewidth
+    \resizebox{\linewidth}{!}{\usebox{\fitbox}}%
+  \else
+    \usebox{\fitbox}%
+  \fi
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Guided-Wave Structural Health Monitoring of Metallic Plates:
+Method Review, Finite-Element Crack Detection, and Four-Transducer Crack Localisation}
+
+\author{Rouzbeh Pourjafarian}
+\address{Department of Aerospace Engineering, Sharif University of Technology, Tehran, Iran}
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\begin{keyword}
+structural health monitoring \sep Lamb waves \sep piezoelectric transducers \sep finite element modelling
+\sep damage index \sep crack localisation \sep probability-based diagnostic imaging \sep Abaqus
+\end{keyword}
+
+\end{frontmatter}
+
+\tableofcontents
+\newpage
+
+\input{body}
+
+\input{refs}
+
+\end{document}

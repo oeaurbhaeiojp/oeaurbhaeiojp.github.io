@@ -1,10 +1,13 @@
 Files for the "structural-health-monitoring" research card (RESEARCH_DATA in index.html):
 
   thumb.jpg  -> collapsed-card thumbnail (full-field wavefield-difference map)
-  open.jpg   -> figure shown at the top of the drawer (PDI crack-localization map)
+  out1.jpg   -> first figure under "What came out" (PDI crack-localization map)
+  out2.jpg   -> second figure under "What came out" (per-path amplitude drop)
+  open.jpg   -> the older single-figure slot, no longer read by the card
 
   report/    -> English LaTeX report (source + PDF + its own figures), see report/NOTE.txt
 
-The card itself still links to no PDF: the drawer shows the figure and the
-abstract only. report/ is not referenced from index.html yet.
+out1.jpg and out2.jpg come from report/figures/p3_pdi_map.png and
+report/figures/p3_amplitude_drop.png. The card links no PDF: it carries the
+three-part write-up (problem, approach, results) plus those two figures.
 Folder name must match the entry "id" in RESEARCH_DATA.

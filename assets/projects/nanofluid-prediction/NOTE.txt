@@ -1,7 +1,16 @@
 Files for the "nanofluid-prediction" showcase card (EXTRA_PROJECTS in index.html):
 
-  thumb.jpg       -> card thumbnail (correlation matrix of nanofluid properties)
-  notebook.ipynb  -> offered as a download when hasCode: true  (not added yet)
+  thumb.jpg  -> card thumbnail (histograms of every feature and the target)
+  out1.jpg   -> first figure under "What came out" (predicted vs actual, all four models)
+  out2.jpg   -> second figure under "What came out" (correlation matrix)
 
-No report PDF — the showcase cards are text-only (abstract + "how it turned out").
+All three come from the outputs of
+HeatTransfer_Project_Sedaghatpey_Mohammadi_Pourjafarian.ipynb, run on
+synthetic_nanofluid_heat_transfer_dataset.csv (10,000 samples).
+The numbers on the card follow the notebook's printed results. Note that the
+written report (Project_Heat_Transfer_ARSGroup.pdf, section 5.2) names the
+random forest as the best model, while the notebook's own metrics and its
+printed selection put linear regression first on MSE, MAE and R².
+Neither the notebook nor the dataset is published: the showcase cards offer no
+files, no report PDF and no code download.
 Folder name must match the project "slug" in EXTRA_PROJECTS.

@@ -1,0 +1,1021 @@
+%-----------------------------------------------------
+\section{Introduction}
+%-----------------------------------------------------
+
+Structures in service accumulate damage, and the traditional answer to that is periodic manual inspection.
+Scheduled inspection has two weaknesses. It only sees the structure at fixed intervals, so damage that
+initiates and grows between two inspections goes unnoticed, and it depends heavily on the judgement of the
+inspector. Structural health monitoring replaces that with permanently installed sensors and an automated
+diagnostic algorithm, so the condition of the structure can be interrogated whenever it is needed rather than
+when the maintenance calendar allows.
+
+The aerospace case is the one that motivated this work. Airframes are thin-walled, fatigue-critical, and
+expensive to disassemble for inspection. A method that can interrogate a large area of skin from a small
+number of permanently bonded transducers avoids most of that disassembly, and ultrasonic guided waves
+are the main candidate for the role. In a plate whose thickness is comparable to the acoustic wavelength, the wave
+is guided by the two free surfaces and travels tens of centimetres with modest attenuation, which means a
+sparse network of transducers can cover a wide area. Any crack, delamination or corrosion patch along the
+path between two transducers scatters the wave and changes the received signal.
+
+\subsection{Scope and structure of this report}
+
+The work reported here was carried out in three stages, and the report follows the same order.
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item Section~\ref{sec:review} surveys the families of SHM methods and compares them against the
+  requirements of a thin metallic aerospace panel, which leads to the choice of piezoelectric guided-wave
+  monitoring. Section~\ref{sec:physics} then sets out the physical basis: the piezoelectric constitutive
+  equations and Lamb-wave dispersion in a plate.
+
+  \item Section~\ref{sec:stage1} builds a pitch-catch finite-element model in Abaqus with one actuator and
+  one sensor, runs it in healthy and cracked states, and compares the two received signals using
+  time-domain damage indices. The question it answers is whether damage is present.
+
+  \item Section~\ref{sec:stage2} rebuilds the model with four transducers, giving six independent sensing
+  paths, and combines the per-path damage indices into a two-dimensional damage-probability map. The
+  question it answers is where the damage is.
+\end{enumerate}
+
+Sections~\ref{sec:stage1} and~\ref{sec:stage2} are reported as a single progression rather than as separate
+exercises. Detection is established first, because a method that cannot detect damage has nothing to
+localise, and the four-transducer model then extends the same finite-element approach with the
+transducers, excitation design and crack representation that localisation requires. This report discusses
+each of those additions where it arises.
+
+%-----------------------------------------------------
+\section{Structural health monitoring: levels, methods and selection}
+\label{sec:review}
+%-----------------------------------------------------
+
+\subsection{Levels of diagnosis}
+
+SHM tasks are usually organised into a hierarchy of increasing diagnostic ambition. The classification
+introduced by Rytter defines four levels, and later work has added two more \cite{Rytter1993,Gharehbaghi2021}.
+
+\begin{table}[H]
+\centering
+\caption{Diagnostic levels in structural health monitoring.}
+\fitwidth{%
+\begin{tabular}{c l p{7.4cm}}
+\toprule
+Level & Question answered & Typical output \\
+\midrule
+1 & Is there damage? & Binary or scalar flag; novelty detection against a threshold \\
+2 & Where is it? & Coordinates, region or a damage-probability map \\
+3 & How severe is it? & Crack length, stiffness loss, section-area reduction \\
+4 & What is the remaining life? & Growth prediction, time to an unacceptable state \\
+5 & What type of damage is it? & Crack, corrosion, delamination, loose joint \\
+6 & What should be done? & Maintenance decision, load restriction \\
+\bottomrule
+\end{tabular}}
+\label{tab:levels}
+\end{table}
+
+The distinction matters for this report because the three stages of work map onto the first two levels. The
+two-transducer model of Section~\ref{sec:stage1} reaches Level~1, and the four-transducer network of
+Section~\ref{sec:stage2} reaches Level~2. Levels 3 and above were not attempted.
+
+\subsection{Survey of monitoring methods}
+
+\paragraph{Vibration-based methods.}
+The structure is excited at low frequency and its modal properties, natural frequencies, mode shapes, modal
+curvature or flexibility, are tracked over time. Damage reduces local stiffness and shifts those properties
+\cite{Yang2021Vib,Rabi2024}. The instrumentation is cheap and the method covers the whole structure at
+once, which is why it dominates civil-infrastructure monitoring. The weakness is sensitivity: global modal
+parameters respond weakly to small local damage, and they respond strongly to temperature, which makes
+early crack detection in a metallic panel difficult.
+
+\paragraph{Acoustic emission.}
+Rather than sending a wave in, acoustic emission listens for the elastic energy released by the damage itself
+as it grows \cite{Ghadarah2023,Muir2021}. It is passive and can catch damage at the moment of initiation,
+which no active method can do. In exchange it only sees damage while it is actively growing, it needs
+continuous listening at high sample rates, and it is vulnerable to operational noise.
+
+\paragraph{Ultrasonic guided waves.}
+A transducer launches a Lamb wave into the plate, and other transducers record what arrives
+\cite{YangZ2023,Alem2016}. Because the wave travels far in a thin-walled structure, a small number of
+transducers covers a large area, and because the excitation frequency is chosen by the operator the
+wavelength can be matched to the size of the damage that must be found. The costs are a dispersive,
+multi-modal wavefield that has to be understood before the signals can be interpreted, and a strong
+dependence on a healthy-state baseline that itself drifts with temperature.
+
+\paragraph{Fibre-optic sensing.}
+Fibre Bragg gratings measure strain at discrete points along a single fibre, and Brillouin or Rayleigh
+scattering methods give strain distributed continuously along its length
+\cite{Alhussein2025,Barrias2016,Garcia2015}. The fibres are light, immune to electromagnetic interference
+and can be embedded in a composite laminate. They measure strain, though, and strain is a local quantity:
+damage away from the fibre produces little signal.
+
+\paragraph{Electromechanical impedance.}
+A bonded PZT patch is driven over a frequency sweep, typically above 30\,kHz, and its electrical impedance
+is measured. Because the patch is coupled to the structure, the electrical impedance carries a copy of the
+local mechanical impedance, and damage near the patch changes it \cite{Na2018}. The method is very
+sensitive but only within a small radius of each patch, which makes area coverage expensive.
+
+\paragraph{Vision-based and thermographic methods.}
+Camera-based inspection detects surface cracks and measures displacement fields, and infrared thermography
+detects subsurface defects through the thermal contrast they produce under active heating
+\cite{He2020,Mardanshahi2025}. Both need line of sight and controlled conditions, so they suit periodic
+inspection better than permanent monitoring.
+
+\paragraph{Machine-learning approaches.}
+Machine learning is a processing layer applied on top of any of the sensing methods above, to classify
+damage, detect novelty, or fuse multiple data sources \cite{Jia2023,Hassani2023}. It becomes attractive once
+a large body of labelled signals exists, which in practice usually means simulated signals.
+
+\subsection{Selection}
+
+Table~\ref{tab:compare} summarises the comparison against the requirements of a thin metallic panel:
+sensitivity to a small crack, area covered per sensor, and suitability for permanent installation.
+
+\begin{table}[H]
+\centering
+\caption{Comparison of the main SHM method families for thin metallic panels.}
+\fitwidth{%
+\begin{tabular}{l c c c}
+\toprule
+Method & Small-crack sensitivity & Area per sensor & Permanent install \\
+\midrule
+Vibration-based        & Low        & Whole structure & Yes \\
+Acoustic emission      & High\,$^{*}$ & Large         & Yes \\
+Guided waves (PZT)     & High       & Large           & Yes \\
+Fibre optic (FBG)      & Medium     & Local           & Yes \\
+Electromechanical impedance & High  & Very local      & Yes \\
+Thermography / vision  & Medium     & Surface only    & No \\
+\bottomrule
+\end{tabular}}\\[4pt]
+{\small $^{*}$ Only while the damage is actively growing.}
+\label{tab:compare}
+\end{table}
+
+Guided-wave monitoring with bonded piezoelectric transducers is the only entry that combines high
+sensitivity to a small crack with a large area per sensor and permanent installation. The same transducer can
+act as actuator and as sensor, and the hardware is thin, light and cheap enough to be distributed over a
+structure \cite{Qing2019,Ju2023}. That is the method used for the rest of this report.
+
+%-----------------------------------------------------
+\section{Physical basis}
+\label{sec:physics}
+%-----------------------------------------------------
+
+\subsection{Piezoelectric constitutive equations}
+
+A piezoelectric material couples its mechanical and electrical states. In the strain-charge form, the strain
+tensor $\mathbf{S}$ and the electric displacement $\mathbf{D}$ are
+
+\begin{align}
+  \mathbf{S} &= \mathbf{s}^{E}\,\mathbf{T} + \mathbf{d}^{\mathsf{T}}\,\mathbf{E} \\
+  \mathbf{D} &= \mathbf{d}\,\mathbf{T} + \boldsymbol{\varepsilon}^{T}\,\mathbf{E}
+\end{align}
+
+where $\mathbf{T}$ is stress, $\mathbf{E}$ the electric field, $\mathbf{s}^{E}$ the compliance at constant
+field, $\boldsymbol{\varepsilon}^{T}$ the permittivity at constant stress, and $\mathbf{d}$ the piezoelectric
+strain-charge coupling matrix. The two equations are what make a single patch usable in both directions.
+Applying a voltage produces a strain, so the patch acts as an actuator; deforming the patch produces a charge,
+so the patch acts as a sensor.
+
+For a disc poled through its thickness, the components that matter are $d_{33}$, which couples the poling
+direction to itself, $d_{31}=d_{32}$, which couples the in-plane directions to the poling direction and is
+what converts an in-plane Lamb wave into a measurable voltage, and the shear terms $d_{15}=d_{24}$. The
+values used throughout this work are those of APC850, listed in Table~\ref{tab:mat2}.
+
+\subsection{Lamb waves in a thin plate}
+
+In a plate bounded by two traction-free surfaces, the bulk longitudinal and shear waves reflect and interfere
+until only certain guided modes survive. These are the Lamb modes, and they separate into symmetric and
+antisymmetric families governed by the Rayleigh--Lamb equations,
+
+\begin{align}
+  \text{symmetric:}\qquad
+  \frac{\tan(qh)}{\tan(ph)} &= -\frac{4k^{2}pq}{\left(q^{2}-k^{2}\right)^{2}} \\[4pt]
+  \text{antisymmetric:}\qquad
+  \frac{\tan(qh)}{\tan(ph)} &= -\frac{\left(q^{2}-k^{2}\right)^{2}}{4k^{2}pq}
+\end{align}
+
+with
+
+\begin{equation}
+  p^{2} = \left(\frac{\omega}{c_{L}}\right)^{2} - k^{2}, \qquad
+  q^{2} = \left(\frac{\omega}{c_{T}}\right)^{2} - k^{2},
+\end{equation}
+
+where $h$ is the half-thickness, $k$ the wavenumber, $\omega$ the angular frequency, and $c_{L}$, $c_{T}$
+the bulk longitudinal and shear velocities. These are transcendental in $k$ and have to be solved numerically
+at each frequency. Doing so gives the phase velocity $c_{p}=\omega/k$ and the group velocity
+$c_{g}=\mathrm{d}\omega/\mathrm{d}k$ for each mode.
+
+Two consequences shape the modelling decisions that follow. First, the velocities depend on frequency, so a
+pulse of finite bandwidth spreads as it travels and the received packet is wider than the transmitted one.
+Second, at least two modes exist at any frequency, the fundamental symmetric $S_{0}$ and antisymmetric
+$A_{0}$, and they travel at different speeds, so the sensor sees them as separate arrivals. Keeping the
+excitation below the cut-on frequency of the higher modes keeps the picture to those two.
+
+For the 1.6\,mm aluminium plate used in this work, driven at 200\,kHz, solving the equations above gives the
+values in Table~\ref{tab:dispersion}.
+
+\begin{table}[H]
+\centering
+\caption{Lamb-wave properties of the 1.6\,mm aluminium plate at 200\,kHz.}
+\begin{tabular}{l c c c}
+\toprule
+Mode & Phase velocity (m/s) & Group velocity (m/s) & Wavelength (mm) \\
+\midrule
+$S_{0}$ & 5348 & 5332 & 26.7 \\
+$A_{0}$ & 1580 & 2627 & 7.90 \\
+\bottomrule
+\end{tabular}
+\label{tab:dispersion}
+\end{table}
+
+The $S_{0}$ mode is the faster of the two and arrives first, which is why every damage index in this report is
+computed on the first arriving packet. The $A_{0}$ mode has the shorter wavelength, 7.90\,mm against
+26.7\,mm, so it is the mode that sets the element size the mesh must resolve.
+
+%-----------------------------------------------------
+\section{Stage 1: crack detection with a two-transducer path}
+\label{sec:stage1}
+%-----------------------------------------------------
+
+If a wave is launched from one bonded transducer and received by another, does a crack on the path change
+the received signal enough to be measured? That is the only question the first model was built to answer.
+
+\subsection{Model description}
+
+An aluminium plate carries two PZT discs, one acting as actuator and one as sensor, placed on opposite faces
+at either end of the plate so that the direct path between them passes over the centre. The crack sits at that
+centre, directly across the path. Geometry is given in Table~\ref{tab:geom2} and material data in
+Table~\ref{tab:mat2}.
+
+\begin{table}[H]
+\centering
+\caption{Geometry of the two-transducer model.}
+\begin{tabular}{l l}
+\toprule
+\multicolumn{2}{l}{\textbf{Aluminium plate}}\\
+Dimensions & $177.8 \times 76.2 \times 1.6$\,mm \\
+Centre & $(0,0)$\,mm \\
+\midrule
+\multicolumn{2}{l}{\textbf{Crack}}\\
+Count & 1 \\
+Dimensions & $1 \times 25 \times 1$\,mm \\
+Centre & $(0,0)$\,mm \\
+Notch root radius & 1\,mm \\
+\midrule
+\multicolumn{2}{l}{\textbf{PZT discs}}\\
+Count & 2 \\
+Dimensions & $r = 6.35$\,mm, $t = 0.254$\,mm \\
+Actuator position & $(-69.85,\ 0,\ -1.6)$\,mm \\
+Sensor position & $(+69.85,\ 0,\ +1.6)$\,mm \\
+\bottomrule
+\end{tabular}
+\label{tab:geom2}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Material data for the plate and the piezoelectric discs.}
+\begin{tabular}{l l l}
+\toprule
+Property & Aluminium plate & PZT disc \\
+\midrule
+Material          & Al 2024-T3 & APC850 \\
+Density           & $2700$\,kg/m$^3$ & $7600$\,kg/m$^3$ \\
+Young's modulus   & $69$\,GPa & $63$\,GPa \\
+Poisson's ratio   & $0.33$ & $0.35$ \\
+Permittivity      & --- & $1.6851\times10^{-8}$\,F/m \\
+Charge constants  & --- & $d_{15}=d_{24}=590$\,pC/N \\
+                  & --- & $d_{31}=d_{32}=-175$\,pC/N \\
+                  & --- & $d_{33}=400$\,pC/N \\
+\bottomrule
+\end{tabular}\\[4pt]
+{\small All remaining components of the charge-constant matrix are zero.}
+\label{tab:mat2}
+\end{table}
+
+The distance between the two discs is $139.7$\,mm. With the $S_{0}$ group velocity of
+Table~\ref{tab:dispersion}, the direct arrival is expected at $139.7/5332 = 26.2$\,\textmu s, which is worth
+remembering when the signals are examined in Section~\ref{sec:stage1results}.
+
+\subsection{Partitioning and mesh}
+
+Meshing a plate with two circular patches bonded to it is the first practical obstacle. A free mesh degrades
+badly where it has to transition around a circular footprint, and the elements it produces there are distorted
+enough to reflect the wave on their own. The plate was therefore partitioned before meshing, both around the
+transducer footprints and around the crack, so the mesh could be built from mappable regions
+(Figures~\ref{fig:p2geom} and~\ref{fig:p2mesh}). Edge seeding was then used to refine the mesh locally near
+the discs and near the crack, where the wavelength of the scattered field is shortest.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_plate_healthy.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_plate_cracked.png}
+\end{minipage}
+\caption{Plate partitioning before meshing. Left: healthy plate, with the two circular transducer footprints
+partitioned into mappable faces. Right: the same plate with the 25\,mm crack partition added at the centre.}
+\label{fig:p2geom}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_pzt_pair.png}\\[2pt]
+  {\small (a) The two PZT discs, partitioned}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_mesh_disc.png}\\[2pt]
+  {\small (b) Meshed disc}
+\end{minipage}
+
+\vspace{8pt}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_mesh_pzt_seat.png}\\[2pt]
+  {\small (c) Plate mesh under a transducer}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p2_mesh_crack.png}\\[2pt]
+  {\small (d) Plate mesh around the crack}
+\end{minipage}
+\caption{Discretisation of the two-transducer model. The mesh is refined locally where the geometry changes
+and where the scattered field is expected to have the shortest wavelength.}
+\label{fig:p2mesh}
+\end{figure}
+
+\subsection{Loads, boundary conditions and solution strategy}
+
+No mechanical load is applied to the plate or to the discs. The excitation is entirely electrical. The bonded
+face of each disc, where it meets the plate, is held at zero volts, and the free face of the actuator is driven
+with a $200$\,kHz sinusoidal potential of $10$\,V amplitude. The free face of the sensor is left free to develop
+a potential, and that potential is the output of the analysis.
+
+The solver strategy is dictated by an Abaqus restriction. The fully coupled piezoelectric continuum element
+is available in Abaqus/Standard but not in Abaqus/Explicit, whereas explicit time integration is what makes
+a wave-propagation analysis affordable. The two requirements were reconciled by splitting the problem: the
+aluminium plate is solved with Dynamic, Explicit, the PZT discs with Dynamic, Implicit, and the two analyses
+are run simultaneously and exchange data at their common interface through an Abaqus co-execution
+(Figure~\ref{fig:p2coexec}). Getting the interface right, so that the partitioned faces on the underside of each
+disc and on the surface of the plate coincide, is the part of the setup that most often prevents the analysis
+from running.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{p2_coexecution.png}
+\caption{Co-execution manager. The healthy and cracked cases are each solved as a coupled
+Abaqus/Standard--Abaqus/Explicit pair, both completing successfully.}
+\label{fig:p2coexec}
+\end{figure}
+
+Two analyses were run, identical except for the crack: a healthy plate and a plate in which the crack was
+introduced as a cut extruded through the thickness. Both were run to $80$\,\textmu s.
+
+\subsection{Damage indices considered}
+
+Once a healthy signal $S_{r}(i)$ and a current signal $S_{d}(i)$ are available, a scalar damage index has to be
+extracted from them. Several were reviewed before two were selected.
+
+\paragraph{Signal difference coefficient (SDC).}
+Defined as one minus the normalised cross-correlation of the two signals,
+
+\begin{equation}
+  \mathrm{SDC} = 1 - \frac{\sum_{i=1}^{N}\tilde{S}_{d}(i)\,\tilde{S}_{r}(i)}
+  {\sqrt{\sum_{i=1}^{N}\tilde{S}_{d}^{2}(i)\ \sum_{i=1}^{N}\tilde{S}_{r}^{2}(i)}}
+  \label{eq:sdc}
+\end{equation}
+
+where $\tilde{S}(i) = S(i)-\bar{S}$ is the mean-removed signal and the sums run over the $N$ samples of the
+record. Identical signals give $\mathrm{SDC}=0$ and
+completely dissimilar signals give $\mathrm{SDC}=1$. Because it uses the full waveform, SDC responds to
+changes in shape and phase as well as amplitude.
+
+\paragraph{Normalised root-mean-square deviation.}
+
+\begin{equation}
+  \mathrm{NRMSD} = \sqrt{\frac{\sum_{i=1}^{N}\left[S_{d}(i)-S_{r}(i)\right]^{2}}{\sum_{i=1}^{N}S_{r}(i)^{2}}}
+\end{equation}
+
+which measures the energy of the difference between the signals, normalised by the energy of the baseline.
+It has a clear physical reading as a fraction of signal energy changed, and thresholds around $0.2$ are
+commonly quoted as the level above which a change exceeds normal environmental variation.
+
+\paragraph{Peak amplitude ratio.}
+The simplest index of all,
+
+\begin{equation}
+  A_{\text{ratio}} = \frac{A_{\text{damaged}}}{A_{\text{baseline}}}
+\end{equation}
+
+comparing the peak amplitude of the first arriving packet. Scattering at the crack removes energy from the
+direct path, so a ratio below one indicates attenuation.
+
+\paragraph{Other features.}
+Time-of-flight shift, residual signal energy, and time-frequency features from the continuous wavelet
+transform, the short-time Fourier transform or the Hilbert envelope were also reviewed. The wavelet-energy
+feature is the one that becomes central in Stage 2, and it is defined in Section~\ref{sec:di3}.
+
+\subsection{Results}
+\label{sec:stage1results}
+
+Figure~\ref{fig:p2wavefield} shows the wave leaving the actuator and spreading across the plate, confirming
+that the electrical excitation does generate a propagating elastic field. Figure~\ref{fig:p2signals} shows the
+electric potential recorded at the sensor electrode in each of the two states.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{p2_wavefield.png}
+\caption{Von Mises stress at $16$\,\textmu s, showing the wave radiating from the actuator across the healthy
+plate.}
+\label{fig:p2wavefield}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{p2_signal_healthy.png}\\[2pt]
+{\small (a) Healthy plate}\\[8pt]
+\includegraphics[width=0.82\textwidth]{p2_signal_cracked.png}\\[2pt]
+{\small (b) Cracked plate}
+\caption{Electric potential at the sensor electrode over $80$\,\textmu s. Both traces are flat until about
+$27$\,\textmu s, which agrees with the $26.2$\,\textmu s predicted from the $S_{0}$ group velocity.}
+\label{fig:p2signals}
+\end{figure}
+
+Both signals stay at zero until roughly $27$\,\textmu s and then begin to oscillate. That arrival time is the
+first useful check on the model: the $S_{0}$ group velocity from Table~\ref{tab:dispersion} predicts
+$26.2$\,\textmu s over the $139.7$\,mm path, so the wave in the model is travelling at the speed the
+analytical dispersion relation says it should.
+
+Overlaying the two traces (Figure~\ref{fig:p2overlay}) shows the effect of the crack. The cracked-state
+signal is lower in amplitude throughout, and the two waveforms drift progressively out of phase as time
+increases.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{p2_signal_overlay.png}
+\caption{Sensor signal from the healthy plate and from the cracked plate, overlaid. The crack reduces the
+amplitude and shifts the phase of the later part of the record.}
+\label{fig:p2overlay}
+\end{figure}
+
+The two selected indices give the values in Table~\ref{tab:res2}.
+
+\begin{table}[H]
+\centering
+\caption{Damage indices for the two-transducer model.}
+\begin{tabular}{l c}
+\toprule
+Quantity & Value \\
+\midrule
+Signal difference coefficient & $0.989$ \\
+Peak amplitude, healthy       & $0.195$ \\
+Peak amplitude, cracked       & $0.157$ \\
+Amplitude drop                & $19.5\%$ \\
+\bottomrule
+\end{tabular}
+\label{tab:res2}
+\end{table}
+
+The amplitude drop of $19.5\%$ is unambiguous. A change of 5--10\% is normally taken as suggestive of
+damage and anything above 10\% as a strong indication, so a drop of nearly 20\% is a clear detection. The
+SDC of $0.989$ is also a clear detection, but its magnitude needs care in interpretation. Equation
+\eqref{eq:sdc} is evaluated at zero lag over the whole $80$\,\textmu s record, and because the two waveforms
+drift out of phase towards the end of that window their zero-lag correlation collapses towards zero, which
+sends SDC towards one. The index has effectively saturated. It confirms that the signals differ, but at that
+value it can no longer rank one difference against another, which matters as soon as several sensing paths
+have to be compared.
+
+\subsection{From detection to localisation}
+
+The two-transducer model was built to answer one question, and by design it carries no information for a
+second one. Three specific requirements separate what it does from what localisation needs, and Stage 2 is
+built around meeting all three.
+
+The first is geometric. A single actuator-sensor pair yields one number, and one number cannot locate
+anything. The crack in this model happens to sit on the direct path, so it produces a large index; a crack of
+the same size sitting 30\,mm to the side would produce a smaller index, and the two situations are
+indistinguishable from a single measurement. A single path can therefore only detect, and reaching Level~2
+of Table~\ref{tab:levels} requires several paths crossing the monitored area at different angles.
+
+The second is in the excitation. Driving the actuator with a continuous 200\,kHz sinusoid, as was done here,
+means the plate is being fed energy for the entire analysis. The received signal grows steadily throughout
+the record rather than arriving as a discrete packet, and by $80$\,\textmu s it also contains reflections from
+the plate edges superposed on the direct arrival. That is workable when the only question is whether the
+signal changed, and it is unusable when the arrival time of a specific wave packet has to be measured. A
+windowed tone burst is required instead, and that is what Stage 2 uses.
+
+The third is a modelling issue. The crack here was created by cutting material out of the plate, which
+means the healthy and cracked models have different meshes. Part of the difference between the two signals
+is therefore attributable to the change in discretisation rather than to the crack. For a detection threshold
+this is tolerable, and for a quantitative per-path index that has to be compared across six paths it is not.
+
+%-----------------------------------------------------
+\section{Stage 2: crack localisation with a four-transducer network}
+\label{sec:stage2}
+%-----------------------------------------------------
+
+The Stage 2 model extends the same finite-element approach to meet all three requirements above.
+
+\subsection{Layout and geometry}
+
+Four PZT discs are placed at the corners of a square on a $400\times400\times1.6$\,mm aluminium plate. Four
+transducers give $\binom{4}{2}=6$ unique sensing paths, four along the sides and two along the diagonals.
+The crack is placed off-centre, on the P1--P3 diagonal, so that one path passes directly through it while the
+remaining five pass at increasing perpendicular offsets. Table~\ref{tab:geom3} gives the layout and
+Figure~\ref{fig:p3layout} shows it.
+
+\begin{table}[H]
+\centering
+\caption{Geometry of the four-transducer model.}
+\fitwidth{%
+\begin{tabular}{l l}
+\toprule
+Plate & $400 \times 400 \times 1.6$\,mm, aluminium \\
+PZT discs & 4, diameter $12.7$\,mm, thickness $0.254$\,mm \\
+PZT positions & P1$(-75,-75)$, P2$(75,-75)$, P3$(75,75)$, P4$(-75,75)$\,mm \\
+Crack & $25$\,mm long, through-thickness, centred at $(-35,-35)$\,mm \\
+Path lengths & 4 sides at $150$\,mm, 2 diagonals at $212.1$\,mm \\
+\bottomrule
+\end{tabular}}
+\label{tab:geom3}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\textwidth]{p3_plate_layout.png}
+\caption{Plate part seen from above. Each of the four transducer footprints carries the butterfly partition
+inside its $30\times30$\,mm structured box, and the small partition left of centre bounds the crack.}
+\label{fig:p3layout}
+\end{figure}
+
+The plate size follows from a timing constraint. This is the smallest plate that keeps the first edge reflection
+outside the $S_{0}$ arrival window on all six paths: reflections arrive at $54.7$\,\textmu s, while the latest
+$S_{0}$ window closes at $48.1$\,\textmu s. That removes the edge-reflection contamination which limited the
+Stage 1 record.
+
+\subsection{Crack representation}
+
+Instead of cutting material away, the crack is modelled as a zero-thickness seam. A seam duplicates the nodes
+on the crack face so the two faces can separate, while leaving the rest of the mesh untouched. The healthy and
+cracked models therefore have identical meshes, element for element: both contain $1{,}040{,}892$ elements,
+and the seam adds exactly 150 duplicated nodes on the crack face. The only difference between the two
+analyses is the crack itself, which is what a per-path damage index requires if it is to mean anything. A notch
+variant with a 1\,mm wide cut was also built in the same CAE model, giving a second crack representation to
+compare the seam against; its co-simulations were not run for this report.
+
+\subsection{Mesh design from the dispersion relations}
+
+The element size comes straight out of Table~\ref{tab:dispersion}. The shorter of the two wavelengths at
+200\,kHz belongs to $A_{0}$ at $7.90$\,mm, and the usual requirement is ten elements per wavelength, giving
+an in-plane element size of $0.8$\,mm, with four elements through the thickness.
+
+Meshing the plate with four circular footprints raised the same difficulty as in Stage 1, in a more severe
+form. A free mesh produced 224 elements with zero or negative volume and 952 elements with an aspect ratio
+above 100, and it also introduced a spurious reflection at the mesh transition that was visible in the signals.
+The fix was to partition each footprint into a butterfly pattern of five mappable faces, an inner square plus
+four radial segments reaching the corners of a $30\times30$\,mm structured box, and to apply the same
+partition to the discs themselves (Figure~\ref{fig:p3disc}). The plate away from the boxes was then meshed
+with a structured technique and only the boxes with sweep or advancing-front. The result is a fully
+structured hexahedral mesh of C3D8E elements with zero failed and zero warning elements, and the spurious
+reflection disappeared with it.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p3_disc_geometry.png}\\[2pt]
+  {\small (a) Meshed PZT disc}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p3_butterfly.png}\\[2pt]
+  {\small (b) Plate mesh beneath transducer P1}
+\end{minipage}
+\caption{Butterfly partition into an inner square and four radial segments, applied to the disc itself (a) and
+to the plate under it (b). The inner square meshes as a regular grid, and the four segments carry the
+transition out to the edge of the $30\times30$\,mm structured box. That box edge is the visible boundary in
+(b) between the swept region and the uniform 0.8\,mm grid outside it.}
+\label{fig:p3disc}
+\end{figure}
+
+A seam has zero thickness, so the mesh closes over it and the crack leaves nothing to see from above.
+Figure~\ref{fig:p3crack}(a) therefore marks the seam on the surrounding mesh, while
+Figure~\ref{fig:p3crack}(b) shows the notch variant, where the 1\,mm cut is a real hole in the mesh.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p3_crack_mesh.png}\\[2pt]
+  {\small (a) Seam model, crack face marked}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{p3_notch_mesh.png}\\[2pt]
+  {\small (b) Notch variant, 1\,mm cut}
+\end{minipage}
+\caption{The crack region. In (a) the uniform 0.8\,mm mesh runs through the crack location undisturbed, with
+the seam drawn in red along the line where its faces are duplicated. In (b) the notch variant removes
+material, so the mesh wraps around the cut and the element count rises to $1{,}231{,}288$.}
+\label{fig:p3crack}
+\end{figure}
+
+\subsection{Excitation}
+
+The continuous sinusoid of Stage 1 is replaced by a four-cycle Hann-windowed tone burst,
+
+\begin{equation}
+  V(t) = \frac{V_{0}}{2}\left[1-\cos\!\left(\frac{2\pi f_{0} t}{N_{\text{cyc}}}\right)\right]
+         \sin\!\left(2\pi f_{0}t\right),
+  \qquad 0 \le t \le \frac{N_{\text{cyc}}}{f_{0}}
+\end{equation}
+
+with $V_{0}=10$\,V, $f_{0}=200$\,kHz and $N_{\text{cyc}}=4$. The window narrows the bandwidth, which
+limits dispersion of the packet, and it produces a wave packet with a definite start and end, which is what
+makes an arrival time measurable.
+
+\subsection{Electrode modelling and co-simulation}
+
+The bottom electrode of every disc is grounded. The actuator's top electrode is driven with the tone burst.
+For the sensors, the top electrode is tied to a single equipotential node through \texttt{*EQUATION}
+constraints on the electric-potential degree of freedom, which reproduces the behaviour of a real continuous
+metal electrode instead of treating every finite-element node on the surface as an independent voltage
+output (Figure~\ref{fig:p3bc}). The electric potential at each electrode's master node is what is recorded.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{p3_electrical_bc.png}
+\caption{Electrical boundary conditions on one transducer: grounded bottom electrode, driven or sensing top
+electrode.}
+\label{fig:p3bc}
+\end{figure}
+
+The plate is again solved in Abaqus/Explicit and the discs in Abaqus/Standard, coupled through a
+surface-based co-simulation with lockstep incrementation. One co-simulation is required per actuator per
+plate state, so eight runs were performed in total, covering actuators P1 to P4 in both healthy and cracked
+states. Three actuators are enough to cover all six unique undirected paths; the fourth actuator repeats those
+paths in the reverse direction and was used as an independent reciprocity check.
+
+\subsection{Verification}
+
+The following checks were performed before any result was interpreted.
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item Healthy and cracked meshes are identical element for element, $1{,}040{,}892$ elements each, with the
+  seam contributing exactly 150 duplicated nodes.
+  \item Mesh quality verification with analysis checks reports zero failed and zero warning elements on all
+  plate variants.
+  \item A data check on the plate model and on each disc model completes with zero errors. This caught two
+  real modelling errors during development, a duplicate equation-constraint conflict created by the butterfly
+  partition and a missing local material orientation on the anisotropic piezoelectric material, both fixed
+  before the production runs.
+  \item All eight co-simulations reached completed status.
+\end{itemize}
+
+\subsection{Damage index and probability-based diagnostic imaging}
+\label{sec:di3}
+
+Following Nasiri et al.~\cite{Nasiri2022}, the damage-sensitive feature is the wavelet energy of the signal
+inside a time window,
+
+\begin{equation}
+  F = \sum_{t}\sum_{f}\left|W(t,f)\right|^{2}
+\end{equation}
+
+where $W(t,f)$ is the continuous wavelet transform of the signal using a complex Morlet wavelet. The
+damage index for a path is the relative change in that energy,
+
+\begin{equation}
+  \mathrm{DI} = \frac{\left|F_{\text{damaged}} - F_{\text{healthy}}\right|}{F_{\text{healthy}}}.
+\end{equation}
+
+A wavelet-energy feature was preferred over the SDC used in Stage 1 for the reason given in
+Section~\ref{sec:stage1results}: SDC saturates, and a per-path index that has to be compared across six
+paths must stay graded.
+
+Turning six scalar indices into a two-dimensional map is the job of the PDI algorithm. Each path contributes
+an elliptical weight function centred on the straight line joining its two transducers,
+
+\begin{align}
+  r(x,y) &= \frac{d_{i}+d_{j}}{d_{ij}} - 1 \\[2pt]
+  \gamma &= \frac{V_{S_{0}}\,T_{S_{0}}}{d_{ij}} \\[2pt]
+  \beta  &= \frac{\sqrt{2}}{n}\,\gamma, \qquad n = 4 \\[2pt]
+  W(x,y) &= \exp\!\left[-\left(\frac{r}{\beta}\right)^{2}\right] \\[2pt]
+  P(x,y) &= \sum_{\text{paths}} \mathrm{DI}_{ij}\,W_{ij}(x,y)
+\end{align}
+
+where $d_{i}$ and $d_{j}$ are the distances from the point $(x,y)$ to the two transducers, $d_{ij}$ is the
+direct path length, and $T_{S_{0}} = N_{\text{cyc}}/f_{0}$ is the duration of the $S_{0}$ packet. The
+quantity $r$ is zero on the direct path and grows away from it, so each path produces a band of high weight
+that is widest at the midpoint and narrows towards the transducers. Summing the weighted indices over all
+paths concentrates probability where the bands from the most strongly affected paths overlap. The
+coefficient $\beta$ controls how wide those bands are. Tying $\beta$ to the physical length of the wave packet,
+which is what \cite{Nasiri2022} contributes, replaces the trial-and-error value used in earlier formulations.
+
+\subsection{Results}
+
+\subsubsection{Sensor signals}
+
+Figure~\ref{fig:p3signals} compares the received signal on all six paths, healthy against cracked, ordered by
+how close each path passes to the crack. The vertical marker on each subplot is the $S_{0}$ arrival time
+predicted from the group velocity of Table~\ref{tab:dispersion}, and it lands on the observed onset in every
+case.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.78\textheight]{p3_signal_comparison.png}
+\caption{$S_{0}$ wave packet on all six sensing paths, healthy plate against cracked plate. The predicted
+$S_{0}$ arrival time is marked on each subplot.}
+\label{fig:p3signals}
+\end{figure}
+
+The pattern across the six paths follows the crack geometry (Figure~\ref{fig:p3drop} and
+Table~\ref{tab:di3}). The P1--P3 diagonal, which passes straight through the crack at zero offset, loses
+$23.4\%$ of its peak amplitude and changes shape after the first arrival. The three paths offset by
+40--50\,mm change by a few percent, in either direction, which is consistent with the scattered field
+interfering constructively or destructively at the sensor depending on the path geometry. The two paths
+110\,mm from the crack show no change at all, to four decimal places in the damage index. That last
+observation also confirms the healthy and cracked models are identical apart from the crack, since meshes
+that differed would have registered something on those distant paths.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{p3_amplitude_drop.png}
+\caption{Peak amplitude drop from healthy to cracked state for each sensing path, annotated with the path's
+perpendicular offset from the crack.}
+\label{fig:p3drop}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Per-path damage indices and amplitude drops. A negative drop means the amplitude increased.}
+\fitwidth{%
+\begin{tabular}{l c c c c}
+\toprule
+Path & Length (mm) & Offset from crack (mm) & Damage index & Amplitude drop (\%) \\
+\midrule
+P1--P3 & 212.1 & 0     & 0.4065 & 23.4 \\
+P1--P2 & 150.0 & 40    & 0.1400 & $-7.5$ \\
+P1--P4 & 150.0 & 40    & 0.0696 & 3.5 \\
+P2--P4 & 212.1 & 49.5  & 0.0996 & $-4.8$ \\
+P2--P3 & 150.0 & 110   & 0.0001 & 0.0 \\
+P3--P4 & 150.0 & 110   & 0.0002 & 0.0 \\
+\bottomrule
+\end{tabular}}
+\label{tab:di3}
+\end{table}
+
+\subsubsection{Localisation by probability-based diagnostic imaging}
+
+Feeding the six damage indices into the PDI algorithm produces the map in Figure~\ref{fig:p3pdi}. The peak of
+the map is at $(-35,-45)$\,mm against a true crack location of $(-35,-35)$\,mm, an error of $10.0$\,mm. On a
+plate spanning 400\,mm that is an error of about $2.5\%$, obtained from four transducers and six paths.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{p3_pdi_map.png}
+\caption{Damage-probability map from the PDI algorithm with Gaussian elliptical weighting. Green cross:
+true crack location. Cyan cross: the peak of the map, which is the algorithm's estimate.}
+\label{fig:p3pdi}
+\end{figure}
+
+\subsubsection{Localisation by time-of-flight delay-and-sum}
+
+A second and independent estimator was implemented on the same extracted signals, with no further
+simulation. Subtracting the healthy signal from the cracked signal on each path,
+
+\begin{equation}
+  v_{\text{residual}}(t) = v_{\text{cracked}}(t) - v_{\text{healthy}}(t),
+\end{equation}
+
+removes the direct arrival, which is common to both states, and leaves the field scattered by the crack. For
+every candidate point on the plate the expected time of flight from actuator to that point to sensor is
+computed, the residual envelope is sampled at that delay, and the contributions from all six paths are
+summed. This is a migration image, the same principle as the total focusing method used in phased-array
+ultrasonic inspection.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{p3_tof_map.png}
+\caption{Delay-and-sum image formed from the time of flight of the crack-scattered wave on all six paths.}
+\label{fig:p3tof}
+\end{figure}
+
+The estimate is $(-37,-110)$\,mm, an error of $75.0$\,mm, which is much worse than the PDI result. Two
+effects account for this. The four-cycle tone burst lasts about $20$\,\textmu s, which at the $S_{0}$ group
+velocity corresponds to a wave packet roughly 100\,mm long in space, so the envelope peak used to measure
+the arrival is blurred over tens of millimetres whatever method reads it. On top of that, four transducers at
+the corners give six paths with limited angular diversity, and the image cannot distinguish the true crossing
+point from other places where several path ellipses happen to intersect. The bright ring away from the crack
+in Figure~\ref{fig:p3tof} is that ghosting, a known behaviour of sparse-array delay-and-sum imaging. The
+full-field check below establishes that the underlying model and signals are sound.
+
+\subsubsection{Full-field validation}
+
+The last check verifies the model itself. It is not deployable, since it requires the entire simulated
+displacement field, which no realistic sensor network can measure. The whole-plate displacement
+field was extracted from the explicit output database at $t=40$\,\textmu s for both the healthy and cracked
+models under actuator P1, and the two fields were subtracted node by node.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{p3_wavefield_diff.png}
+\caption{$\left|U_{\text{crack}} - U_{\text{healthy}}\right|$ over the whole plate at $t=40$\,\textmu s. The
+circular wavefront is centred on the true crack location.}
+\label{fig:p3field}
+\end{figure}
+
+The difference field is a clean circular wavefront expanding from a point that coincides with the true crack
+location to within the 2\,mm resolution of the grid used. The crack behaves as a secondary point source
+exactly where it was placed. What the point-sensor methods infer indirectly from six voltage traces is
+therefore visible directly here, and it puts an upper bound on how much of the $10$\,mm PDI error the model
+itself could account for: the model places the crack correctly, so the remaining error is set by what four
+sensors and six paths can resolve.
+
+\subsection{Comparison of the three estimators}
+
+\begin{table}[H]
+\centering
+\caption{Localisation error of the three methods applied to the same simulation.}
+\fitwidth{%
+\begin{tabular}{l l c}
+\toprule
+Method & Input used & Localisation error \\
+\midrule
+Classical PDI (wavelet energy) & 6 paths + healthy baseline & $10.0$\,mm \\
+Time-of-flight delay-and-sum & 6 paths + healthy baseline & $75.0$\,mm \\
+Full-field wavefield difference & full displacement field & $\sim 2$\,mm (validation only) \\
+\bottomrule
+\end{tabular}}
+\label{tab:methods3}
+\end{table}
+
+Three points follow from Table~\ref{tab:methods3}.
+
+The energy change in a guided-wave signal correlates strongly with how close the direct path passes to the
+crack. The path that intersects the crack changes by far the most, and paths 110\,mm away do not change at
+all. Elliptical weighting turns that correlation into a usable image, and it is the best-performing
+sensor-based method tested here.
+
+Changing the feature from amplitude to time of flight did not improve accuracy with this layout. With four
+corner transducers the aperture is too sparse to separate the true crossing point from ghost intersections,
+and the finite duration of the tone burst blurs any envelope-based time measurement regardless of which
+feature is used. The elliptical Gaussian weight in the PDI algorithm already absorbs that blur, which is why
+it tolerates the sparse layout better.
+
+The full-field check settles where the residual error comes from. The crack sits where it was placed in the
+model, so the $10$\,mm is what this sensor layout can resolve.
+
+\subsection{Comparison against published PDI results}
+\label{sec:litcompare}
+
+The PDI algorithm used here is the one developed by Nasiri et al.~\cite{Nasiri2022} and applied to sensor-layout
+design by Keshavarz Motamed et al.~\cite{Motamed2019}, and both report actual localisation errors that this
+result can be checked against.
+
+Nasiri et al.\ instrument a $500\times500\times1$\,mm stiffener-reinforced aluminium plate with nine PZTs (56
+sensing paths) and report errors of $2.2$--$41.9$\,mm across three single-crack scenarios with their best weight
+function ($\beta$-GWD), averaging about $22$\,mm; their fatigue cracks are $4$\,mm long. Keshavarz Motamed
+et al.\ use the same $400\times400\times1$\,mm aluminium plate geometry as this report, with a $200\times200$\,mm
+central monitoring area and a $20$\,mm crack, and report two relevant results: with 8 sensors, finite-element
+verification of three single-crack cases gives errors of $7.8$--$19.5$\,mm; and, across a statistical sweep of 121
+crack positions, a circular array needs 14--20 sensors to keep 80\% of predictions within $10$\,mm.
+
+\begin{table}[H]
+\centering
+\caption{Published PDI localisation errors compared against the result of Section~\ref{sec:stage2}.}
+\fitwidth{%
+\begin{tabular}{l c c c c}
+\toprule
+Source & Plate & Crack & Sensors & Localisation error \\
+\midrule
+Nasiri et al.~\cite{Nasiri2022} & $500\times500$\,mm, stiffened & $4$\,mm & 9 (56 paths) & $2.2$--$41.9$\,mm (3 cases) \\
+Motamed et al.~\cite{Motamed2019} & $400\times400$\,mm, plain & $20$\,mm & 8 & $7.8$--$19.5$\,mm (3 cases) \\
+Motamed et al.~\cite{Motamed2019} & $400\times400$\,mm, plain & $20$\,mm & 14--20 & $10$\,mm at 80th pctl. \\
+\midrule
+This report (Section~\ref{sec:stage2}) & $400\times400$\,mm, plain & $25$\,mm & 4 (6 paths) & $10.0$\,mm (1 case) \\
+\bottomrule
+\end{tabular}}
+\label{tab:litcompare}
+\end{table}
+
+The comparison has to be read with its caveats attached, and the crack itself is the largest one: at $25$\,mm,
+the crack in this report is roughly six times longer than the $4$\,mm fatigue cracks in Nasiri et al.\ and about a
+quarter longer than the $20$\,mm crack in Keshavarz Motamed et al. A longer crack scatters more of the wave
+and is intrinsically easier to detect and locate, so part of the gap in sensor count is the comparison rewarding
+a larger flaw rather than a better method. The crack position adds a second advantage: it sits exactly on the
+P1--P3 path (Table~\ref{tab:di3}), which is the single most favourable geometry for any of these arrays, whereas
+the published numbers are statistics over many crack positions and orientations, most of which are not that
+well aligned. Nasiri et al.'s plate also carries a stiffener and two rows of rivet holes, which give the wave field
+more to scatter from than the plain plate used here. Taken together, this report's $10.0$\,mm is one data point
+from a favourable case, not a distribution, and it should be read as evidence that the PDI method can reach
+this accuracy with four sensors under good conditions, not as evidence that four sensors are sufficient for
+this plate in general. Within that reading, the result is still a genuine one: a bachelor's-level model with a
+sparse, unoptimised four-corner layout reaches the same accuracy that the cited graduate-level studies, from
+the same research group, needed considerably denser arrays to reach even on their easiest cases.
+
+%-----------------------------------------------------
+\section{Discussion}
+%-----------------------------------------------------
+
+Read together, the three phases form a single argument: choose the method, demonstrate that it detects,
+then extend it until it localises.
+
+The method review fixed the direction of the work. Once the requirement was stated as high sensitivity to a
+small crack, a large monitored area per sensor, and permanent installation, guided-wave monitoring with
+bonded piezoelectric transducers was the only family that satisfied all three. The review supplies the
+argument for that choice.
+
+The two-transducer model established that the physics could be captured numerically. The arrival time
+matched the analytical $S_{0}$ group velocity, the crack produced a $19.5\%$ amplitude drop, and the
+implicit-explicit co-execution proved to be a workable route around the absence of coupled piezoelectric
+elements in Abaqus/Explicit. It also made clear three specific requirements a localisation-capable model
+would have to satisfy: multiple paths, since a single path cannot localise; a windowed excitation, since a
+continuous tone prevents any time-of-flight measurement and admits edge reflections; and a crack
+representation that leaves the mesh unchanged, since a crack cut out of the mesh contaminates the
+comparison with a discretisation difference.
+
+The four-transducer model meets all three. Six paths replaced one, a windowed tone burst replaced the
+continuous sinusoid, and a seam replaced the cut so that the healthy and cracked meshes stayed identical.
+That last change buys a piece of verification the Stage 1 model could not offer: with the two meshes identical
+element for element, the damage index of $0.0001$ reported by the two distant paths measures the numerical
+noise floor of the whole procedure. Against that floor, the $0.4065$ index on the path through the crack is
+unambiguous.
+
+The gap between the PDI result and the delay-and-sum result is what the comparison teaches. Both estimators
+consume the same six signals, and one is seven times more accurate than the other, so the difference lies in
+how much each method demands of the data. Delay-and-sum needs a resolvable arrival time from every path,
+which a 100\,mm-long wave packet on a sparse array cannot supply. PDI needs only a graded scalar per path,
+which the same signals do supply. Array density, then, is what limits accuracy here, and switching damage
+feature will not move it much.
+
+%-----------------------------------------------------
+\section{Conclusions}
+%-----------------------------------------------------
+
+\begin{enumerate}[leftmargin=*,itemsep=3pt]
+  \item A comparison of SHM method families against the requirements of a thin metallic panel selects
+  guided-wave monitoring with bonded piezoelectric transducers, which is the only approach combining
+  sensitivity to small cracks with a large monitored area per sensor and permanent installation.
+
+  \item A coupled finite-element model of an aluminium plate with two bonded PZT discs, solved as an
+  implicit-explicit co-execution in Abaqus, reproduces $S_{0}$ Lamb-wave propagation at the velocity
+  predicted by the Rayleigh--Lamb equations. A 25\,mm crack on the direct path produces a $19.5\%$ drop in
+  peak amplitude and a signal difference coefficient of $0.989$, which is a clear Level~1 detection.
+
+  \item The same modelling approach extended to four transducers gives six independent sensing paths.
+  Damage indices computed from the continuous wavelet energy of each path follow the expected physical
+  ordering, from $0.4065$ on the path through the crack down to $0.0001$ on the paths 110\,mm away.
+
+  \item Combining those indices through a probability-based diagnostic imaging algorithm with elliptical
+  Gaussian weighting locates the crack to within $10$\,mm of its true position on a 400\,mm plate, which is
+  a Level~2 diagnosis from four sensors. That error sits inside the $2.2$--$41.9$\,mm range reported for the
+  same class of algorithm with denser arrays in two published studies (Section~\ref{sec:litcompare}), one of
+  which uses the identical $400\times400$\,mm plate and needs 14--20 sensors for a comparable error at its
+  80th percentile, against the four used here on a single, favourably positioned case with a longer crack.
+
+  \item A time-of-flight delay-and-sum image built from the same signals gives a $75$\,mm error, caused by
+  the sparse aperture of a four-corner array together with the spatial length of the tone burst.
+
+  \item A full-field wavefield-difference check shows the crack acting as a secondary point source at its
+  true location to within the 2\,mm grid resolution. The residual localisation error is therefore set by what
+  the sensor layout can resolve.
+\end{enumerate}
+
+%-----------------------------------------------------
+\section{Future work}
+%-----------------------------------------------------
+
+\paragraph{Denser and better-distributed arrays.}
+Table~\ref{tab:methods3} points to array sparsity as the factor limiting accuracy. Six, eight or nine
+transducers distributed around the plate, instead of four at the corners, would increase both the number of
+independent paths and the angular diversity. The delay-and-sum estimator, whose ghosting is a direct
+consequence of too few paths, would gain the most.
+
+\paragraph{Feature fusion.}
+Amplitude-based and time-of-flight features fail in different ways, the first through interference of the
+scattered field and the second through sparse-aperture ghosting. Combining them into a single fused image
+would prevent either failure mode from dominating.
+
+\paragraph{Baseline-free operation.}
+Every index used here needs a recorded healthy signal, and in service that baseline drifts with temperature
+and loading. Instantaneous-baseline methods, which compare geometrically identical paths within the same
+measurement instead of comparing against a stored record, remove that dependence
+\cite{Alem2016,Alem2017,Alem2021}, and they are the natural next step for making this approach usable
+outside a simulation.
+
+\paragraph{Optimal sensor placement.}
+The layout can be treated as a design variable and optimised against localisation accuracy
+\cite{Motamed2019,Hassani2023Opt}, which turns the trial layout used here into a designed one.
+
+\paragraph{Machine learning on the signal database.}
+The finite-element model can generate labelled signals for many crack positions, lengths and orientations at a
+cost that physical experiments cannot match. That database is what a learned classifier or regressor needs,
+and it would let damage type and severity, Levels 3 and 5 of Table~\ref{tab:levels}, be estimated alongside
+position \cite{Jia2023,YangZ2023}.
