@@ -893,6 +893,10 @@
   .cert-body h4 { font-size: 1.02rem; margin: 0 0 6px; }
   .cert-body .cert-meta { font-size: 0.83rem; color: var(--accent); margin: 0 0 8px; }
   .cert-body .cert-summary { font-size: 0.86rem; color: var(--text-dim); margin: 0; }
+  /* A caveat about the certificate itself (e.g. issued after a delay),
+     set apart from the summary so it doesn't read as part of the course
+     description. */
+  .cert-body .cert-note { font-size: 0.8rem; color: var(--meta); font-style: italic; margin: 8px 0 0; }
 
   /* ===========================================================
      TEACHING
@@ -1802,7 +1806,16 @@ const CERTIFICATES_DATA = [
     name: "Personal Chatbot Development with LangChain Essentials",
     issuer: "FaraDars",
     date: "09/26",
-    summary: "Building a chatbot with LangChain: chains, memory and tool calling."
+    summary: "Building a chatbot with LangChain: chains, memory and tool calling.",
+    note: "Course completed earlier; the certificate was issued later."
+  },
+  {
+    slug: "deep-learning-tensorflow-keras",
+    name: "Deep Learning with Python Using TensorFlow and Keras",
+    issuer: "FaraDars",
+    date: "09/26",
+    summary: "Building and training neural networks in Python with TensorFlow and Keras.",
+    note: "Course completed earlier; the certificate was issued later."
   },
   {
     slug: "abaqus-scripting-python",
@@ -2474,6 +2487,7 @@ document.getElementById('certGrid').innerHTML = CERTIFICATES_DATA.map(cert => `
       <h4>${cert.name}</h4>
       <p class="cert-meta">${cert.issuer} · ${cert.date}</p>
       ${cert.summary ? `<p class="cert-summary">${cert.summary}</p>` : ''}
+      ${cert.note ? `<p class="cert-note">${cert.note}</p>` : ''}
     </div>
   </div>
 `).join('');
