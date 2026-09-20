@@ -1,1 +1,10 @@
-Place thumb.jpg here (roughly 4:3, e.g. 600x450px) to show a thumbnail for this research entry on the Research page.
+Files for the "battery-thermal-system" research card (RESEARCH_DATA in index.html):
+
+  thumb.jpg  -> collapsed-card thumbnail (simulation mesh, Figure 52)
+  out1.jpg   -> first figure under "What came out" (duct geometry, Figure 51)
+  out2.jpg   -> second figure under "What came out" (temperature result, Figure 53)
+
+All three are Figures 51-53 from the Lyrebird team report
+(D:\SUT\AE\#Master\#Other\Courses\course\...\Lyrebird Report\Report\Report.docx),
+used exactly as embedded in the document (no cropping).
+Folder name must match the entry "id" in RESEARCH_DATA.
