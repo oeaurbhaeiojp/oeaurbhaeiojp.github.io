@@ -503,10 +503,13 @@
     flex-shrink: 0;
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .showcase.open .showcase-more svg { transform: rotate(180deg); }
+  .showcase.open .showcase-more svg,
+  .proj-card.open .showcase-more svg { transform: rotate(180deg); }
   .showcase-more .less,
-  .showcase.open .showcase-more .more { display: none; }
-  .showcase.open .showcase-more .less { display: inline; }
+  .showcase.open .showcase-more .more,
+  .proj-card.open .showcase-more .more { display: none; }
+  .showcase.open .showcase-more .less,
+  .proj-card.open .showcase-more .less { display: inline; }
 
   .showcase .drawer-inner { padding: 0 22px 22px; }
   /* Same paragraph treatment as the About page: justified, hyphenated, and
@@ -748,29 +751,17 @@
     min-width: 0;
   }
 
-  /* Project cards — full-width landscape; grouped into rows of up to 3.
-     Flex, not grid: a homework card widens by animating flex-grow when it
-     opens, and its row-mate shrinks the same way, so the whole gesture
-     eases together. A project/presentation card carries a full description
-     and tag row that a homework card doesn't, so a shrunk sibling collapses
-     to just its title (see .proj-card.collapsed) instead of the illegible
-     sliver a homework-style min-width would leave here. */
+  /* Project cards — always one full-width card per row, open or closed,
+     same as the Projects/Research showcase cards. */
   .proj-grid { display: flex; flex-direction: column; gap: 14px; }
-  .proj-row { display: flex; flex-wrap: wrap; gap: 14px; }
   .proj-card {
-    flex: 1 1 0;
-    min-width: 0;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    transition: border-color 0.2s ease, flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: border-color 0.2s ease;
   }
-  .proj-card.open { border-color: var(--accent); flex-grow: 999; }
-  .proj-card.collapsed { flex: 0.5 1 160px; }
-  .proj-card.collapsed .proj-desc,
-  .proj-card.collapsed .tag-row,
-  .proj-card.collapsed .proj-head-foot .tag-row { display: none; }
+  .proj-card.open { border-color: var(--accent); }
   .proj-head { padding: 18px 20px; }
   /* Only the whole-head-click cards (non-featured, course-only projects) get
      the pointer cursor and hover-tint; a featured project's head is inert
@@ -1124,8 +1115,6 @@
     .hw-row { flex-direction: column; }
     .hw-card.open { flex-grow: 1; }
     .hw-card.sibling-open { flex-grow: 1; min-width: 0; }
-    .proj-row { flex-direction: column; }
-    .proj-card.collapsed { flex-basis: auto; }
     /* Closer to the corner on a phone, where 24px is a lot of screen. */
     .to-top {
       right: max(16px, env(safe-area-inset-right));
@@ -1215,7 +1204,7 @@
 
       <h2 class="reveal">About</h2>
       <p>
-        Structural engineering problems drew me in during my bachelor's, and that pull is why I chose structural engineering for my master's. As new methods emerged, I started reaching for them instead of the traditional approach to structural problems, which is what led me to my current work: composite material structural design using agentic AI. I'm interested in how an AI system can understand an engineering problem on its own, bring in the domain knowledge it needs, and help produce a design for a complex system made of many interacting components, the kind of problem I want to spend my career on. The applications I care about most are structural health monitoring, early damage detection and real-time deformation analysis. I want to pursue a PhD to keep working on real structural engineering problems with novel methods, in a lab with a dynamic setting and a strong research team, and I'd like to connect with researchers and engineers working on similar problems.
+I'm an engineer who enjoys solving problems. During my B.Sc. in aerospace engineering, I looked across its different fields, and structures was the one I ended up caring about most; that interest took me straight into an M.Sc. in structural engineering as a talented-student direct-entry candidate, and my B.Sc. thesis was on structural health monitoring. I started learning about AI and its methods back in my undergraduate years, and now, in my M.Sc., I work on composite material design using agentic AI, which covers both of the fields I care about: structures and AI. I want to continue into further graduate study, staying on structure-related problems and solving them with new methods. I'd like to do my PhD in a lab or research environment that works close to real-world problems and has a dynamic setting.
       </p>
 
 
@@ -1703,7 +1692,7 @@ const RESEARCH_DATA = [
       { term: "Year 1 · Semester 2", work: "Literature review, problem definition, and completing and validating the computational core for basic composite analysis." },
       { term: "Year 1 · Summer",     work: "Extending the core to more complex analysis and validating it against examples from the references." },
       { term: "Year 2 · Semester 1", work: "Completing the structural scope of the core, and designing the agent architecture: knowledge layer, tool interfaces and design decision graph." },
-      { term: "Year 2 · Semester 2 to Summer", work: "Integrating the architecture with the core, running end-to-end design scenarios, comparing them with manual design and classical optimization, then analysing the results, fixing shortcomings, writing the thesis and preparing the defence." }
+      { term: "Year 2 · Semester 2", work: "Integrating the architecture with the core, running end-to-end design scenarios, comparing them with manual design and classical optimization, then analysing the results, fixing shortcomings, writing the thesis and preparing the defence." }
     ],
     tags: ["Agentic AI", "Composite Material", "LangGraph", "Optimization"]
   },
@@ -2226,8 +2215,6 @@ function closePdf(btn) {
     projCard.classList.remove('open');
     const expandTarget = projCard.querySelector('.proj-more') || projCard.querySelector('.proj-head');
     if (expandTarget) expandTarget.setAttribute('aria-expanded', 'false');
-    const row = projCard.closest('.proj-row');
-    if (row) row.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
   }
   const grid = drawer.closest('.hw-grid');           // present only for HW drawers
   if (grid) {
@@ -2324,10 +2311,12 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     }
     const tags = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
     const drawerId = `projdrawer-${slug}-${p.slug}`;
-    // A featured project is also a Projects-page showcase card, so it opens
-    // the same way: only the More/Less button is clickable, not the whole
-    // head. A non-featured project (course-only) keeps the whole-head click.
-    const head = p.featured
+    // A featured project is also a Projects-page showcase card, and a
+    // Presentation gets the same treatment, so both open the same way: only
+    // the More/Less button is clickable, not the whole head. A non-featured
+    // course-only project keeps the whole-head click.
+    const useMoreButton = p.featured || p.kind === 'Presentation';
+    const head = useMoreButton
       ? `<div class="proj-head" aria-controls="${drawerId}">
           <h4>${p.title}</h4>
           <p class="proj-desc">${p.summary || p.description}</p>
@@ -2353,20 +2342,10 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
         </div>
       </div>`;
   }
-  // Grouped into rows of 3 (like .hw-row's rows of 2) so a card opening only
-  // ever has to negotiate width with the up-to-two siblings actually beside
-  // it, never with cards further down the grid — see toggleProj().
-  function projRowsHtml(items) {
-    let out = '';
-    for (let i = 0; i < items.length; i += 3) {
-      out += `<div class="proj-row">${items.slice(i, i + 3).map(projCardHtml).join('')}</div>`;
-    }
-    return out;
-  }
   const presentationItems = c.projects.filter(p => p.kind === 'Presentation');
   const projectItems = c.projects.filter(p => p.kind !== 'Presentation');
-  const presentationCards = projRowsHtml(presentationItems);
-  const projectCards = projRowsHtml(projectItems);
+  const presentationCards = presentationItems.map(projCardHtml).join('');
+  const projectCards = projectItems.map(projCardHtml).join('');
 
   courseContent.innerHTML = `
     <h3 class="course-title">${c.name}</h3>
@@ -2440,10 +2419,7 @@ function toggleProj(el) {
   const drawer = card.querySelector('.drawer');
   const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
   const isOpen = card.classList.contains('open');
-  // Only one card open per grid at a time, same as the homework accordion —
-  // closing whichever else was open (in any row of this Presentations/
-  // Projects grid) before opening this one, and clearing every row's
-  // collapsed siblings so nothing is left shrunk from a previous open card.
+  // Only one card open per grid at a time, same as the homework accordion.
   if (grid) {
     grid.querySelectorAll('.proj-card.open').forEach(other => {
       if (other === card) return;
@@ -2453,7 +2429,6 @@ function toggleProj(el) {
       const otherTarget = other.querySelector('.proj-more') || other.querySelector('.proj-head');
       if (otherTarget) otherTarget.setAttribute('aria-expanded', 'false');
     });
-    grid.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
   }
   if (isOpen) {
     card.classList.remove('open');
@@ -2464,18 +2439,12 @@ function toggleProj(el) {
     drawer.classList.add('open');
     expandTarget.setAttribute('aria-expanded', 'true');
     loadPdfSlots(drawer);
-    // Shrink just this card's row-mates (card.parentNode is the .proj-row),
-    // the same "open widens, row-mates shrink" gesture as a homework row.
-    const row = card.closest('.proj-row');
-    if (row) row.querySelectorAll('.proj-card').forEach(el => { if (el !== card) el.classList.add('collapsed'); });
   }
   refreshFocusMode();
 }
 function closeProj(btn) {
   const card = btn.closest('.proj-card');
   card.classList.remove('open');
-  const row = card.closest('.proj-row');
-  if (row) row.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
   const drawer = card.querySelector('.drawer');
   drawer.classList.remove('open');
   const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
