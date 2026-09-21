@@ -604,7 +604,7 @@
     padding: 0 40px;
   }
 
-  .course-nav {
+  .course-nav-col {
     flex-shrink: 0;
     width: 280px;
     position: sticky;
@@ -615,12 +615,25 @@
     top: calc(var(--topbar-h, 65px) + 24px);
     display: flex;
     flex-direction: column;
+    gap: 10px;
+  }
+  .course-nav {
+    display: flex;
+    flex-direction: column;
     gap: 3px;
     background: var(--bg-soft);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 12px;
   }
+  .course-nav-note {
+    margin: 0;
+    padding: 0 4px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .course-nav-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .course-nav-note a:hover { color: var(--accent); }
   .course-nav button {
     text-align: left;
     font-family: var(--sans);
@@ -735,16 +748,29 @@
     min-width: 0;
   }
 
-  /* Project cards — full-width landscape; multi-column when several exist */
-  .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 14px; }
+  /* Project cards — full-width landscape; grouped into rows of up to 3.
+     Flex, not grid: a homework card widens by animating flex-grow when it
+     opens, and its row-mate shrinks the same way, so the whole gesture
+     eases together. A project/presentation card carries a full description
+     and tag row that a homework card doesn't, so a shrunk sibling collapses
+     to just its title (see .proj-card.collapsed) instead of the illegible
+     sliver a homework-style min-width would leave here. */
+  .proj-grid { display: flex; flex-direction: column; gap: 14px; }
+  .proj-row { display: flex; flex-wrap: wrap; gap: 14px; }
   .proj-card {
+    flex: 1 1 0;
+    min-width: 0;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .proj-card.open { border-color: var(--accent); }
+  .proj-card.open { border-color: var(--accent); flex-grow: 999; }
+  .proj-card.collapsed { flex: 0.5 1 160px; }
+  .proj-card.collapsed .proj-desc,
+  .proj-card.collapsed .tag-row,
+  .proj-card.collapsed .proj-head-foot .tag-row { display: none; }
   .proj-head { padding: 18px 20px; }
   /* Only the whole-head-click cards (non-featured, course-only projects) get
      the pointer cursor and hover-tint; a featured project's head is inert
@@ -1078,9 +1104,11 @@
     .hero-photo { width: 128px; height: 128px; }
 
     .courses-layout { flex-direction: column; }
-    .course-nav {
+    .course-nav-col {
       width: 100%;
       position: static;
+    }
+    .course-nav {
       flex-direction: row;
       flex-wrap: wrap;
       overflow-x: auto;
@@ -1096,8 +1124,8 @@
     .hw-row { flex-direction: column; }
     .hw-card.open { flex-grow: 1; }
     .hw-card.sibling-open { flex-grow: 1; min-width: 0; }
-    /* minmax(360px, 1fr) is wider than the viewport itself on a phone. */
-    .proj-grid { grid-template-columns: 1fr; }
+    .proj-row { flex-direction: column; }
+    .proj-card.collapsed { flex-basis: auto; }
     /* Closer to the corner on a phone, where 24px is a lot of screen. */
     .to-top {
       right: max(16px, env(safe-area-inset-right));
@@ -1223,7 +1251,10 @@
     <section id="courses" class="page">
       <h2 class="reveal">Courses</h2>
       <div class="courses-layout">
-        <nav class="course-nav" id="courseNav"><!-- populated by JS --></nav>
+        <div class="course-nav-col">
+          <nav class="course-nav" id="courseNav"><!-- populated by JS --></nav>
+          <p class="course-nav-note">Some content is redacted for privacy. Need the full version? <a href="#contact">Get in touch</a></p>
+        </div>
         <div class="course-content" id="courseContent"><!-- populated by JS --></div>
       </div>
     </section>
@@ -1423,10 +1454,7 @@ const COURSES_DATA = {
         summary: "Sizing an aircraft wing box with an LLM that makes the engineer's judgment calls while tested Python code computes every number.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
         problem: "Sizing an aircraft wing box is a long hand calculation that loops: bending material in the covers, a spar web that buckles before it shears, ribs, joints, every margin pushed toward zero from above while the load envelope keeps moving with the structure's own weight. The procedure is documented and standardized, but choosing the alloy, the spar positions and the catalogue stringers is left to the structural engineer's judgment.",
-        approach: [
-          "I built the system around one rule and made the code itself enforce it: the model never does arithmetic and Python never makes a judgment call. I gave the decision schemas no numeric field an LLM could write a thickness into, let numbers enter the shared state only as a tool's return value, and attached a provenance record to every quantity. An audit walks the finished design and flags it infeasible if any number lacks one. Underneath, I implemented the sizing as a deterministic, unit-tested Python translation of Niu, Megson and Roskam.",
-          "I turned the nine classical design phases into a LangGraph StateGraph over one shared, typed dossier. I kept the backbone a prompt chain, since the order is documented and has to stay reviewable step by step; I fanned spar web, ribs and joints out in parallel once the covers are sized; and I added a deterministic checker with a rule-based router that sends a failing design back to whichever node can fix its worst margin. For material selection I ran an Ashby structural index with alloy-family screening and a Pareto trade-off, once per cover position."
-        ],
+        approach: "I built the system around one rule: the model never does arithmetic and Python never makes a judgment call, with numbers entering the shared state only as a tool's return value carrying a provenance record. The nine classical design phases become a LangGraph StateGraph over one shared, typed dossier, its backbone a reviewable prompt chain that fans spar web, ribs and joints out in parallel once the covers are sized, with a deterministic checker routing a failing design back to whichever node can fix its worst margin; material selection runs an Ashby structural index with alloy-family screening and a Pareto trade-off. Underneath, the sizing itself is a deterministic, unit-tested Python translation of Niu, Megson and Roskam.",
         results: "The course's own hand-worked cross-section is reproduced to tabulated precision as an automated acceptance gate, and rebuilding it surfaced four notation and arithmetic slips in the reference itself, each now pinned by a test. Run live against a published METU master's design of a PC-21 class trainer wing, the pipeline converged on 131.9 to 132.4 kg against that thesis's own optimized 125.9 kg, about 5% high, with the gap traced to the discrete stringer catalogue used here against the thesis's continuous search. An Abaqus 2024 model built from the converged geometry balanced the root reaction against the applied shear.",
         figures: [
           { file: "out1.jpg", caption: "The lecture cross-section as the live model converged it: NACA 2412 silhouette, box between the spar stations it chose, and every stringer drawn at its real catalogue profile." },
@@ -1489,13 +1517,10 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "Fall 2025",
-        summary: "Testing whether a published neural-network replacement for a composite damage model holds up when rebuilt from the paper alone.",
+        summary: "Testing whether a published Neural-Network replacement for a composite damage model holds up when rebuilt from the paper alone.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
-        problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small neural networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution. They published no code and no data.",
-        approach: [
-          "I rebuilt everything from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, the three networks, the macro-scale UMAT and the open-hole tension benchmark. For quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, I pulled from an independent source or calibrated against its own curves, and marked each one in the report with where it came from.",
-          "I ported the three networks to PyTorch one for one, matching layer widths, activations, losses and optimisers to the paper's tables and reading epoch counts straight off the horizontal axes of its own training plots. The first predicts homogenised stress, the second damage onset and the third the failure mode. They run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. I wrote down five acceptance criteria before running any of it."
-        ],
+        problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small Neural Networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution. They published no code and no data.",
+        approach: "I rebuilt everything from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, and the three networks, ported to PyTorch one for one with layer widths, activations, losses and optimisers matched to the paper's tables and epoch counts read off its own training plots. The first network predicts homogenised stress, the second damage onset and the third the failure mode, and all three run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. For quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, I pulled from an independent source or calibrated against its own curves and marked each one in the report; I wrote down five acceptance criteria before running any of it.",
         results: "All five criteria pass. The regression network reaches R² = 0.9997 on the paper's own held-out load path against a 0.99 target, the two classifiers reach 98.0% and 99.0%, and the speed-up lands between 5.2 and 8.6 times depending on how the CPU counts are matched. On the open-hole plate the surrogate peaks at 12.8043 kN against the paper's 12.8170 kN, a difference of 0.10%. The initiation network, never shown a plate or a stress concentration, calls damage onset within 3.3% of the reference model's own.",
         figures: [
           { file: "out1.jpg", width: 860, caption: "The three networks, ported one for one from the paper: stress regression (3-60-50-3, tanh), damage initiation (3-8-10-2, ReLU) and failure mode (3-12-20-4, ReLU), each with its loss and optimiser." },
@@ -1517,9 +1542,9 @@ const COURSES_DATA = {
     homeworks: [
       { id: 1, topic: "Optimization problem formulation" },
       { id: 2, topic: "Interior penalty function method" },
-      { id: 3, topic: "Linear programming (Simplex method)" },
+      { id: 3, topic: "Linear programming (Simplex) &amp; nonlinear programming (Evolutionary algorithm)" },
       { id: 4, topic: "Multi-objective ideal &amp; nadir points" },
-      { id: 5, topic: "Least squares polynomial curve fitting" }
+      { id: 5, topic: "Least squares curve fitting &amp; hypothesis testing of sample means" }
     ],
     projects: [
       {
@@ -1530,10 +1555,7 @@ const COURSES_DATA = {
         summary: "Handing the formulation of a multi-objective composite optimization problem, and its repair when it fails, to an LLM agent.",
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
         problem: "In multi-objective optimization of composite structures the designer writes the problem before the run: objectives, constraints, design variables. If the Pareto front comes back degenerate, the designer reads the output, works out what went wrong, rewrites the formulation and runs it again. This work hands that loop to an agent.",
-        approach: [
-          "I built an agent that takes a design description in plain language, extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract. I gave the language model only the formulation step, and built a deterministic kernel on classical laminated plate theory to compute every physical quantity. The graph I designed runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself before diagnosing anything.",
-          "I made failure detection deterministic and threshold-based. When a front comes back degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. I split model use by node, giving a lighter model to intake and reporting and a stronger one to formulation, repair and explanation."
-        ],
+        approach: "I built an agent that takes a design description in plain language, extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract, with the language model handling only the formulation step and a deterministic kernel on classical laminated plate theory computing every physical quantity. The graph I designed runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself, then deterministic, threshold-based failure detection: when a front comes back degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. I split model use by node, giving a lighter model to intake and reporting and a stronger one to formulation, repair and explanation.",
         results: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one under an equal search budget: all 37 designs, the same layer counts and stacking sequences, and no difference in buckling load. The deterministic kernel reproduced the paper's analytical numbers to a worst case of 0.001%. Given a deliberately broken request, the feedback loop found the fault within four iterations, revised the formulation twice, and raised the front's hypervolume by 4.17% and then by 36.13%.",
         figures: [
           { file: "out1.jpg", caption: "Buckling load factor against laminate thickness for the published two-objective problem, at a 15° and a 45° ply-angle interval. The agent's own formulation (dashed) reproduces the hand-written one (solid) almost exactly, and both track the paper's own published points." },
@@ -1554,9 +1576,9 @@ const COURSES_DATA = {
     instructorUrl: "http://sharif.ir/~fallah/",
     homeworks: [
       { id: 1, topic: "Kirchhoff plate bending" },
-      { id: 2, topic: "Navier &amp; Lévy solutions" },
-      { id: 3, topic: "Shells of revolution" },
-      { id: 4, topic: "Biaxial compression plate buckling" },
+      { id: 2, topic: "Ritz method for a clamped triangular plate" },
+      { id: 3, topic: "Ritz method for a rectangular plate" },
+      { id: 4, topic: "Biaxial compression plate buckling (Navier's approach)" },
       { id: 5, topic: "Axisymmetric circular plate bending" },
       { id: 6, topic: "Orthotropic stiffened plate bending" },
       { id: 7, topic: "Cylindrical shell discontinuity stresses" }
@@ -1566,7 +1588,7 @@ const COURSES_DATA = {
         slug: "plate-vibration",
         kind: "Presentation",
         title: "An improved plate deep energy method for the bending, buckling and free vibration problems of irregular Kirchhoff plates",
-        description: "Abstract: an improved plate deep energy method without penalty terms is introduced to study the bending, free vibration and buckling problems of irregular Kirchhoff plates. The finite difference produced by convolution operation is employed for a faster calculation of derivatives and enforcement of boundary conditions. Most deep learning based neural network methods adopt the penalty method to impose boundary constraints, which may cause convergence issues especially when dealing with complex solution domain or mixed boundary conditions. In this paper, the R-function is utilized to build the distance function multiplied by the neural network output to meet the Dirichlet boundary constraints, while the boundary constraints expressed by derivative functions are applied by introducing virtual nodes. With such treatments, the boundary losses of a plate system can be avoided. To validate the proposed method, numerical examples considering plates with irregular shapes and mixed boundary conditions are studied, and the results are compared to those provided by the theoretical solutions, finite element method (FEM), and literature. (Huang &amp; Peng, 2024, Engineering Structures 301, 117235.)",
+        description: "A deep energy method for bending, buckling and free vibration of irregular Kirchhoff plates, without penalty terms: an R-function builds a distance function enforcing the Dirichlet boundary constraints directly, while virtual nodes handle the derivative-based constraints, avoiding the convergence issues penalty methods can cause on complex or mixed boundary conditions. (Huang &amp; Peng, 2024, Engineering Structures 301, 117235.)",
         tags: [],
         hasReport: false,
         hasSlides: true,
@@ -1600,10 +1622,7 @@ const EXTRA_PROJECTS = [
     title: "Hybrid-Electric STOL Air Taxi",
     summary: "Conceptual design of a hybrid-electric STOL air taxi with a six-person team, then individually carrying the wing into a structural design problem.",
     problem: "The RFP called for a hybrid-electric STOL air taxi built around distributed electric propulsion: four to six passengers plus a pilot, a 300 nautical mile range with a 10% reserve, at least 150 knots cruise, takeoff and landing within 300 feet, and FAR Part 23 certification. A six-person team took the project from that brief through weight sizing and a full conceptual layout in Aircraft Design I, and the wing then carried into Aircraft Design II as a stand-alone structural problem.",
-    approach: [
-      "Aircraft Design I, under Prof. Banazadeh, started from a historical weight-fraction estimate cross-checked against comparable aircraft, then a matching diagram set the wing and power loading against the stall, takeoff, landing, climb, cruise and ceiling constraints; my part covered the weight sensitivity study and the stall, takeoff and landing sizing on that diagram. A weighted decision matrix picked the configuration, a high tapered wing with a conventional tail and retractable tricycle gear, over the alternatives it was scored against, and the team sized the fuselage, wing planform, empennage and landing gear in turn, cross-checked against a weight-and-balance CG range and built out in SolidWorks.",
-      "Aircraft Design II picked the wing back up as an individual structural problem: built 3D SolidWorks models of the wing, the stabilizers and the engine-wing interfaces, and ran ABAQUS stress, deformation and buckling analyses against the loads implied by the distributed-propulsion layout and the STOL mission."
-    ],
+    approach: "Aircraft Design I, under Prof. Banazadeh, started from a historical weight-fraction estimate cross-checked against comparable aircraft, then a matching diagram set the wing and power loading against the stall, takeoff, landing, climb, cruise and ceiling constraints, with my part covering the weight sensitivity study and the stall, takeoff and landing sizing on that diagram; a weighted decision matrix picked the configuration, a high tapered wing with a conventional tail and retractable tricycle gear, and the team sized the fuselage, wing planform, empennage and landing gear in turn, cross-checked against a weight-and-balance CG range and built out in SolidWorks. Aircraft Design II then picked the wing back up as an individual structural problem: I built 3D SolidWorks models of the wing, the stabilizers and the engine-wing interfaces, and ran ABAQUS stress, deformation and buckling analyses against the loads implied by the distributed-propulsion layout and the STOL mission.",
     results: "Aircraft Design I converged on a 5,612 lb aircraft with a 16.98 m² wing at aspect ratio 10 spanning 13 m, its empennage sized by the tail volume coefficient method and the layout validated with a full weight-and-balance check and a 5-view SolidWorks model. Aircraft Design II delivered a final wing, stabilizer and engine-interface design that met the STOL-specific safety, weight and performance requirements the ABAQUS analyses were run against.",
     tags: ["Team Work", "SolidWorks", "ABAQUS", "FEM"],
     figures: [
@@ -1619,10 +1638,7 @@ const EXTRA_PROJECTS = [
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
     summary: "Predicting the heat transfer coefficient of nanofluids from their physical properties with machine learning, and finding which properties matter most.",
     problem: "Team project for Dr. Javadi's Heat Transfer course. The convective heat transfer coefficient of a nanofluid depends on how the fluid flows and what is suspended in it, and measuring it for every combination is not practical. The brief was to predict it with machine learning from a synthetic dataset of 10,000 samples, using flow rate, inlet temperature, nanoparticle concentration, viscosity, density and thermal conductivity, then compare models and explain which properties drive the prediction.",
-    approach: [
-      "The team checked the data first. It has no missing values, no outliers by the 1.5 IQR rule and no categorical columns, so the one-hot encoding step had nothing to convert. A correlation matrix showed concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target. They compared MinMax and standard scaling on the feature distributions, then split 80/20 into 8,000 training and 2,000 test samples.",
-      "They trained four regressors with scikit-learn and scored them on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons. A second round tuned the random forest and the MLP with GridSearchCV, added ridge regression and pairwise interaction terms, ran 5-fold cross-validation and a voting ensemble, then ran permutation importance and SHAP on the random forest to see which inputs it leans on."
-    ],
+    approach: "The team checked the data first, finding no missing values, no outliers by the 1.5 IQR rule and no categorical columns, and a correlation matrix showing concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target; they compared MinMax and standard scaling on the feature distributions, then split 80/20 into 8,000 training and 2,000 test samples. They trained four regressors with scikit-learn and scored them on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons, then tuned the forest and the MLP with GridSearchCV, added ridge regression and pairwise interaction terms, ran 5-fold cross-validation and a voting ensemble, and ran permutation importance and SHAP on the random forest to see which inputs it leans on.",
     results: "All four models predict the coefficient almost exactly, with R² between 0.9972 and 0.9978 and a mean absolute error of 4.1 to 4.6 W/m²K on a target spanning about 200 to 690. Linear regression was best on all three measures, with MSE 25.8 against 32.9 for the random forest, and tuning the forest and the MLP did not change that ranking. Permutation importance puts thermal conductivity, concentration and density first and flow rate fourth, while viscosity scores almost zero despite its 0.70 correlation with the target.",
     figures: [
       { file: "out1.jpg", width: 760, caption: "Predicted against actual heat transfer coefficient on the 2,000 test samples for all four models, each lying along the ideal-fit line." },
@@ -1638,10 +1654,7 @@ const EXTRA_PROJECTS = [
     title: "Scholarly Citation Network Analysis & Research Assistant",
     summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
     problem: "Finding the right papers in an unfamiliar field is slow, and keyword search returns too much. A scholarly dataset also records who cites whom and who writes with whom, and that network says a lot about which authors and papers belong together. This project analyses those links, predicts how many citations a paper will get, and builds a research assistant that finds papers by topic or by author.",
-    approach: [
-      "I used a dataset of scholarly articles published through 2017, crawling papers from Semantic Scholar across five AI subfields to hold back as a test set. Exploratory analysis came first, then network analysis over the citation, co-authorship and venue graphs, including PageRank, degree centrality and how network density moves across decades. I detected author communities with greedy modularity, label propagation and Girvan-Newman, compared them on average clustering coefficient, then named them from keywords pulled out of their own papers.",
-      "I trained a citation-count regressor on title and abstract embeddings plus publication year, using a RandomForestRegressor tuned through GridSearchCV, and added a graph neural network over the co-authorship network in PyTorch Geometric as a second route to the same target. On top of that I built a retrieval-augmented assistant: paper embeddings indexed in FAISS, topic queries expanded with KeyBERT, author names lifted out of a question by spaCy named-entity recognition, and an optional LLM pass that summarises what came back."
-    ],
+    approach: "I used a dataset of scholarly articles published through 2017, crawling papers from Semantic Scholar across five AI subfields to hold back as a test set, then ran network analysis over the citation, co-authorship and venue graphs, including PageRank, degree centrality and how network density moves across decades, and detected author communities with greedy modularity, label propagation and Girvan-Newman, compared on average clustering coefficient and named from keywords pulled out of their own papers. I trained a citation-count regressor on title and abstract embeddings plus publication year with a RandomForestRegressor tuned through GridSearchCV, and added a graph Neural Network over the co-authorship network in PyTorch Geometric as a second route to the same target; on top of that I built a retrieval-augmented assistant, with paper embeddings indexed in FAISS, topic queries expanded with KeyBERT, author names lifted out of a question by spaCy named-entity recognition, and an optional LLM pass that summarises what came back.",
     results: "Girvan-Newman scored the highest average clustering coefficient, 0.7771, with greedy modularity at 0.7770 and label propagation at 0.7757. The citation regressor did not carry over to the 2,350 crawled test papers: test R² came out at -0.26 with a mean absolute error of 1,217 citations, which the report puts down to the time gap and the new topics and authors in recent papers. The assistant answers both topic and author queries, returning matching papers with their authors and abstracts and an LLM summary on request.",
     figures: [
       { file: "out1.jpg", caption: "Total citations against number of publications for each author, with the fitted regression line (R² = 0.34) used to predict the citation count for a given author." },
@@ -1679,7 +1692,7 @@ const RESEARCH_DATA = [
     period: "In progress",
     title: "Optimal design of stiffened composite laminates using LLM-based agentic AI",
     summary: "Building a multi-agent LLM system for the preliminary design of stiffened composite laminates, with every number computed by a validated core.",
-    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with neural networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, needs hundreds of finite element runs, and does not generalize across different structural configurations, each of which tends to need its own bespoke setup.",
+    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with Neural Networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, needs hundreds of finite element runs, and does not generalize across different structural configurations, each of which tends to need its own bespoke setup.",
     approachLabel: "Proposed solution",
     approach: "The proposal is a multi-agent system in which LLM agents lead the design: they plan, pull in design knowledge and requirements, call computational modules and check every result, following the analytical framework of a reference text on composite structures. Language models alone are not reliable enough for engineering, so every number comes from a deterministic, validated computational core. The agents need no prior training and the system grows by adding tools, so the same architecture adapts across different composite structural design problems instead of being rebuilt per configuration. For a composite, the agent must also reason about the layup, mechanical prerequisites and each theory's range of validity before calling an equation. Given the input requirements, the goal is for the system to return the most optimal design and best-suited structure.",
     plan: [
@@ -1703,10 +1716,7 @@ const RESEARCH_DATA = [
     title: "LLM-based multi-agent mechanism design",
     summary: "Automating the conceptual design of mechanical linkages with a team of LLM agents built on CrewAI and RAG.",
     problem: "Mechanical linkage design depends on domain knowledge that is scarce and slow to apply: picking a mechanism family, sizing its links and checking that it actually delivers the required motion and forces can take weeks per iteration, even before manufacturing constraints enter the picture.",
-    approach: [
-      "I built a multi-agent system with CrewAI, with separate agents for synthesis, evaluation and refinement instead of one model doing everything. A retrieval-augmented generation layer over a library of known mechanisms lets the synthesis agent search and adapt existing linkage families to a new request rather than invent one from scratch.",
-      "The evaluation agent checks each candidate's kinematics, dynamics and standards compliance, and the refinement agent revises the design against whatever that check flags. A user only has to describe what they need in plain language; the agents carry it through to a validated, production-ready mechanism."
-    ],
+    approach: "I built a multi-agent system with CrewAI, with separate agents for synthesis, evaluation and refinement instead of one model doing everything: a retrieval-augmented generation layer over a library of known mechanisms lets the synthesis agent search and adapt existing linkage families to a new request rather than invent one from scratch, the evaluation agent checks each candidate's kinematics, dynamics and standards compliance, and the refinement agent revises the design against whatever that check flags. A user only has to describe what they need in plain language; the agents carry it through to a validated, production-ready mechanism.",
     results: "The system takes a plain-language description of a required motion and returns a validated mechanism in minutes rather than the weeks a manual iteration would take, with kinematics, dynamics and standards compliance already checked.",
     tags: ["Multi-Agent systems", "CrewAI", "Mechanical Mechanisms"]
   },
@@ -1718,10 +1728,7 @@ const RESEARCH_DATA = [
     title: "Inverse finite element method for structural health monitoring",
     summary: "Reconstructing structural deformation in real time from sparse strain sensors, and studying how that reconstruction could transfer to structures with little data of their own.",
     problem: "Reconstructing a structure's deformed shape in real time from a handful of strain sensors, without knowing the loads or material behaviour driving that deformation, is the core problem shape sensing has to solve. A second, separate problem sits on top of it: a well-instrumented structure can build a reliable healthy-state baseline for damage detection, but a similar structure with only a few sensors cannot, so its diagnosis has to borrow from the first one's data despite the two never being identical.",
-    approach: [
-      "I worked through the iFEM formulation from its variational basis: strains measured at discrete sensor locations feed a least-squares functional that is minimised over the nodal displacements, giving a pseudo-stiffness system I derived down to its shape-function and strain-displacement matrices for an 8-node hexahedral solid-shell element. Solving that system reconstructs the full displacement field, and from it the stresses, the deformed shape and a strain-residual damage indicator, all without needing the external loads or material stiffness as inputs. I implemented this in Python and ran it on a simulated plate with 100 sensor locations and two seeded damage sites, comparing the baseline and damaged strain fields to recover both the location and severity of each site.",
-      "For the second problem, population-based structural health monitoring, I studied Transfer Component Analysis and worked through its formulation: a domain-adaptation method that maps a source structure's iFEM-reconstructed frequency response features and a target structure's directly measured features into a shared latent space, using an RBF kernel and a Maximum Mean Discrepancy metric to align their distributions. In that space, a new reading from the target structure would be flagged as damaged if its Mahalanobis distance to the healthy cluster passed a Monte Carlo threshold, letting a sparsely instrumented structure draw on a richer one's baseline instead of building its own from scratch."
-    ],
+    approach: "I worked through the iFEM formulation from its variational basis, where strains measured at discrete sensor locations feed a least-squares functional minimised over the nodal displacements, giving a pseudo-stiffness system I derived down to its shape-function and strain-displacement matrices for an 8-node hexahedral solid-shell element; solving that system reconstructs the full displacement field, and from it the stresses, the deformed shape and a strain-residual damage indicator, all without needing the external loads or material stiffness as inputs. I implemented this in Python and ran it on a simulated plate with 100 sensor locations and two seeded damage sites, comparing the baseline and damaged strain fields to recover both the location and severity of each site. For the second, population-based problem, I studied Transfer Component Analysis and worked through its formulation: a domain-adaptation method that maps a source structure's iFEM-reconstructed frequency response features and a target structure's directly measured features into a shared latent space with an RBF kernel and a Maximum Mean Discrepancy metric, where a new reading from the target structure would be flagged as damaged if its Mahalanobis distance to the healthy cluster passed a Monte Carlo threshold, letting a sparsely instrumented structure draw on a richer one's baseline instead of building its own from scratch.",
     results: "The strain-sensor simulation recovered both seeded damage sites from the strain-residual field, with the estimated damage centroids landing close to the true locations on the 100-point sensor grid; the six-panel output tracks the mesh and sensor layout, the strain fields before and after damage, the time series at the affected sensors, and the final detection map side by side.",
     figures: [
       { file: "out1.jpg", caption: "Strain sensor simulation on a 100-sensor plate: sensor layout with two seeded damage sites, strain fields before and after damage, strain time series at the sensors nearest the damage, and the resulting damage-detection map against the true locations." },
@@ -1736,11 +1743,8 @@ const RESEARCH_DATA = [
     period: "02/25 to 08/25",
     title: "Structural health monitoring: crack detection and localization",
     summary: "Detecting and locating cracks in thin aluminium plates from the ultrasonic signals picked up by bonded piezoelectric sensors.",
-    problem: "Aircraft skin panels crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. Before that is worth building, two questions need answers: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
-    approach: [
-      "I ran a survey first, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis on what each one can resolve. That comparison pointed me to bonded PZT transducers driven with Lamb waves. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
-      "In stage one I bonded two PZT discs to a plate in Abaqus, solving the discs in Standard and the plate in Explicit through a surface-based co-execution, and compared sensor voltage healthy against cracked. Stage two grew that to four discs on a 400 mm plate for six sensing paths: I swapped the continuous drive for a four-cycle Hann-windowed tone burst, and modelled the crack as a zero-thickness seam so both meshes stay identical element for element. I turned wavelet energy per path into a damage index, then fed the six into a probability-based diagnostic imaging algorithm."
-    ],
+    problem: "Structures crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Thin-walled structures, in particular, need a monitoring method that works within their limited thickness. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. That raises several separate questions, of which this project addresses two: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
+    approach: "The work ran in three stages. The first was a survey of the available methods, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis, drawing mainly on journal papers and PhD-level work simplified to fit this scope; that comparison pointed to bonded PZT transducers driven with Lamb waves, and solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, with the shorter A0 wavelength of 7.90 mm fixing the 0.8 mm element size the mesh had to hold. The second stage addressed whether a crack is even detectable, bonding two PZT discs to a plate in Abaqus, solving the discs in Standard and the plate in Explicit through a surface-based co-execution, and comparing sensor voltage healthy against cracked. The third stage addressed locating the crack: I grew the setup to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, modelled the crack as a zero-thickness seam so both meshes stay identical element for element, turned wavelet energy per path into a damage index, and fed the six into a probability-based diagnostic imaging algorithm.",
     results: "On the two-transducer path the crack drops peak amplitude by 19.5% and gives a signal difference coefficient of 0.989, which settles detection and says nothing about position. With four transducers the path through the crack loses 23.4% of its S0 amplitude while the two paths 110 mm away register nothing to four decimal places. PDI places the crack 10 mm from where it was put, about 2.5% of the plate span, against 75 mm for delay-and-sum on the same signals; the full-field wavefield difference shows it radiating from the right point.",
     tags: ["ABAQUS", "Piezoelectric", "Lamb waves"],
     figures: [
@@ -1776,14 +1780,14 @@ const CERTIFICATES_DATA = [
     name: "LLM Applications Development",
     issuer: "Quera College",
     date: "09/25",
-    summary: "A practical course on building applications with large language models: RAG, prompting patterns and agent workflows."
+    summary: "A practical course on building applications with LLMs: RAG, prompting patterns and agent workflows."
   },
   {
     slug: "prompt-engineering",
     name: "Prompt Engineering",
     issuer: "Quera College",
     date: "09/25",
-    summary: "How to design, structure and evaluate prompts that steer large language models reliably."
+    summary: "How to design, structure and evaluate prompts that steer LLMs reliably."
   },
   {
     slug: "chatbot-langchain-essentials",
@@ -1798,7 +1802,7 @@ const CERTIFICATES_DATA = [
     name: "Deep Learning with Python Using TensorFlow and Keras",
     issuer: "FaraDars",
     date: "09/26",
-    summary: "Building and training neural networks in Python with TensorFlow and Keras.",
+    summary: "Building and training Neural Networks in Python with TensorFlow and Keras.",
     note: "Course completed earlier; the certificate was issued later."
   },
   {
@@ -2222,6 +2226,8 @@ function closePdf(btn) {
     projCard.classList.remove('open');
     const expandTarget = projCard.querySelector('.proj-more') || projCard.querySelector('.proj-head');
     if (expandTarget) expandTarget.setAttribute('aria-expanded', 'false');
+    const row = projCard.closest('.proj-row');
+    if (row) row.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
   }
   const grid = drawer.closest('.hw-grid');           // present only for HW drawers
   if (grid) {
@@ -2258,7 +2264,7 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     hwCards += pair.map(hw => {
       const inner = hw.notebook
         ? notebookBlock(hw, `assets/courses/${slug}/hw/HW${hw.id}.ipynb`)
-        : `<div style="padding-top:14px">${pdfViewer(`assets/courses/${slug}/hw/HW${hw.id}.pdf`)}</div>${redactionNotice()}`;
+        : `<div style="padding-top:14px">${pdfViewer(`assets/courses/${slug}/hw/HW${hw.id}.pdf`)}</div>`;
       return `
       <div class="drawer hw-drawer" id="hwdrawer-${slug}-${hw.id}" data-drawer="${hw.id}">
         <div class="drawer-inner">
@@ -2347,14 +2353,24 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
         </div>
       </div>`;
   }
+  // Grouped into rows of 3 (like .hw-row's rows of 2) so a card opening only
+  // ever has to negotiate width with the up-to-two siblings actually beside
+  // it, never with cards further down the grid — see toggleProj().
+  function projRowsHtml(items) {
+    let out = '';
+    for (let i = 0; i < items.length; i += 3) {
+      out += `<div class="proj-row">${items.slice(i, i + 3).map(projCardHtml).join('')}</div>`;
+    }
+    return out;
+  }
   const presentationItems = c.projects.filter(p => p.kind === 'Presentation');
   const projectItems = c.projects.filter(p => p.kind !== 'Presentation');
-  const presentationCards = presentationItems.map(projCardHtml).join('');
-  const projectCards = projectItems.map(projCardHtml).join('');
+  const presentationCards = projRowsHtml(presentationItems);
+  const projectCards = projRowsHtml(projectItems);
 
   courseContent.innerHTML = `
     <h3 class="course-title">${c.name}</h3>
-    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''} · ${c.projects.length} project${c.projects.length!==1?'s':''}${instructorHtml(c)}</p>
+    <p class="course-sub">${c.homeworks.length} homework${c.homeworks.length!==1?'s':''}${presentationItems.length ? ` · ${presentationItems.length} presentation${presentationItems.length!==1?'s':''}` : ''} · ${projectItems.length} project${projectItems.length!==1?'s':''}${instructorHtml(c)}</p>
 
     ${c.homeworks.length ? `
     <p class="sub-heading">Homeworks</p>
@@ -2420,9 +2436,25 @@ function toggleHw(card) {
 // rather than assuming `el` IS the head.
 function toggleProj(el) {
   const card   = el.closest('.proj-card');
+  const grid   = card.closest('.proj-grid');
   const drawer = card.querySelector('.drawer');
   const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
   const isOpen = card.classList.contains('open');
+  // Only one card open per grid at a time, same as the homework accordion —
+  // closing whichever else was open (in any row of this Presentations/
+  // Projects grid) before opening this one, and clearing every row's
+  // collapsed siblings so nothing is left shrunk from a previous open card.
+  if (grid) {
+    grid.querySelectorAll('.proj-card.open').forEach(other => {
+      if (other === card) return;
+      other.classList.remove('open');
+      const otherDrawer = other.querySelector('.drawer');
+      if (otherDrawer) otherDrawer.classList.remove('open');
+      const otherTarget = other.querySelector('.proj-more') || other.querySelector('.proj-head');
+      if (otherTarget) otherTarget.setAttribute('aria-expanded', 'false');
+    });
+    grid.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
+  }
   if (isOpen) {
     card.classList.remove('open');
     drawer.classList.remove('open');
@@ -2432,12 +2464,18 @@ function toggleProj(el) {
     drawer.classList.add('open');
     expandTarget.setAttribute('aria-expanded', 'true');
     loadPdfSlots(drawer);
+    // Shrink just this card's row-mates (card.parentNode is the .proj-row),
+    // the same "open widens, row-mates shrink" gesture as a homework row.
+    const row = card.closest('.proj-row');
+    if (row) row.querySelectorAll('.proj-card').forEach(el => { if (el !== card) el.classList.add('collapsed'); });
   }
   refreshFocusMode();
 }
 function closeProj(btn) {
   const card = btn.closest('.proj-card');
   card.classList.remove('open');
+  const row = card.closest('.proj-row');
+  if (row) row.querySelectorAll('.proj-card.collapsed').forEach(el => el.classList.remove('collapsed'));
   const drawer = card.querySelector('.drawer');
   drawer.classList.remove('open');
   const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
