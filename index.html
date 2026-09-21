@@ -459,6 +459,10 @@
     justify-content: space-between;
     gap: 10px;
   }
+  /* No thumbnail: the side column only has to fit the More/Less button, so
+     the text column next to it (flex: 1) can use the width the thumbnail
+     would otherwise have reserved. */
+  .showcase-side.no-thumb { width: auto; }
   .showcase-thumb {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -1183,7 +1187,7 @@
 
       <h2 class="reveal">About</h2>
       <p>
-        I'm a structural engineer interested in how agentic AI can support structural engineering work. Mostly I want to know whether an AI system can understand an engineering problem on its own, bring in the domain knowledge it needs, and help produce a design. The applications I care about most are structural health monitoring, early damage detection and real-time deformation analysis. I think bringing AI into structural engineering could change a good deal of the field's day-to-day work, and I'd like to connect with researchers and engineers working on similar problems.
+        Structural engineering problems drew me in during my bachelor's, and that pull is why I chose structural engineering for my master's. As new methods emerged, I started reaching for them instead of the traditional approach to structural problems, which is what led me to my current work: composite material structural design using agentic AI. I'm interested in how an AI system can understand an engineering problem on its own, bring in the domain knowledge it needs, and help produce a design for a complex system made of many interacting components, the kind of problem I want to spend my career on. The applications I care about most are structural health monitoring, early damage detection and real-time deformation analysis. I want to pursue a PhD to keep working on real structural engineering problems with novel methods, in a lab with a dynamic setting and a strong research team, and I'd like to connect with researchers and engineers working on similar problems.
       </p>
 
 
@@ -1420,8 +1424,8 @@ const COURSES_DATA = {
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
         problem: "Sizing an aircraft wing box is a long hand calculation that loops: bending material in the covers, a spar web that buckles before it shears, ribs, joints, every margin pushed toward zero from above while the load envelope keeps moving with the structure's own weight. The procedure is documented and standardized, but choosing the alloy, the spar positions and the catalogue stringers is left to the structural engineer's judgment.",
         approach: [
-          "One rule governs the system, and the code itself enforces it: the model never does arithmetic and Python never makes a judgment call. Decision schemas carry no numeric field an LLM could write a thickness into, numbers enter the shared state only as a tool's return value, and every quantity carries a provenance record. An audit walks the finished design and reports it infeasible if any number lacks one. The sizing underneath is a deterministic, unit-tested Python implementation of Niu, Megson and Roskam.",
-          "The nine classical design phases become a LangGraph StateGraph over one shared, typed dossier. The backbone is a prompt chain, since the order is documented and has to stay reviewable step by step; spar web, ribs and joints fan out in parallel once the covers are sized; and a deterministic checker with a rule-based router sends a failing design back to whichever node can fix its worst margin. Material selection runs an Ashby structural index with alloy-family screening and a Pareto trade-off, once per cover position."
+          "I built the system around one rule and made the code itself enforce it: the model never does arithmetic and Python never makes a judgment call. I gave the decision schemas no numeric field an LLM could write a thickness into, let numbers enter the shared state only as a tool's return value, and attached a provenance record to every quantity. An audit walks the finished design and flags it infeasible if any number lacks one. Underneath, I implemented the sizing as a deterministic, unit-tested Python translation of Niu, Megson and Roskam.",
+          "I turned the nine classical design phases into a LangGraph StateGraph over one shared, typed dossier. I kept the backbone a prompt chain, since the order is documented and has to stay reviewable step by step; I fanned spar web, ribs and joints out in parallel once the covers are sized; and I added a deterministic checker with a rule-based router that sends a failing design back to whichever node can fix its worst margin. For material selection I ran an Ashby structural index with alloy-family screening and a Pareto trade-off, once per cover position."
         ],
         results: "The course's own hand-worked cross-section is reproduced to tabulated precision as an automated acceptance gate, and rebuilding it surfaced four notation and arithmetic slips in the reference itself, each now pinned by a test. Run live against a published METU master's design of a PC-21 class trainer wing, the pipeline converged on 131.9 to 132.4 kg against that thesis's own optimized 125.9 kg, about 5% high, with the gap traced to the discrete stringer catalogue used here against the thesis's continuous search. An Abaqus 2024 model built from the converged geometry balanced the root reaction against the applied shear.",
         figures: [
@@ -1527,8 +1531,8 @@ const COURSES_DATA = {
         title: "Multi-Objective Optimization of Composite Structures Using a Large-Language-Model-Based Agent",
         problem: "In multi-objective optimization of composite structures the designer writes the problem before the run: objectives, constraints, design variables. If the Pareto front comes back degenerate, the designer reads the output, works out what went wrong, rewrites the formulation and runs it again. This work hands that loop to an agent.",
         approach: [
-          "The agent takes a design description in plain language and extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract. The language model handles the formulation, and a deterministic kernel built on classical laminated plate theory computes every physical quantity. The graph runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself before anything is diagnosed.",
-          "After the run, failure detection is deterministic and threshold-based. When a front is degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. Model use is split by node, with a lighter model on intake and reporting and a stronger one on formulation, repair and explanation."
+          "I built an agent that takes a design description in plain language, extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract. I gave the language model only the formulation step, and built a deterministic kernel on classical laminated plate theory to compute every physical quantity. The graph I designed runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself before diagnosing anything.",
+          "I made failure detection deterministic and threshold-based. When a front comes back degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. I split model use by node, giving a lighter model to intake and reporting and a stronger one to formulation, repair and explanation."
         ],
         results: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one under an equal search budget: all 37 designs, the same layer counts and stacking sequences, and no difference in buckling load. The deterministic kernel reproduced the paper's analytical numbers to a worst case of 0.001%. Given a deliberately broken request, the feedback loop found the fault within four iterations, revised the formulation twice, and raised the front's hypervolume by 4.17% and then by 36.13%.",
         figures: [
@@ -1582,7 +1586,7 @@ const COURSES_DATA = {
      base        -> asset folder; thumb.jpg, out1.jpg, out2.jpg are read from it
      summary     -> the two lines shown on the collapsed card
      problem     -> "The problem" paragraph in the open card
-     approach    -> ["para", "para"] under "How it was solved"
+     approach    -> ["para", "para"] under "The approach"
      results     -> "What came out" paragraph
      figures     -> [{ file, caption }] shown under the results
    No report PDF and no code download: the showcase cards offer no files.
@@ -1631,7 +1635,7 @@ const EXTRA_PROJECTS = [
     base: "assets/projects/ai-research-assistant",
     course: "Foundations of Data Science",
     period: "Fall 2024 to Winter 2025",
-    title: "Research Assistant",
+    title: "Scholarly Citation Network Analysis & Research Assistant",
     summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
     problem: "Finding the right papers in an unfamiliar field is slow, and keyword search returns too much. A scholarly dataset also records who cites whom and who writes with whom, and that network says a lot about which authors and papers belong together. This project analyses those links, predicts how many citations a paper will get, and builds a research assistant that finds papers by topic or by author.",
     approach: [
@@ -1657,7 +1661,7 @@ const EXTRA_PROJECTS = [
    thumbnail -> assets/research/<id>/thumb.jpg   (collapsed card)
    Write-up, same fields as the Projects showcase cards:
      problem       -> "The problem"
-     approach      -> "How it was solved" (string or array of paragraphs)
+     approach      -> "The approach" (string or array of paragraphs)
      results       -> "What came out", with `figures` [{ file, caption, width }]
    For work still in progress:
      approachLabel -> renames the approach block (e.g. "Proposed solution")
@@ -1675,9 +1679,9 @@ const RESEARCH_DATA = [
     period: "In progress",
     title: "Optimal design of stiffened composite laminates using LLM-based agentic AI",
     summary: "Building a multi-agent LLM system for the preliminary design of stiffened composite laminates, with every number computed by a validated core.",
-    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with neural networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, and needs hundreds of finite element runs.",
+    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with neural networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, needs hundreds of finite element runs, and does not generalize across different structural configurations, each of which tends to need its own bespoke setup.",
     approachLabel: "Proposed solution",
-    approach: "The proposal is a multi-agent system in which LLM agents lead the design: they plan, pull in design knowledge and requirements, call computational modules and check every result, following the analytical framework of a reference text on composite structures. Language models alone are not reliable enough for engineering, so every number comes from a deterministic, validated computational core. The agents need no prior training and the system grows by adding tools. For a composite, the agent must also reason about the layup, mechanical prerequisites and each theory's range of validity before calling an equation.",
+    approach: "The proposal is a multi-agent system in which LLM agents lead the design: they plan, pull in design knowledge and requirements, call computational modules and check every result, following the analytical framework of a reference text on composite structures. Language models alone are not reliable enough for engineering, so every number comes from a deterministic, validated computational core. The agents need no prior training and the system grows by adding tools, so the same architecture adapts across different composite structural design problems instead of being rebuilt per configuration. For a composite, the agent must also reason about the layup, mechanical prerequisites and each theory's range of validity before calling an equation. Given the input requirements, the goal is for the system to return the most optimal design and best-suited structure.",
     plan: [
       "Two tracks run in parallel. The first completes and validates the deterministic computational core, from basic laminate analysis up to more complex structures checked against reference examples. The second designs the agent architecture: a knowledge layer holding computational knowledge and interpretive design requirements, tool interfaces, and a design decision graph. The scope is classical laminate theory, linear elastic behaviour and static or quasi-static load, with material properties as inputs; when the data is missing, the system reports the problem as unsolvable.",
       "The tracks are then integrated and run end to end on design scenarios such as sandwich panels and stiffened shells, compared with manual design and classical optimization on accuracy and efficiency, and checked against standard references for shells, stiffened cylinders, sandwich panels and laminates. The expected outcome is a working prototype, a computational library that also runs without the agent, and at least one scientific paper. The known risks are sensitivity to prompt phrasing, assumptions drifting over long chains, and the nondeterminism of LLMs."
@@ -1698,18 +1702,32 @@ const RESEARCH_DATA = [
     period: "10/25 to 04/26",
     title: "LLM-based multi-agent mechanism design",
     summary: "Automating the conceptual design of mechanical linkages with a team of LLM agents built on CrewAI and RAG.",
-    abstract: "Worked on a multi-agent system, built with CrewAI and retrieval-augmented generation (RAG), that automates the conceptual design of mechanical linkages, with separate agents for synthesis, evaluation and refinement.",
+    problem: "Mechanical linkage design depends on domain knowledge that is scarce and slow to apply: picking a mechanism family, sizing its links and checking that it actually delivers the required motion and forces can take weeks per iteration, even before manufacturing constraints enter the picture.",
+    approach: [
+      "I built a multi-agent system with CrewAI, with separate agents for synthesis, evaluation and refinement instead of one model doing everything. A retrieval-augmented generation layer over a library of known mechanisms lets the synthesis agent search and adapt existing linkage families to a new request rather than invent one from scratch.",
+      "The evaluation agent checks each candidate's kinematics, dynamics and standards compliance, and the refinement agent revises the design against whatever that check flags. A user only has to describe what they need in plain language; the agents carry it through to a validated, production-ready mechanism."
+    ],
+    results: "The system takes a plain-language description of a required motion and returns a validated mechanism in minutes rather than the weeks a manual iteration would take, with kinematics, dynamics and standards compliance already checked.",
     tags: ["Multi-Agent systems", "CrewAI", "Mechanical Mechanisms"]
   },
   {
-    id: "ifem-acoustic-emission",
-    base: "assets/research/ifem-acoustic-emission",
+    id: "ifem-shm",
+    base: "assets/research/ifem-shm",
     course: "Personal Research",
     period: "07/25 to 08/25",
-    title: "Inverse finite element method & acoustic emission",
-    summary: "Reconstructing structural deformation in real time from sparse strain sensors, and using acoustic emission to locate damage more accurately.",
-    abstract: "Implemented the inverse Finite Element Method (iFEM) to reconstruct structural deformation in real time from sparse strain measurements, and combined it with acoustic emission (AE) signals to improve damage localization.",
-    tags: ["iFEM", "Acoustic emission", "Strain sensing", "Shape sensing", "Damage localization", "Structural health monitoring"]
+    title: "Inverse finite element method for structural health monitoring",
+    summary: "Reconstructing structural deformation in real time from sparse strain sensors, and studying how that reconstruction could transfer to structures with little data of their own.",
+    problem: "Reconstructing a structure's deformed shape in real time from a handful of strain sensors, without knowing the loads or material behaviour driving that deformation, is the core problem shape sensing has to solve. A second, separate problem sits on top of it: a well-instrumented structure can build a reliable healthy-state baseline for damage detection, but a similar structure with only a few sensors cannot, so its diagnosis has to borrow from the first one's data despite the two never being identical.",
+    approach: [
+      "I worked through the iFEM formulation from its variational basis: strains measured at discrete sensor locations feed a least-squares functional that is minimised over the nodal displacements, giving a pseudo-stiffness system I derived down to its shape-function and strain-displacement matrices for an 8-node hexahedral solid-shell element. Solving that system reconstructs the full displacement field, and from it the stresses, the deformed shape and a strain-residual damage indicator, all without needing the external loads or material stiffness as inputs. I implemented this in Python and ran it on a simulated plate with 100 sensor locations and two seeded damage sites, comparing the baseline and damaged strain fields to recover both the location and severity of each site.",
+      "For the second problem, population-based structural health monitoring, I studied Transfer Component Analysis and worked through its formulation: a domain-adaptation method that maps a source structure's iFEM-reconstructed frequency response features and a target structure's directly measured features into a shared latent space, using an RBF kernel and a Maximum Mean Discrepancy metric to align their distributions. In that space, a new reading from the target structure would be flagged as damaged if its Mahalanobis distance to the healthy cluster passed a Monte Carlo threshold, letting a sparsely instrumented structure draw on a richer one's baseline instead of building its own from scratch."
+    ],
+    results: "The strain-sensor simulation recovered both seeded damage sites from the strain-residual field, with the estimated damage centroids landing close to the true locations on the 100-point sensor grid; the six-panel output tracks the mesh and sensor layout, the strain fields before and after damage, the time series at the affected sensors, and the final detection map side by side.",
+    figures: [
+      { file: "out1.jpg", caption: "Strain sensor simulation on a 100-sensor plate: sensor layout with two seeded damage sites, strain fields before and after damage, strain time series at the sensors nearest the damage, and the resulting damage-detection map against the true locations." },
+      { file: "out2.jpg", width: 420, caption: "The two-stage pipeline: a high-fidelity Abaqus model generates synthetic sensor data and a reference displacement field, iFEM reconstructs the displacement field from the sensor data alone on a coarser mesh, and the two are compared to check the reconstruction." }
+    ],
+    tags: ["iFEM", "Shape sensing", "Structural health monitoring", "Transfer learning", "Damage detection"]
   },
   {
     id: "structural-health-monitoring",
@@ -1720,8 +1738,8 @@ const RESEARCH_DATA = [
     summary: "Detecting and locating cracks in thin aluminium plates from the ultrasonic signals picked up by bonded piezoelectric sensors.",
     problem: "Aircraft skin panels crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. Before that is worth building, two questions need answers: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
     approach: [
-      "A survey came first, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis on what each one can resolve. That comparison pointed to bonded PZT transducers driven with Lamb waves. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
-      "Stage one bonded two PZT discs to a plate in Abaqus, the discs solved in Standard and the plate in Explicit through a surface-based co-execution, comparing sensor voltage healthy against cracked. Stage two grew that to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, and modelled the crack as a zero-thickness seam so both meshes stay identical element for element. Wavelet energy per path becomes a damage index, and the six feed a probability-based diagnostic imaging algorithm."
+      "I ran a survey first, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis on what each one can resolve. That comparison pointed me to bonded PZT transducers driven with Lamb waves. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
+      "In stage one I bonded two PZT discs to a plate in Abaqus, solving the discs in Standard and the plate in Explicit through a surface-based co-execution, and compared sensor voltage healthy against cracked. Stage two grew that to four discs on a 400 mm plate for six sensing paths: I swapped the continuous drive for a four-cycle Hann-windowed tone burst, and modelled the crack as a zero-thickness seam so both meshes stay identical element for element. I turned wavelet energy per path into a damage index, then fed the six into a probability-based diagnostic imaging algorithm."
     ],
     results: "On the two-transducer path the crack drops peak amplitude by 19.5% and gives a signal difference coefficient of 0.989, which settles detection and says nothing about position. With four transducers the path through the crack loses 23.4% of its S0 amplitude while the two paths 110 mm away register nothing to four decimal places. PDI places the crack 10 mm from where it was put, about 2.5% of the plate span, against 75 mm for delay-and-sum on the same signals; the full-field wavefield difference shows it radiating from the right point.",
     tags: ["ABAQUS", "Piezoelectric", "Lamb waves"],
@@ -2024,7 +2042,7 @@ function writeupBlocksHtml(item) {
   // renames the middle block, and `plan` adds a "Planned work" block in
   // place of results that do not exist yet.
   if (item.problem)  blocks += block('The problem', item.problem);
-  if (item.approach) blocks += block(item.approachLabel || 'How it was solved', item.approach);
+  if (item.approach) blocks += block(item.approachLabel || 'The approach', item.approach);
   if (item.plan)     blocks += block('Planned work', item.plan);
   if (item.schedule) blocks += `
       <div class="proj-block">
@@ -2079,7 +2097,7 @@ function showcaseCardHtml(item, prefix) {
           <p class="showcase-summary">${item.summary || ''}</p>
           ${tags ? `<div class="tag-row">${tags}</div>` : ''}
         </div>
-        <div class="showcase-side">
+        <div class="showcase-side${item.noThumb ? ' no-thumb' : ''}">
           ${item.noThumb ? '' : `<div class="showcase-thumb">
             <img src="${thumb}" alt="" loading="lazy"
                  onerror="this.closest('.showcase-thumb').classList.add('is-empty'); this.remove();" />
