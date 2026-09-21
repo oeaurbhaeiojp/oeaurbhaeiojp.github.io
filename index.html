@@ -326,28 +326,11 @@
   .btn.btn-outline svg { color: var(--accent); }
   .btn-outline:hover svg { color: var(--on-accent); }
 
-  /* Contact buttons reveal the actual address/link in a subtle tooltip on hover
-     so the button itself only shows the icon + platform name. */
-  .contact-btn { position: relative; }
-  .contact-btn::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    background: var(--bg-card-2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.74rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 30;
-  }
-  .contact-btn:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* Each contact method is its own button plus the real address/link as
+     plain text underneath, so a visitor can select and copy it directly
+     instead of only being able to click through. */
+  .contact-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .contact-handle { margin: 0; color: var(--text-dim); font-size: 0.82rem; user-select: all; }
 
   /* Links that point at a file which may not be uploaded yet (CV, standalone
      "View report" links) — greyed out instead of a raw 404 as the failure
@@ -361,9 +344,7 @@
   .pill, .tag {
     display: inline-block;
     border-radius: 999px;
-    transition: transform 0.15s ease;
   }
-  .pill:hover, .tag:hover { transform: scale(1.06); }
   .pill {
     font-size: 0.8rem;
     padding: 5px 12px;
@@ -445,9 +426,7 @@
        just under the thumbnail. */
     align-items: stretch;
     padding: 20px 22px;
-    cursor: pointer;
   }
-  .showcase-head:hover h3 { color: var(--accent); }
   .showcase-text { flex: 1; min-width: 0; }
   .showcase-text .date {
     font-size: 0.8rem;
@@ -492,10 +471,9 @@
   /* No thumb.jpg uploaded yet: keep the slot, drop the broken-image icon. */
   .showcase-thumb.is-empty { border-style: dashed; }
 
-  /* Drawn as a small outline button, but it is only a label: the whole head
-     is already the button (role="button" + aria-expanded), and a real
-     <button> nested inside it would be invalid. A click on it lands on the
-     head like a click anywhere else on the card. */
+  /* The only click target that opens/closes the card — the rest of the head
+     is inert. A real <button> so it gets native keyboard and focus handling
+     for free, instead of the role="button" shim the old whole-head click used. */
   .showcase-more {
     display: inline-flex;
     align-items: center;
@@ -504,14 +482,17 @@
     padding: 6px 12px;
     border-radius: 7px;
     border: 1px solid var(--accent-border);
+    background: transparent;
     color: var(--accent);
+    font: inherit;
     font-size: 0.82rem;
     font-weight: 500;
     line-height: 1.2;
+    cursor: pointer;
     user-select: none;
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
-  .showcase-head:hover .showcase-more { background: var(--accent-soft); border-color: var(--accent); }
+  .showcase-more:hover, .showcase-more:focus-visible { background: var(--accent-soft); border-color: var(--accent); }
   .showcase-more svg {
     width: 14px;
     height: 14px;
@@ -760,11 +741,20 @@
     transition: border-color 0.2s ease;
   }
   .proj-card.open { border-color: var(--accent); }
-  .proj-head { padding: 18px 20px; cursor: pointer; }
-  .proj-head:hover h4 { color: var(--accent); }
+  .proj-head { padding: 18px 20px; }
+  /* Only the whole-head-click cards (non-featured, course-only projects) get
+     the pointer cursor and hover-tint; a featured project's head is inert
+     text and its .proj-more button (below) is the only click target. */
+  .proj-head[role="button"] { cursor: pointer; }
+  .proj-head[role="button"]:hover h4 { color: var(--accent); }
   .proj-head h4 { font-size: 1.1rem; margin: 0 0 6px; transition: color 0.2s ease; }
   .proj-head .proj-desc { font-size: 0.9rem; color: var(--text-dim); margin: 0 0 12px; }
   .proj-head .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  /* Featured project head: tag row + More/Less button on one line, button
+     pinned to the right, matching the showcase card's own bottom row. */
+  .proj-head-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .proj-head-foot .tag-row { flex: 1; }
+  .proj-more { flex-shrink: 0; }
 
   /* Accordion drawer (shared by HW + projects + showcase cards)
      -----------------------------------------------------------
@@ -952,13 +942,14 @@
   /* ===========================================================
      SKILLS
      =========================================================== */
-  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .skill-col {
+  .skills-box {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px;
   }
+  .skills-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  .skill-col + .skill-col { padding-top: 20px; border-top: 1px solid var(--border); }
   .skill-col h3 { font-size: 1rem; margin: 0 0 14px; color: var(--accent); }
   .skill-col .pill-row { gap: 8px; }
 
@@ -972,7 +963,7 @@
     border-radius: 10px;
     padding: 26px;
   }
-  .contact-box p { margin: 0 0 18px; color: var(--text-dim); }
+  .contact-box .btn-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
   /* ===========================================================
      SCROLL REVEAL
@@ -1041,7 +1032,6 @@
     html { scroll-behavior: auto; }
     .page.active { animation: none; }
     .hw-card:hover, .cert-card:hover { transform: none; }
-    .pill:hover, .tag:hover { transform: none; }
     .drawer { transition: none; }
   }
 
@@ -1212,6 +1202,7 @@
          collapsed, and the full write-up behind a click. -->
     <section id="research" class="page">
       <h2 class="reveal">Research experience</h2>
+      <p class="course-sub" id="researchCount"><!-- populated by JS --></p>
       <div class="cproj-grid" id="researchGrid"><!-- populated by JS --></div>
     </section>
 
@@ -1246,33 +1237,35 @@
          which answer what they have actually done. -->
     <section id="skills" class="page">
       <h2 class="reveal">Skills</h2>
-      <div class="skills-grid">
-        <div class="skill-col reveal">
-          <h3>Software</h3>
-          <div class="pill-row">
-            <span class="pill">ABAQUS</span>
-            <span class="pill">SolidWorks</span>
-            <span class="pill">CATIA</span>
-            <span class="pill">COMSOL</span>
-            <span class="pill">MATLAB</span>
+      <div class="skills-box reveal">
+        <div class="skills-grid">
+          <div class="skill-col">
+            <h3>Software</h3>
+            <div class="pill-row">
+              <span class="pill">ABAQUS</span>
+              <span class="pill">SolidWorks</span>
+              <span class="pill">CATIA</span>
+              <span class="pill">COMSOL</span>
+              <span class="pill">MATLAB</span>
+            </div>
           </div>
-        </div>
-        <div class="skill-col reveal">
-          <h3>Programming</h3>
-          <div class="pill-row">
-            <span class="pill">Python</span>
-            <span class="pill">C++</span>
+          <div class="skill-col">
+            <h3>Programming</h3>
+            <div class="pill-row">
+              <span class="pill">Python</span>
+              <span class="pill">C++</span>
+            </div>
           </div>
-        </div>
-        <div class="skill-col reveal">
-          <h3>Tools</h3>
-          <div class="pill-row">
-            <span class="pill">LangChain</span>
-            <span class="pill">LangGraph</span>
-            <span class="pill">CrewAI</span>
-            <span class="pill">TensorFlow</span>
-            <span class="pill">PyTorch</span>
-            <span class="pill">Scikit-learn</span>
+          <div class="skill-col">
+            <h3>Tools</h3>
+            <div class="pill-row">
+              <span class="pill">LangChain</span>
+              <span class="pill">LangGraph</span>
+              <span class="pill">CrewAI</span>
+              <span class="pill">TensorFlow</span>
+              <span class="pill">PyTorch</span>
+              <span class="pill">Scikit-learn</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1285,17 +1278,25 @@
     <section id="contact" class="page">
       <h2 class="reveal">Contact</h2>
       <div class="contact-box reveal">
-        <p>You can reach me about academic collaboration or research questions, or to ask for the full versions of the course materials. I'm glad to talk with researchers and engineers working on related problems.</p>
         <div class="btn-row">
-          <a class="btn btn-outline contact-btn" data-tip="rouzbehpourjafarian@gmail.com" href="mailto:rouzbehpourjafarian@gmail.com">
-            <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>Email
-          </a>
-          <a class="btn btn-outline contact-btn" data-tip="linkedin.com/in/rouzbeh-pourjafarian" href="https://www.linkedin.com/in/rouzbeh-pourjafarian/" target="_blank" rel="noopener">
-            <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>LinkedIn
-          </a>
-          <a class="btn btn-outline contact-btn" data-tip="t.me/rouzbeh_p" href="https://t.me/rouzbeh_p" target="_blank" rel="noopener">
-            <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"/></svg>Telegram
-          </a>
+          <div class="contact-item">
+            <a class="btn btn-outline contact-btn" href="mailto:rouzbehpourjafarian@gmail.com">
+              <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>Email
+            </a>
+            <p class="contact-handle">rouzbehpourjafarian@gmail.com</p>
+          </div>
+          <div class="contact-item">
+            <a class="btn btn-outline contact-btn" href="https://www.linkedin.com/in/rouzbeh-pourjafarian/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>LinkedIn
+            </a>
+            <p class="contact-handle">linkedin.com/in/rouzbeh-pourjafarian</p>
+          </div>
+          <div class="contact-item">
+            <a class="btn btn-outline contact-btn" href="https://t.me/rouzbeh_p" target="_blank" rel="noopener">
+              <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"/></svg>Telegram
+            </a>
+            <p class="contact-handle">t.me/rouzbeh_p</p>
+          </div>
         </div>
       </div>
     </section>
@@ -1411,17 +1412,6 @@ const COURSES_DATA = {
     homeworks: [],
     projects: [
       {
-        slug: "project-proposal",
-        kind: "Presentation",
-        title: "Intelligent Material Selection Using Particle Swarm Optimization and Ashby Indices for Aerospace Structures",
-        description: "The original project proposal. It describes an automated system for choosing aerospace structural materials that combines a structured material database, Ashby performance indices, a constraint filter, particle swarm optimization and a language-model coordinator, so an engineer can start from a design requirement written in plain language and get back a ranked, justified shortlist of candidate materials. The project later grew into the wing-box sizing system in the final report below.",
-        tags: [],
-        hasReport: false,
-        hasSlides: true,
-        hasCode: false,
-        code: ""
-      },
-      {
         slug: "agentic-llm-wingbox-design",
         kind: "Project",
         featured: true,
@@ -1438,7 +1428,7 @@ const COURSES_DATA = {
           { file: "out1.jpg", caption: "The lecture cross-section as the live model converged it: NACA 2412 silhouette, box between the spar stations it chose, and every stringer drawn at its real catalogue profile." },
           { file: "out2.jpg", caption: "The converged METU wing box solved in Abaqus 2024, contoured on displacement magnitude, root encastred at bottom left." }
         ],
-        tags: ["Python", "LangGraph", "LangChain", "Pydantic", "DeepSeek-V3.2", "Abaqus 2024", "Agentic LLM", "Ashby index", "Aircraft structures"],
+        tags: ["AI agent", "LangGraph", "ABAQUS"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1499,15 +1489,15 @@ const COURSES_DATA = {
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
         problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small neural networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution. They published no code and no data.",
         approach: [
-          "Everything was rebuilt from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, the three networks, the macro-scale UMAT and the open-hole tension benchmark. Quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, were taken from an independent source or calibrated against its own curves, and each is marked in the report with where it came from.",
-          "The three networks were ported to PyTorch one for one, with layer widths, activations, losses and optimisers matching the paper's tables and epoch counts read straight off the horizontal axes of its own training plots. The first predicts homogenised stress, the second damage onset and the third the failure mode. They run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. Five acceptance criteria were written down before any of it was run."
+          "I rebuilt everything from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, the three networks, the macro-scale UMAT and the open-hole tension benchmark. For quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, I pulled from an independent source or calibrated against its own curves, and marked each one in the report with where it came from.",
+          "I ported the three networks to PyTorch one for one, matching layer widths, activations, losses and optimisers to the paper's tables and reading epoch counts straight off the horizontal axes of its own training plots. The first predicts homogenised stress, the second damage onset and the third the failure mode. They run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. I wrote down five acceptance criteria before running any of it."
         ],
         results: "All five criteria pass. The regression network reaches R² = 0.9997 on the paper's own held-out load path against a 0.99 target, the two classifiers reach 98.0% and 99.0%, and the speed-up lands between 5.2 and 8.6 times depending on how the CPU counts are matched. On the open-hole plate the surrogate peaks at 12.8043 kN against the paper's 12.8170 kN, a difference of 0.10%. The initiation network, never shown a plate or a stress concentration, calls damage onset within 3.3% of the reference model's own.",
         figures: [
           { file: "out1.jpg", width: 860, caption: "The three networks, ported one for one from the paper: stress regression (3-60-50-3, tanh), damage initiation (3-8-10-2, ReLU) and failure mode (3-12-20-4, ReLU), each with its loss and optimiser." },
           { file: "out2.jpg", width: 680, caption: "Fibre damage (left) and matrix damage (right) around the hole. The top two rows are this reproduction at u = 0.9828 and 1.0568 mm; underneath are the paper's own contours from its Figures 13 and 14. Contour limits fixed between 0 and 1." }
         ],
-        tags: ["Abaqus 2024", "Fortran UMAT", "PyTorch", "Python", "Continuum damage mechanics", "Periodic unit cell", "Neural network surrogate"],
+        tags: ["Neural Network", "ABAQUS", "Subroutine", "Fortran UMAT", "PyTorch"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1545,7 +1535,7 @@ const COURSES_DATA = {
           { file: "out1.jpg", caption: "Buckling load factor against laminate thickness for the published two-objective problem, at a 15° and a 45° ply-angle interval. The agent's own formulation (dashed) reproduces the hand-written one (solid) almost exactly, and both track the paper's own published points." },
           { file: "out2.jpg", caption: "The same blind test on the paper's single-objective case, at five ply-angle intervals: the agent's formulation (dark) matches the hand-written reproduction (light) and both sit above the paper's own reported optimum." }
         ],
-        tags: ["Python", "LangGraph", "LangChain", "pymoo", "NSGA-II", "DeepSeek-V4-Flash", "Qwen-Flash", "Classical laminated plate theory", "Composite optimization"],
+        tags: ["Optimization", "Genetic Algorithm", "NSGA-II", "LangGraph", "AI Agent"],
         hasReport: true,
         hasSlides: false,
         hasCode: false,
@@ -1576,55 +1566,6 @@ const COURSES_DATA = {
         tags: [],
         hasReport: false,
         hasSlides: true,
-        hasCode: false,
-        code: ""
-      }
-    ]
-  },
-
-  "foundations-of-data-science": {
-    name: "Foundations of Data Science",
-    instructor: "Dr. Khalaj",
-    instructorUrl: "https://sharif.edu",
-    // These homeworks link a notebook (.ipynb), not a PDF: `notebook: true`
-    // renders a summary + a direct download link instead of the PDF viewer.
-    homeworks: [
-      { id: 1, topic: "Pandas data wrangling &amp; visualization", notebook: true,
-        summary: "Cleaned and queried e-commerce, Canadian cheese, and Glassdoor job-listing datasets with Pandas, and reproduced FiveThirtyEight's COVID-19 polling graphs from public data." },
-      { id: 2, topic: "Web scraping &amp; statistical hypothesis testing", notebook: true,
-        summary: "Scraped current NBA season-leader and player stats from the league's own site, then tested attribute-ranking relationships on a 1950 to 2022 dataset with t-tests, ANOVA, and Pearson/Spearman correlation." },
-      { id: 3, topic: "Classification, dimensionality reduction &amp; graph community detection", notebook: true,
-        summary: "Built Naive Bayes/SVM/KNN classifiers on IMDB review sentiment, ran PCA/MDS/t-SNE on breast-cancer and fruit data, and detected communities in the Zachary's Karate Club and Marvel Universe networks via hierarchical, Louvain, Girvan Newman, and spectral clustering." },
-      { id: 4, topic: "CNN transfer learning &amp; generative models (VQ-VAE)", notebook: true,
-        summary: "Trained a CNN and fine-tuned pretrained models (transfer learning) to classify chest X-rays for pneumonia, then implemented a VQ-VAE from scratch to generate CIFAR-10 images." },
-      { id: 5, topic: "NLP embeddings, spaCy pipelines &amp; AutoML deployment", notebook: true,
-        summary: "Ran POS tagging and NER with spaCy over arXiv abstracts, compared BoW/TF-IDF/GloVe embeddings for a citation-year regression, explored embedding-space orthogonality, and deployed a model with H2O AutoML tracked via DVC." }
-    ],
-    projects: [
-      {
-        slug: "ai-research-assistant",
-        kind: "Project",
-        featured: true,
-        period: "Fall 2024 to Winter 2025",
-        summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
-        title: "Research Assistant",
-        problem: "Finding the right papers in an unfamiliar field is slow, and keyword search returns too much. A scholarly dataset also records who cites whom and who writes with whom, and that network says a lot about which authors and papers belong together. This project analyses those links, predicts how many citations a paper will get, and builds a research assistant that finds papers by topic or by author.",
-        approach: [
-          "The dataset is scholarly articles published through 2017, with papers crawled from Semantic Scholar across five AI subfields held back as a test set. Exploratory analysis came first, then network analysis over the citation, co-authorship and venue graphs, including PageRank, degree centrality and how network density moves across decades. Author communities were detected with greedy modularity, label propagation and Girvan-Newman, compared on average clustering coefficient, and then named from keywords pulled out of their own papers.",
-          "A citation-count regressor was trained on title and abstract embeddings plus publication year, using a RandomForestRegressor tuned through GridSearchCV, with a graph neural network over the co-authorship network in PyTorch Geometric as a second route to the same target. The product on top is a retrieval-augmented assistant: paper embeddings indexed in FAISS, topic queries expanded with KeyBERT, author names lifted out of a question by spaCy named-entity recognition, and an optional LLM pass that summarises what came back."
-        ],
-        results: "Girvan-Newman scored the highest average clustering coefficient, 0.7771, with greedy modularity at 0.7770 and label propagation at 0.7757. The citation regressor did not carry over to the 2,350 crawled test papers: test R² came out at -0.26 with a mean absolute error of 1,217 citations, which the report puts down to the time gap and the new topics and authors in recent papers. The assistant answers both topic and author queries, returning matching papers with their authors and abstracts and an LLM summary on request.",
-        figures: [
-          { file: "out1.jpg", caption: "Total citations against number of publications for each author, with the fitted regression line (R² = 0.34) used to predict the citation count for a given author." },
-          { file: "out2.jpg", caption: "The assistant answering an author query. spaCy lifts the name out of the question, and the matching papers come back with their authors and abstracts." }
-        ],
-        tags: ["Python", "pandas", "scikit-learn", "PyTorch Geometric", "SentenceTransformers", "FAISS", "KeyBERT", "spaCy", "Selenium", "OpenAI API", "Network analysis", "RAG"],
-        reports: [
-          { label: "Report: Phase 0 (Data Crawling)", file: "phase0.pdf" },
-          { label: "Report: Phase 1 (Final Project)", file: "phase1.pdf" }
-        ],
-        hasReport: false,
-        hasSlides: false,
         hasCode: false,
         code: ""
       }
@@ -1660,7 +1601,7 @@ const EXTRA_PROJECTS = [
       "Aircraft Design II picked the wing back up as an individual structural problem: built 3D SolidWorks models of the wing, the stabilizers and the engine-wing interfaces, and ran ABAQUS stress, deformation and buckling analyses against the loads implied by the distributed-propulsion layout and the STOL mission."
     ],
     results: "Aircraft Design I converged on a 5,612 lb aircraft with a 16.98 m² wing at aspect ratio 10 spanning 13 m, its empennage sized by the tail volume coefficient method and the layout validated with a full weight-and-balance check and a 5-view SolidWorks model. Aircraft Design II delivered a final wing, stabilizer and engine-interface design that met the STOL-specific safety, weight and performance requirements the ABAQUS analyses were run against.",
-    tags: ["SolidWorks", "ABAQUS", "MATLAB", "Weight Sizing", "Matching Diagram", "FEM", "Stress Analysis", "Buckling Analysis", "Distributed Electric Propulsion"],
+    tags: ["Team Work", "SolidWorks", "ABAQUS", "FEM"],
     figures: [
       { file: "out1.jpg", caption: "Team design poster for the AeroNEX hybrid-electric STOL air taxi, summarizing the mission requirements, configuration and sizing results." },
       { file: "out2.jpg", width: 620, caption: "AeroNEX in flight, showing the high tapered wing, distributed electric propulsion and V-tail from the final conceptual layout." }
@@ -1675,15 +1616,34 @@ const EXTRA_PROJECTS = [
     summary: "Predicting the heat transfer coefficient of nanofluids from their physical properties with machine learning, and finding which properties matter most.",
     problem: "Team project for Dr. Javadi's Heat Transfer course. The convective heat transfer coefficient of a nanofluid depends on how the fluid flows and what is suspended in it, and measuring it for every combination is not practical. The brief was to predict it with machine learning from a synthetic dataset of 10,000 samples, using flow rate, inlet temperature, nanoparticle concentration, viscosity, density and thermal conductivity, then compare models and explain which properties drive the prediction.",
     approach: [
-      "The data was checked first. It has no missing values, no outliers by the 1.5 IQR rule and no categorical columns, so the one-hot encoding step had nothing to convert. A correlation matrix showed concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target. MinMax and standard scaling were compared on the feature distributions, and an 80/20 split gave 8,000 training and 2,000 test samples.",
-      "Four regressors were trained with scikit-learn and scored on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons. A second round tuned the random forest and the MLP with GridSearchCV, added ridge regression, pairwise interaction terms, 5-fold cross-validation and a voting ensemble, then ran permutation importance and SHAP on the random forest to see which inputs it leans on."
+      "The team checked the data first. It has no missing values, no outliers by the 1.5 IQR rule and no categorical columns, so the one-hot encoding step had nothing to convert. A correlation matrix showed concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target. They compared MinMax and standard scaling on the feature distributions, then split 80/20 into 8,000 training and 2,000 test samples.",
+      "They trained four regressors with scikit-learn and scored them on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons. A second round tuned the random forest and the MLP with GridSearchCV, added ridge regression and pairwise interaction terms, ran 5-fold cross-validation and a voting ensemble, then ran permutation importance and SHAP on the random forest to see which inputs it leans on."
     ],
     results: "All four models predict the coefficient almost exactly, with R² between 0.9972 and 0.9978 and a mean absolute error of 4.1 to 4.6 W/m²K on a target spanning about 200 to 690. Linear regression was best on all three measures, with MSE 25.8 against 32.9 for the random forest, and tuning the forest and the MLP did not change that ranking. Permutation importance puts thermal conductivity, concentration and density first and flow rate fourth, while viscosity scores almost zero despite its 0.70 correlation with the target.",
     figures: [
       { file: "out1.jpg", width: 760, caption: "Predicted against actual heat transfer coefficient on the 2,000 test samples for all four models, each lying along the ideal-fit line." },
       { file: "out2.jpg", width: 620, caption: "Correlation matrix of the six properties and the target. Concentration, density and thermal conductivity are perfectly correlated with each other, and each correlates at 0.97 with the heat transfer coefficient." }
     ],
-    tags: ["Python", "Jupyter Notebook", "pandas", "NumPy", "scikit-learn", "SHAP", "Matplotlib", "Seaborn", "Random forest", "MLP regression", "GridSearchCV", "Permutation importance"]
+    tags: ["pandas", "NumPy", "scikit-learn", "MLP regression"]
+  },
+  {
+    slug: "ai-research-assistant",
+    base: "assets/projects/ai-research-assistant",
+    course: "Foundations of Data Science",
+    period: "Fall 2024 to Winter 2025",
+    title: "Research Assistant",
+    summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
+    problem: "Finding the right papers in an unfamiliar field is slow, and keyword search returns too much. A scholarly dataset also records who cites whom and who writes with whom, and that network says a lot about which authors and papers belong together. This project analyses those links, predicts how many citations a paper will get, and builds a research assistant that finds papers by topic or by author.",
+    approach: [
+      "I used a dataset of scholarly articles published through 2017, crawling papers from Semantic Scholar across five AI subfields to hold back as a test set. Exploratory analysis came first, then network analysis over the citation, co-authorship and venue graphs, including PageRank, degree centrality and how network density moves across decades. I detected author communities with greedy modularity, label propagation and Girvan-Newman, compared them on average clustering coefficient, then named them from keywords pulled out of their own papers.",
+      "I trained a citation-count regressor on title and abstract embeddings plus publication year, using a RandomForestRegressor tuned through GridSearchCV, and added a graph neural network over the co-authorship network in PyTorch Geometric as a second route to the same target. On top of that I built a retrieval-augmented assistant: paper embeddings indexed in FAISS, topic queries expanded with KeyBERT, author names lifted out of a question by spaCy named-entity recognition, and an optional LLM pass that summarises what came back."
+    ],
+    results: "Girvan-Newman scored the highest average clustering coefficient, 0.7771, with greedy modularity at 0.7770 and label propagation at 0.7757. The citation regressor did not carry over to the 2,350 crawled test papers: test R² came out at -0.26 with a mean absolute error of 1,217 citations, which the report puts down to the time gap and the new topics and authors in recent papers. The assistant answers both topic and author queries, returning matching papers with their authors and abstracts and an LLM summary on request.",
+    figures: [
+      { file: "out1.jpg", caption: "Total citations against number of publications for each author, with the fitted regression line (R² = 0.34) used to predict the citation count for a given author." },
+      { file: "out2.jpg", caption: "The assistant answering an author query. spaCy lifts the name out of the question, and the matching papers come back with their authors and abstracts." }
+    ],
+    tags: ["Scrawling", "RAG", "KeyBERT"]
   }
 ];
 
@@ -1710,6 +1670,7 @@ const RESEARCH_DATA = [
   {
     id: "msc-thesis-agentic-composite-design",
     base: "assets/research/msc-thesis-agentic-composite-design",
+    noThumb: true,
     course: "M.Sc. Thesis · Dr. Kouchakzadeh",
     period: "In progress",
     title: "Optimal design of stiffened composite laminates using LLM-based agentic AI",
@@ -1727,17 +1688,18 @@ const RESEARCH_DATA = [
       { term: "Year 2 · Semester 1", work: "Completing the structural scope of the core, and designing the agent architecture: knowledge layer, tool interfaces and design decision graph." },
       { term: "Year 2 · Semester 2 to Summer", work: "Integrating the architecture with the core, running end-to-end design scenarios, comparing them with manual design and classical optimization, then analysing the results, fixing shortcomings, writing the thesis and preparing the defence." }
     ],
-    tags: ["LLM agents", "Multi-agent systems", "Agentic AI", "Composite structures", "Classical laminate theory", "Sandwich panels", "Stiffened shells", "Preliminary design"]
+    tags: ["Agentic AI", "Composite Material", "LangGraph", "Optimization"]
   },
   {
     id: "llm-multiagent-mechanism-design",
     base: "assets/research/llm-multiagent-mechanism-design",
+    noThumb: true,
     course: "Intelligent Design Office · Dr. Dehghani",
     period: "10/25 to 04/26",
     title: "LLM-based multi-agent mechanism design",
     summary: "Automating the conceptual design of mechanical linkages with a team of LLM agents built on CrewAI and RAG.",
     abstract: "Worked on a multi-agent system, built with CrewAI and retrieval-augmented generation (RAG), that automates the conceptual design of mechanical linkages, with separate agents for synthesis, evaluation and refinement.",
-    tags: ["CrewAI", "Python", "RAG", "Multi-agent systems", "LLM", "Mechanism design"]
+    tags: ["Multi-Agent systems", "CrewAI", "Mechanical Mechanisms"]
   },
   {
     id: "ifem-acoustic-emission",
@@ -1758,11 +1720,11 @@ const RESEARCH_DATA = [
     summary: "Detecting and locating cracks in thin aluminium plates from the ultrasonic signals picked up by bonded piezoelectric sensors.",
     problem: "Aircraft skin panels crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. Before that is worth building, two questions need answers: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
     approach: [
-      "A survey came first: vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis, compared on what each one can resolve. Bonded PZT transducers driven with Lamb waves came out of that comparison. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
+      "A survey came first, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis on what each one can resolve. That comparison pointed to bonded PZT transducers driven with Lamb waves. Solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, and the shorter A0 wavelength of 7.90 mm fixed the 0.8 mm element size the mesh had to hold.",
       "Stage one bonded two PZT discs to a plate in Abaqus, the discs solved in Standard and the plate in Explicit through a surface-based co-execution, comparing sensor voltage healthy against cracked. Stage two grew that to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, and modelled the crack as a zero-thickness seam so both meshes stay identical element for element. Wavelet energy per path becomes a damage index, and the six feed a probability-based diagnostic imaging algorithm."
     ],
     results: "On the two-transducer path the crack drops peak amplitude by 19.5% and gives a signal difference coefficient of 0.989, which settles detection and says nothing about position. With four transducers the path through the crack loses 23.4% of its S0 amplitude while the two paths 110 mm away register nothing to four decimal places. PDI places the crack 10 mm from where it was put, about 2.5% of the plate span, against 75 mm for delay-and-sum on the same signals; the full-field wavefield difference shows it radiating from the right point.",
-    tags: ["Abaqus/Explicit", "Abaqus/Standard", "Abaqus co-simulation", "Python", "Lamb waves", "Piezoelectric (PZT)", "Morlet wavelet transform", "PDI imaging", "Delay-and-sum", "Crack localization"],
+    tags: ["ABAQUS", "Piezoelectric", "Lamb waves"],
     figures: [
       { file: "out1.jpg", caption: "Damage-probability map from the four-transducer network. Green cross: the true crack. Cyan cross: the peak of the map, 10 mm away on a 400 mm plate." },
       { file: "out2.jpg", caption: "Peak S0 amplitude drop on each of the six sensing paths, annotated with how far that path passes from the crack." }
@@ -1777,7 +1739,7 @@ const RESEARCH_DATA = [
     summary: "Cooling a battery pack for an electric STOL aircraft with a wing-mounted duct, simulated in COMSOL to run at about 25 °C against an 80 °C rated limit.",
     abstract: "Compared radiator, air-blade and ducted cooling for the battery pack of an electric STOL aircraft, and chose the ducted design for its lower weight and simpler maintenance. Simulated the chosen duct in COMSOL Multiphysics with altitude-dependent air properties and turbulent flow, and added a desiccant chamber inside the duct to strip moisture from the cooling air before it reaches the battery box.",
     achievements: "The simulation predicted a peak battery temperature of about 25 °C, well inside the battery's rated −30 °C to 80 °C operating range.",
-    tags: ["COMSOL", "Thermal Analysis", "CFD", "Duct Design"],
+    tags: ["Team Work", "COMSOL", "Heat Transfer"],
     figures: [
       { file: "out1.jpg", width: 500, caption: "The modeled cooling channel: a 2 m duct, 0.1 m by 0.15 m in cross-section, running the length of the battery box." },
       { file: "out2.jpg", width: 500, caption: "Simulated surface temperature along the duct: a peak of 25.12 °C at the inlet end, well inside the battery's 80 °C rated limit." }
@@ -2109,8 +2071,7 @@ function showcaseCardHtml(item, prefix) {
 
   return `
     <article class="showcase reveal">
-      <div class="showcase-head" role="button" tabindex="0" aria-expanded="false" aria-controls="${drawerId}"
-           onclick="toggleShowcase(this)" onkeydown="activateOnKey(event, this, toggleShowcase)">
+      <div class="showcase-head" aria-controls="${drawerId}">
         <div class="showcase-text">
           ${item.period ? `<div class="date">${item.period}</div>` : ''}
           <h3>${item.title}</h3>
@@ -2119,11 +2080,12 @@ function showcaseCardHtml(item, prefix) {
           ${tags ? `<div class="tag-row">${tags}</div>` : ''}
         </div>
         <div class="showcase-side">
-          <div class="showcase-thumb">
+          ${item.noThumb ? '' : `<div class="showcase-thumb">
             <img src="${thumb}" alt="" loading="lazy"
                  onerror="this.closest('.showcase-thumb').classList.add('is-empty'); this.remove();" />
-          </div>
-          <span class="showcase-more" aria-hidden="true"><span class="more">More</span><span class="less">Less</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>`}
+          <button type="button" class="showcase-more"${item.noThumb ? ' style="margin-top:auto"' : ''} aria-expanded="false" aria-controls="${drawerId}"
+                  onclick="toggleShowcase(this)"><span class="more">More</span><span class="less">Less</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
         </div>
       </div>
       <div class="drawer" id="${drawerId}">
@@ -2147,8 +2109,8 @@ function showcaseCardHtml(item, prefix) {
 function setShowcase(card, open) {
   card.classList.toggle('open', open);
   card.querySelector('.drawer').classList.toggle('open', open);
-  const head = card.querySelector('.showcase-head');
-  if (head) head.setAttribute('aria-expanded', String(open));
+  const btn = card.querySelector('.showcase-more');
+  if (btn) btn.setAttribute('aria-expanded', String(open));
 }
 const DRAWER_MS = 520; // a hair past the drawer's own 0.5s collapse
 // Runs `close`, which collapses zero or more drawers above `anchor`, and
@@ -2185,13 +2147,13 @@ function collapseKeepingPut(anchor, close) {
     if (now - start < DRAWER_MS) requestAnimationFrame(step);
   })(start);
 }
-function toggleShowcase(head) {
-  const card   = head.parentNode;
-  const drawer = head.nextElementSibling;
+function toggleShowcase(btn) {
+  const card   = btn.closest('.showcase');
+  const drawer = card.querySelector('.drawer');
   const isOpen = card.classList.contains('open');
   if (!isOpen) {
     const others = [...card.parentNode.querySelectorAll('.showcase.open')].filter(c => c !== card);
-    if (others.length) collapseKeepingPut(head, () => others.forEach(other => setShowcase(other, false)));
+    if (others.length) collapseKeepingPut(btn, () => others.forEach(other => setShowcase(other, false)));
   }
   setShowcase(card, !isOpen);
   if (!isOpen) loadPdfSlots(drawer);
@@ -2232,14 +2194,6 @@ function setFocusMode(on) {
 function refreshFocusMode() {
   setFocusMode(!!courseContent.querySelector('.drawer.open'));
 }
-// Keep the URL in sync with which course/project is open, without spending a
-// back-button history entry per accordion click — a link copied at any point
-// still points straight at the open project (see the router section below).
-function setCourseHash(courseSlug, projectSlug) {
-  const hash = '#courses/' + courseSlug + (projectSlug ? '/' + projectSlug : '');
-  if (location.hash !== hash) history.replaceState(null, '', hash);
-}
-
 // Close button inside a PDF viewer: close its drawer + clear card highlight
 function closePdf(btn) {
   const drawer = btn.closest('.drawer');
@@ -2248,9 +2202,8 @@ function closePdf(btn) {
   const projCard = drawer.closest('.proj-card');
   if (projCard) {
     projCard.classList.remove('open');
-    const head = projCard.querySelector('.proj-head');
-    if (head) head.setAttribute('aria-expanded', 'false');
-    if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
+    const expandTarget = projCard.querySelector('.proj-more') || projCard.querySelector('.proj-head');
+    if (expandTarget) expandTarget.setAttribute('aria-expanded', 'false');
   }
   const grid = drawer.closest('.hw-grid');           // present only for HW drawers
   if (grid) {
@@ -2262,8 +2215,8 @@ function closePdf(btn) {
   const showcase = drawer.closest('.showcase');
   if (showcase) {
     showcase.classList.remove('open');
-    const head = showcase.querySelector('.showcase-head');
-    if (head) head.setAttribute('aria-expanded', 'false');
+    const moreBtn = showcase.querySelector('.showcase-more');
+    if (moreBtn) moreBtn.setAttribute('aria-expanded', 'false');
   }
   refreshFocusMode();
 }
@@ -2347,13 +2300,27 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     }
     const tags = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
     const drawerId = `projdrawer-${slug}-${p.slug}`;
-    return `
-      <div class="proj-card">
-        <div class="proj-head" role="button" tabindex="0" aria-expanded="false" aria-controls="${drawerId}" onclick="toggleProj(this)" onkeydown="activateOnKey(event, this, toggleProj)">
+    // A featured project is also a Projects-page showcase card, so it opens
+    // the same way: only the More/Less button is clickable, not the whole
+    // head. A non-featured project (course-only) keeps the whole-head click.
+    const head = p.featured
+      ? `<div class="proj-head" aria-controls="${drawerId}">
+          <h4>${p.title}</h4>
+          <p class="proj-desc">${p.summary || p.description}</p>
+          <div class="proj-head-foot">
+            <div class="tag-row">${tags}</div>
+            <button type="button" class="showcase-more proj-more" aria-expanded="false" aria-controls="${drawerId}"
+                    onclick="toggleProj(this)"><span class="more">More</span><span class="less">Less</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
+          </div>
+        </div>`
+      : `<div class="proj-head" role="button" tabindex="0" aria-expanded="false" aria-controls="${drawerId}" onclick="toggleProj(this)" onkeydown="activateOnKey(event, this, toggleProj)">
           <h4>${p.title}</h4>
           <p class="proj-desc">${p.summary || p.description}</p>
           <div class="tag-row">${tags}</div>
-        </div>
+        </div>`;
+    return `
+      <div class="proj-card">
+        ${head}
         <div class="drawer" id="${drawerId}" data-course="${slug}" data-project="${p.slug}">
           <div class="drawer-inner">
             ${blocks}
@@ -2429,22 +2396,24 @@ function toggleHw(card) {
   refreshFocusMode();
 }
 
-// Project accordion
-function toggleProj(head) {
-  const card   = head.parentNode;
-  const drawer = head.nextElementSibling;
+// Project accordion. `el` is either the whole .proj-head (non-featured,
+// whole-box click) or the .proj-more button nested inside it (featured
+// projects), so this always resolves the card/drawer/head via closest()
+// rather than assuming `el` IS the head.
+function toggleProj(el) {
+  const card   = el.closest('.proj-card');
+  const drawer = card.querySelector('.drawer');
+  const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
   const isOpen = card.classList.contains('open');
   if (isOpen) {
     card.classList.remove('open');
     drawer.classList.remove('open');
-    head.setAttribute('aria-expanded', 'false');
-    if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
+    expandTarget.setAttribute('aria-expanded', 'false');
   } else {
     card.classList.add('open');
     drawer.classList.add('open');
-    head.setAttribute('aria-expanded', 'true');
+    expandTarget.setAttribute('aria-expanded', 'true');
     loadPdfSlots(drawer);
-    if (drawer.dataset.course) setCourseHash(drawer.dataset.course, drawer.dataset.project);
   }
   refreshFocusMode();
 }
@@ -2453,9 +2422,8 @@ function closeProj(btn) {
   card.classList.remove('open');
   const drawer = card.querySelector('.drawer');
   drawer.classList.remove('open');
-  const head = card.querySelector('.proj-head');
-  if (head) head.setAttribute('aria-expanded', 'false');
-  if (drawer.dataset.course) setCourseHash(drawer.dataset.course);
+  const expandTarget = card.querySelector('.proj-more') || card.querySelector('.proj-head');
+  if (expandTarget) expandTarget.setAttribute('aria-expanded', 'false');
   refreshFocusMode();
 }
 
@@ -2479,8 +2447,11 @@ function switchCourse(slug, btn) {
     courseContent.querySelectorAll('.hw-card.open, .proj-card.open').forEach(el => el.classList.remove('open'));
     setFocusMode(false);
   }
-  const newHash = '#courses/' + slug;
-  if (location.hash !== newHash) history.pushState(null, '', newHash);
+  // No history write here on purpose: switching courses in the sidebar is
+  // browsing, not navigation, same as opening a project drawer — a refresh
+  // or a tab switch must land back on the default (first) course, never on
+  // whichever one was last clicked. Only an explicit nav-tab click or a
+  // pasted deep link is allowed to change the URL (see resetPageState()).
 
   // fade the current content out, then swap + fade the new content in
   courseContent.style.transition = `opacity ${dur}ms ease`;
@@ -2528,6 +2499,8 @@ document.getElementById('projectsCount').textContent =
    drawer ids never collide with the 'sel'/'cp' project copies above. */
 document.getElementById('researchGrid').innerHTML =
   RESEARCH_DATA.map(r => showcaseCardHtml(r, 'res')).join('');
+document.getElementById('researchCount').textContent =
+  `${RESEARCH_DATA.length} project${RESEARCH_DATA.length !== 1 ? 's' : ''}`;
 
 /* ---------- TEACHING ---------- */
 document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
@@ -2624,11 +2597,36 @@ window.addEventListener('resize', () => {
   if (window.innerWidth > 760) setMobileNavOpen(false);
 });
 
+// Explicit nav-tab clicks always land on that page's default state — no
+// card, project or PDF viewer stays open from an earlier visit in the same
+// session. Deep links (initial load, Back/Forward, a project's own URL) skip
+// this and keep going through applyRoute(), which may legitimately want a
+// specific project open.
+function resetPageState(id) {
+  const page = document.getElementById(id);
+  if (!page) return;
+  page.querySelectorAll('.showcase.open').forEach(card => {
+    card.classList.remove('open');
+    const btn = card.querySelector('.showcase-more');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  });
+  page.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
+  if (id === 'courses') {
+    // Reset to the first course too, not just its open drawers — leaving and
+    // coming back to Courses should never keep whichever course was last
+    // selected, same as a project drawer never stays open across a switch.
+    const defaultSlug = courseSlugs[0];
+    courseNav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.slug === defaultSlug));
+    renderCourse(defaultSlug, 0);
+  }
+}
+
 navLinks.forEach(a => {
   a.addEventListener('click', (e) => {
     e.preventDefault();
     const id = a.getAttribute('href').slice(1);
     showPage(id);
+    resetPageState(id);
     setMobileNavOpen(false);
     // Courses keeps whichever course is already on screen, so the URL has to
     // name it — a bare "#courses" would send anyone the link is shared with
