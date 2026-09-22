@@ -1697,19 +1697,6 @@ const RESEARCH_DATA = [
     tags: ["Agentic AI", "Composite Material", "LangGraph", "Optimization"]
   },
   {
-    id: "llm-multiagent-mechanism-design",
-    base: "assets/research/llm-multiagent-mechanism-design",
-    noThumb: true,
-    course: "Intelligent Design Office · Dr. Dehghani",
-    period: "10/25 – 04/26",
-    title: "LLM-based multi-agent mechanism design",
-    summary: "Automating the conceptual design of mechanical linkages with a team of LLM agents built on CrewAI and RAG.",
-    problem: "Mechanical linkage design depends on domain knowledge that is scarce and slow to apply: picking a mechanism family, sizing its links and checking that it actually delivers the required motion and forces can take weeks per iteration, even before manufacturing constraints enter the picture.",
-    approach: "I built a multi-agent system with CrewAI, with separate agents for synthesis, evaluation and refinement instead of one model doing everything: a retrieval-augmented generation layer over a library of known mechanisms lets the synthesis agent search and adapt existing linkage families to a new request rather than invent one from scratch, the evaluation agent checks each candidate's kinematics, dynamics and standards compliance, and the refinement agent revises the design against whatever that check flags. A user only has to describe what they need in plain language; the agents carry it through to a validated, production-ready mechanism.",
-    results: "The system takes a plain-language description of a required motion and returns a validated mechanism in minutes rather than the weeks a manual iteration would take, with kinematics, dynamics and standards compliance already checked.",
-    tags: ["Multi-Agent systems", "CrewAI", "Mechanical Mechanisms"]
-  },
-  {
     id: "ifem-shm",
     base: "assets/research/ifem-shm",
     course: "Personal Research",
@@ -1839,8 +1826,6 @@ const TEACHING_DATA = [
   {
     semester: "Spring 2025",
     entries: [
-      { course: "Aircraft Structure Design", professor: "Dr. Dehghani", role: "TA",
-      duties: "Designed and graded assignments"},
       { course: "Probability &amp; Statistics for Engineers", professor: "Dr. Kiani", role: "TA",
         duties: "Designed and graded assignments and quizzes" }
     ]
