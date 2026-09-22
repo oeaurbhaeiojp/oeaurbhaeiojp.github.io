@@ -1,8 +1,8 @@
 Still to add for this research card (RESEARCH_DATA in index.html):
 
-  thumb.jpg  -> collapsed-card thumbnail, roughly 4:3 (e.g. 600x450px)
-  out1.jpg   -> first figure under "What came out"
-  out2.jpg   -> second figure under "What came out"
+  pic1.jpg   -> collapsed-card thumbnail, roughly 4:3 (e.g. 600x450px)
+  pic2.jpg   -> first figure under "What came out"
+  pic3.jpg   -> second figure under "What came out"
 
 The card currently shows the short abstract only. It gets the same three-part
 write-up as the other cards (problem, approach, results) once there is a report

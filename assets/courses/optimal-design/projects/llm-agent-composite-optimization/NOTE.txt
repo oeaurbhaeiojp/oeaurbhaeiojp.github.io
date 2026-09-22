@@ -1,11 +1,10 @@
 Place project files here:
   report.pdf  -> shown when hasReport: true
-  slides.pdf  -> shown when hasSlides: true
 
 Showcase-card images (the card in the Projects section):
-  thumb.jpg   -> the square-ish image beside the title on the collapsed card
-  out1.jpg    -> first figure under "What came out" in the open card
-  out2.jpg    -> second figure under "What came out" (not added yet)
+  pic1.jpg    -> the square-ish image beside the title on the collapsed card
+  pic2.jpg    -> first figure under "What came out" in the open card
+  pic3.jpg    -> second figure under "What came out" (not added yet)
 All three are cropped out of report.pdf. A missing file removes its own
 figure rather than showing a broken image, so a card is never left half-built.
 Captions live with the project entry in index.html, under `figures`.

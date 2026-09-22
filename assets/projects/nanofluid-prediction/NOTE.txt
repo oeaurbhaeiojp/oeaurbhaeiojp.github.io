@@ -1,8 +1,8 @@
 Files for the "nanofluid-prediction" showcase card (EXTRA_PROJECTS in index.html):
 
-  thumb.jpg  -> card thumbnail (histograms of every feature and the target)
-  out1.jpg   -> first figure under "What came out" (predicted vs actual, all four models)
-  out2.jpg   -> second figure under "What came out" (correlation matrix)
+  pic1.jpg   -> card thumbnail (histograms of every feature and the target)
+  pic2.jpg   -> first figure under "What came out" (predicted vs actual, all four models)
+  pic3.jpg   -> second figure under "What came out" (correlation matrix)
 
 All three come from the outputs of
 HeatTransfer_Project_Sedaghatpey_Mohammadi_Pourjafarian.ipynb, run on

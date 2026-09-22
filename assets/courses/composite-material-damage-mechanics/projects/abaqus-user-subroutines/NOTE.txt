@@ -1,4 +1,3 @@
 Place project files here:
-  report.pdf  -> shown when hasReport: true
-  slides.pdf  -> shown when hasSlides: true
+  CompositeMaterialDamageMechanics_AbaqusUserSubroutines.pdf  -> shown when hasSlides: true
 Folder name must match the project "slug" in COURSES_DATA in index.html.
