@@ -60,7 +60,7 @@
     --decor:         var(--cyan);
   }
 
-  /* ---- DARK THEME (default) — charcoal-navy ground, indigo + amber + cyan ---- */
+  /* ---- DARK THEME (default): charcoal-navy ground, indigo + amber + cyan ---- */
   body.dark {
     --bg-primary:    #14161c;
     --bg-secondary:  #1d2029;
@@ -83,7 +83,7 @@
     --pdf-bg:        #111111;
   }
 
-  /* ---- LIGHT THEME — cool neutral ground, indigo + amber + cyan (not cream) ---- */
+  /* ---- LIGHT THEME: cool neutral ground, indigo + amber + cyan (not cream) ---- */
   body.light {
     --bg-primary:    #ffffff;
     --bg-secondary:  #eef1f6;
@@ -115,7 +115,7 @@
   * { box-sizing: border-box; }
   /* scroll-padding-top keeps the sticky topbar from covering whatever a
      native fragment scroll (a #hash in the address bar, a shared link,
-     even scrollIntoView) lands on — without it, the target's top few dozen
+     even scrollIntoView) lands on; without it, the target's top few dozen
      pixels render right under the topbar instead of below it. --topbar-h is
      measured in JS; the fallback is the desktop topbar height. */
   html { scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h, 65px) + 12px); }
@@ -148,7 +148,7 @@
     top: 0;
     z-index: 50;
   }
-  /* Static gradient underline — ties the palette together without running
+  /* Static gradient underline, ties the palette together without running
      forever and unprompted; motion here did no rhetorical work for the
      page, it just cost the reader ambient distraction. */
   .topbar::after {
@@ -187,7 +187,7 @@
 
   .topbar-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
 
-  /* Light/dark theme toggle, and (mobile only) the hamburger nav toggle —
+  /* Light/dark theme toggle, and (mobile only) the hamburger nav toggle:
      both are icon-only buttons that crossfade between two SVG states. */
   .theme-toggle, .nav-toggle {
     position: relative;
@@ -215,7 +215,7 @@
   .theme-toggle .ticon svg, .nav-toggle .ticon svg { display: block; }
   body.dark  .theme-toggle .ticon-moon { opacity: 1; transform: none; }
   body.light .theme-toggle .ticon-sun  { opacity: 1; transform: none; }
-  /* Hidden on desktop entirely — the mobile breakpoint below turns it on. */
+  /* Hidden on desktop entirely; the mobile breakpoint below turns it on. */
   .nav-toggle { display: none; }
   .nav-toggle .ticon-menu { opacity: 1; transform: none; }
   .nav-toggle.open .ticon-menu { opacity: 0; transform: rotate(90deg) scale(0.5); }
@@ -297,7 +297,7 @@
   .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
   .btn:not(.btn-primary) svg { color: var(--accent); }
 
-  /* Download CV button — filled accent button that stands out from the contact buttons */
+  /* Download CV button: filled accent button that stands out from the contact buttons */
   .btn-cv {
     background: var(--accent);
     border-color: var(--accent);
@@ -333,11 +333,11 @@
   .contact-handle { margin: 0; color: var(--text-dim); font-size: 0.82rem; user-select: all; }
 
   /* Links that point at a file which may not be uploaded yet (CV, standalone
-     "View report" links) — greyed out instead of a raw 404 as the failure
+     "View report" links): greyed out instead of a raw 404 as the failure
      mode, matching the graceful placeholder every course PDF already gets. */
   .link-unavailable { opacity: 0.45; }
 
-  /* One chip shape for both jobs — a declared skill/domain (.pill, --accent) and
+  /* One chip shape for both jobs: a declared skill/domain (.pill, --accent) and
      a technology actually used in a specific piece of work (.tag, --meta).
      They used to differ in shape too, for no reason a visitor could infer;
      now shape is shared and color is the only thing that carries meaning. */
@@ -475,7 +475,7 @@
   /* No pic1.jpg uploaded yet: keep the slot, drop the broken-image icon. */
   .showcase-thumb.is-empty { border-style: dashed; }
 
-  /* The only click target that opens/closes the card — the rest of the head
+  /* The only click target that opens/closes the card; the rest of the head
      is inert. A real <button> so it gets native keyboard and focus handling
      for free, instead of the role="button" shim the old whole-head click used. */
   .showcase-more {
@@ -544,13 +544,13 @@
   @media (max-width: 640px) {
     .showcase-schedule li { grid-template-columns: 1fr; gap: 2px; }
   }
-  /* Figure inside the drawer, under the abstract — the expanded counterpart
+  /* Figure inside the drawer, under the abstract: the expanded counterpart
      to the collapsed thumbnail. */
   .showcase-figure {
     margin: 22px 0 4px;
     padding: 0;
   }
-  /* Fill the column, but never upscale a figure past its own resolution —
+  /* Fill the column, but never upscale a figure past its own resolution:
      a small plot centred at native size reads better than a blurry wide one. */
   .showcase-figure img {
     display: block;
@@ -584,13 +584,13 @@
     gap: 28px;
     align-items: flex-start;
     width: 100%;
-    /* Opening a report is one gesture — the layout widening to full-bleed
-       and the drawer growing open (see .drawer below) — so both run on the
+    /* Opening a report is one gesture: the layout widening to full-bleed
+       and the drawer growing open (see .drawer below), so both run on the
        same duration and curve. Snapping this instantly while the drawer
        eased open smoothly was the mismatch that made opening a homework
        specifically read as abrupt: the box jumped, then the content grew.
        Yes, this animates width/margin/padding (real layout properties, so
-       it does force a reflow each frame) — accepted deliberately here since
+       it does force a reflow each frame), accepted deliberately here since
        it only runs on an occasional, user-triggered open/close, not on a
        loop or anything performance-sensitive. */
     transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
@@ -659,7 +659,7 @@
   }
   .course-content { flex: 1; min-width: 0; }
   .course-content h3.course-title { font-size: 1.45rem; margin: 0 0 4px; }
-  /* Shared "N of these · M of those" summary line style — used under a
+  /* Shared "N of these · M of those" summary line style, used under a
      section heading wherever a count is worth surfacing (course homework/
      project counts, and the Projects/Teaching page totals below). */
   .course-sub {
@@ -687,7 +687,7 @@
     margin-right: 4px;
   }
   /* Shared micro-label treatment for the two structural section labels
-     (previously declared twice, independently, at two sizes — see
+     (previously declared twice, independently, at two sizes; see
      .proj-block-label below, which now only overrides what differs). */
   .sub-heading, .proj-block-label {
     text-transform: uppercase;
@@ -751,7 +751,7 @@
     min-width: 0;
   }
 
-  /* Project cards — always one full-width card per row, open or closed,
+  /* Project cards: always one full-width card per row, open or closed,
      same as the Projects/Research showcase cards. */
   .proj-grid { display: flex; flex-direction: column; gap: 14px; }
   .proj-card {
@@ -1082,7 +1082,7 @@
     }
     .nav.open { display: flex; }
     /* Full-width, generously padded rows read as a mobile menu, not a
-       squeezed copy of the desktop link row — and clear the ~44px touch
+       squeezed copy of the desktop link row, and clear the ~44px touch
        target guideline the desktop underline-on-hover version doesn't
        need to. */
     .nav a { padding: 12px 6px; border-bottom: 1px solid var(--border); }
@@ -1342,7 +1342,7 @@ const CONTACT_EMAIL    = "rouzbeh.pourjafarian@ae.sharif.edu";
 const CONTACT_LINKEDIN = "https://www.linkedin.com/in/rouzbeh-pourjafarian/";
 
 /* =================================================================
-   ICONS  (inline SVGs, one consistent stroke language — see the CV /
+   ICONS  (inline SVGs, one consistent stroke language; see the CV /
    theme-toggle icons above for the same style. Used in place of raw
    Unicode glyphs/emoji so every icon on the site is drawn, not typed.)
    ================================================================= */
@@ -1430,7 +1430,7 @@ const COURSES_DATA = {
   },
 
   "advanced-structural-analysis-design": {
-    name: "Advanced Structural Analysis &amp; Design",
+    name: "Advanced Structural Design",
     instructor: "Dr. Haddadpour",
     instructorUrl: "https://sharif.edu",
     homeworks: [],
@@ -1440,11 +1440,11 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "02/26 – 08/26",
-        summary: "Sizing an aircraft wing box with an LLM that makes the engineer's judgment calls while tested Python code computes every number.",
+        summary: "Implementing a system that uses an LLM for decision-making in place of the engineer in the design process.",
         title: "An Agentic LLM System for the Preliminary Structural Design of an Aircraft Wing Box",
-        problem: "Sizing an aircraft wing box is a long hand calculation that loops: bending material in the covers, a spar web that buckles before it shears, ribs, joints, every margin pushed toward zero from above while the load envelope keeps moving with the structure's own weight. The procedure is documented and standardized, but choosing the alloy, the spar positions and the catalogue stringers is left to the structural engineer's judgment.",
-        approach: "I built the system around one rule: the model never does arithmetic and Python never makes a judgment call, with numbers entering the shared state only as a tool's return value carrying a provenance record. The nine classical design phases become a LangGraph StateGraph over one shared, typed dossier, its backbone a reviewable prompt chain that fans spar web, ribs and joints out in parallel once the covers are sized, with a deterministic checker routing a failing design back to whichever node can fix its worst margin; material selection runs an Ashby structural index with alloy-family screening and a Pareto trade-off. Underneath, the sizing itself is a deterministic, unit-tested Python translation of Niu, Megson and Roskam.",
-        results: "The course's own hand-worked cross-section is reproduced to tabulated precision as an automated acceptance gate, and rebuilding it surfaced four notation and arithmetic slips in the reference itself, each now pinned by a test. Run live against a published METU master's design of a PC-21 class trainer wing, the pipeline converged on 131.9 to 132.4 kg against that thesis's own optimized 125.9 kg, about 5% high, with the gap traced to the discrete stringer catalogue used here against the thesis's continuous search. An Abaqus 2024 model built from the converged geometry balanced the root reaction against the applied shear.",
+        problem: "Sizing an aircraft wing box is a design process built on decisions, and in traditional methods those decisions need an experienced engineer to make them: the alloy, the spar positions, the catalogue stringers, with many parameters to change and choose between at every step. Bending material in the covers, a spar web that buckles before it shears, ribs, joints, every margin pushed toward zero from above while the load envelope keeps moving with the structure's own weight: different fields have to be considered in the design, and they all have to be checked together rather than one at a time.",
+        approach: "I used the LLM as the decision-maker and Python code as the tool it calls to carry out the design and check the output of each analysis. The nine classical design phases become a LangGraph StateGraph over one shared, typed dossier, its backbone a reviewable prompt chain that fans spar web, ribs and joints out in parallel once the covers are sized, with a deterministic checker routing a failing design back to whichever node can fix its worst margin; material selection runs an Ashby structural index with alloy-family screening and a Pareto trade-off. Underneath, the sizing itself is a deterministic, unit-tested Python translation of Niu, Megson and Roskam.",
+        results: "The course's own hand-worked cross-section is reproduced to tabulated precision as an automated acceptance gate, and rebuilding it surfaced four notation and arithmetic slips in the reference itself, each now pinned by a test. Run live against a published METU master's design of a PC-21 class trainer wing, the pipeline converged on 131.9 to 132.4 kg against that thesis's own optimized 125.9 kg, about 5% high, with the gap traced to the discrete stringer catalogue used here against the thesis's continuous search. I used Abaqus to validate the output of the design, building a 2024 model from the converged geometry that balanced the root reaction against the applied shear.",
         figures: [
           { file: "pic2.jpg", caption: "The lecture cross-section as the live model converged it: NACA 2412 silhouette, box between the spar stations it chose, and every stringer drawn at its real catalogue profile." },
           { file: "pic3.jpg", caption: "The converged METU wing box solved in Abaqus 2024, contoured on displacement magnitude, root encastred at bottom left." }
@@ -1506,11 +1506,11 @@ const COURSES_DATA = {
         kind: "Project",
         featured: true,
         period: "02/26 – 08/26",
-        summary: "Testing whether a published Neural-Network replacement for a composite damage model holds up when rebuilt from the paper alone.",
+        summary: "Reproducing a published article that replaces an Abaqus UMAT subroutine with a Neural Network, drawing on experience with both UMAT subroutines and Neural Network training.",
         title: "A From-Scratch Reproduction of a Neural-Network Surrogate for Continuum Damage Mechanics in Composite Laminates",
-        problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small Neural Networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution. They published no code and no data.",
-        approach: "I rebuilt everything from the paper's text, its four tables and its published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, and the three networks, ported to PyTorch one for one with layer widths, activations, losses and optimisers matched to the paper's tables and epoch counts read off its own training plots. The first network predicts homogenised stress, the second damage onset and the third the failure mode, and all three run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. For quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, I pulled from an independent source or calibrated against its own curves and marked each one in the report; I wrote down five acceptance criteria before running any of it.",
-        results: "All five criteria pass. The regression network reaches R² = 0.9997 on the paper's own held-out load path against a 0.99 target, the two classifiers reach 98.0% and 99.0%, and the speed-up lands between 5.2 and 8.6 times depending on how the CPU counts are matched. On the open-hole plate the surrogate peaks at 12.8043 kN against the paper's 12.8170 kN, a difference of 0.10%. The initiation network, never shown a plate or a stress concentration, calls damage onset within 3.3% of the reference model's own.",
+        problem: "Composite laminates are usually analysed with a continuum damage mechanics model written as an Abaqus UMAT. The model is accurate but slow, because every integration point at every increment evaluates a nonlinear damage law and assembles a material Jacobian. Yan, Zou, Ilkhani and Jones (2020) proposed replacing that with three small Neural Networks trained once on a mesoscale unit cell, and reported an 11.9 times speed-up alongside close agreement with a 3D reference solution.",
+        approach: "I rebuilt the paper from its text and published figures: the Linde-type damage model, the periodic unit cell and its boundary conditions, the training dataset, and the three networks, ported to PyTorch one for one with layer widths, activations, losses and optimisers matched to the paper's own description. The first network predicts homogenised stress, the second damage onset and the third the failure mode, and all three run inside a macro-scale UMAT with a frozen undamaged Jacobian, so a full CDM evaluation collapses into three forward passes. For quantities the paper never gives, among them fracture energies, specimen width and training hyperparameters, I pulled from an independent source or calibrated against its own curves and marked each one in the report; I wrote down five acceptance criteria before running any of it.",
+        results: "All five acceptance criteria pass. The regression network reaches R² = 0.9997 on the paper's own held-out load path against a 0.99 target, the two classifiers reach 98.0% and 99.0%, and the speed-up lands between 5.2 and 8.6 times depending on how the CPU counts are matched. On the open-hole plate the surrogate peaks at 12.8043 kN against the paper's 12.8170 kN, a difference of 0.10%. Two of the paper's own reported results did not carry over, though, and both trace back to the same cause: the fibre direction needs far more strain than the matrix to reach the same damage level, so the fibre-before-matrix damage ordering the paper reports came out reversed here, and the four-class failure taxonomy collapses to two reachable classes for this laminate, since the fibre-only and both-damaged states never occur.",
         figures: [
           { file: "pic2.jpg", width: 860, caption: "The three networks, ported one for one from the paper: stress regression (3-60-50-3, tanh), damage initiation (3-8-10-2, ReLU) and failure mode (3-12-20-4, ReLU), each with its loss and optimiser." },
           { file: "pic3.jpg", width: 680, caption: "Fibre damage (left) and matrix damage (right) around the hole. The top two rows are this reproduction at u = 0.9828 and 1.0568 mm; underneath are the paper's own contours from its Figures 13 and 14. Contour limits fixed between 0 and 1." }
@@ -1543,7 +1543,7 @@ const COURSES_DATA = {
         period: "02/26 – 07/26",
         summary: "Handing the formulation of a multi-objective composite optimization problem, and its repair when it fails, to an LLM agent.",
         title: "Multi-Objective Optimization of Composite Structures Using a LLM Agent",
-        problem: "In multi-objective optimization of composite structures the designer writes the problem before the run: objectives, constraints, design variables. If the Pareto front comes back degenerate, the designer reads the output, works out what went wrong, rewrites the formulation and runs it again. This work hands that loop to an agent.",
+        problem: "In an optimization problem, the designer first has to understand the subject before writing its formulation: the objectives, the constraints, the design variables. Here I used an LLM agent to do that for the multi-objective optimization of composite structures, writing the problem before the run and, if the Pareto front comes back degenerate, reading the output, working out what went wrong and rewriting the formulation itself rather than leaving that loop to the designer.",
         approach: "I built an agent that takes a design description in plain language, extracts a mathematical formulation from it, then passes that to NSGA-II through a typed contract, with the language model handling only the formulation step and a deterministic kernel on classical laminated plate theory computing every physical quantity. The graph I designed runs intake, knowledge retrieval, formulation, validation, human approval, compilation and the search itself, then deterministic, threshold-based failure detection: when a front comes back degenerate, the diagnosis nodes name the cause and the model picks one remedial action from a closed list, which rewrites the specification and sends it back through validation. I split model use by node, giving a lighter model to intake and reporting and a stronger one to formulation, repair and explanation.",
         results: "In a blind test against a published composite-plate study, the formulation the agent wrote for itself produced exactly the same Pareto front as the hand-written one under an equal search budget: all 37 designs, the same layer counts and stacking sequences, and no difference in buckling load. The deterministic kernel reproduced the paper's analytical numbers to a worst case of 0.001%. Given a deliberately broken request, the feedback loop found the fault within four iterations, revised the formulation twice, and raised the front's hypervolume by 4.17% and then by 36.13%.",
         figures: [
@@ -1606,27 +1606,27 @@ const EXTRA_PROJECTS = [
   {
     slug: "stol-air-taxi",
     base: "assets/projects/stol-air-taxi",
-    course: "Aircraft Design I & II",
+    course: "Aircraft Design I & II · Dr. Banazadeh",
     period: "10/24 – 01/25, 03/25 – 07/25",
     title: "Hybrid-Electric STOL Air Taxi",
-    summary: "Conceptual design of a hybrid-electric STOL air taxi with a six-person team, then individually carrying the wing into a structural design problem.",
-    problem: "The RFP called for a hybrid-electric STOL air taxi built around distributed electric propulsion: four to six passengers plus a pilot, a 300 nautical mile range with a 10% reserve, at least 150 knots cruise, takeoff and landing within 300 feet, and FAR Part 23 certification. A six-person team took the project from that brief through weight sizing and a full conceptual layout in Aircraft Design I, and the wing then carried into Aircraft Design II as a stand-alone structural problem.",
-    approach: "Aircraft Design I, under Prof. Banazadeh, started from a historical weight-fraction estimate cross-checked against comparable aircraft, then a matching diagram set the wing and power loading against the stall, takeoff, landing, climb, cruise and ceiling constraints, with my part covering the weight sensitivity study and the stall, takeoff and landing sizing on that diagram; a weighted decision matrix picked the configuration, a high tapered wing with a conventional tail and retractable tricycle gear, and the team sized the fuselage, wing planform, empennage and landing gear in turn, cross-checked against a weight-and-balance CG range and built out in SolidWorks. Aircraft Design II then picked the wing back up as an individual structural problem: I built 3D SolidWorks models of the wing, the stabilizers and the engine-wing interfaces, and ran ABAQUS stress, deformation and buckling analyses against the loads implied by the distributed-propulsion layout and the STOL mission.",
+    summary: "Conceptual design of a hybrid-electric STOL air taxi with a six-person team, with my duty being the wing design, then individually carrying it into a structural design problem.",
+    problem: "Aircraft Design I and II are two consecutive courses sharing one continuous project. We were given an RFP for a hybrid-electric STOL air taxi built around distributed electric propulsion: four to six passengers plus a pilot, a 300 nautical mile range with a 10% reserve, at least 150 knots cruise, takeoff and landing within 300 feet, and FAR Part 23 certification. A six-person team took that brief through conceptual and then preliminary design. My share of the work was the wing design, the stabilizers, and the landing gear.",
+    approach: "Aircraft Design I started from a historical weight-fraction estimate cross-checked against comparable aircraft, then a matching diagram set the wing and power loading against the stall, takeoff, landing, climb, cruise and ceiling constraints, with my part covering the weight sensitivity study and the stall, takeoff and landing sizing on that diagram; a weighted decision matrix picked the configuration, a high tapered wing with a conventional tail and retractable tricycle gear, and I sized the wing's initial layout, the stabilizers and the landing gear, cross-checked against a weight-and-balance CG range and built out in SolidWorks. Aircraft Design II then took the wing from that conceptual layout into a detailed individual design and analysis: I built 3D SolidWorks models of the wing, the stabilizers and the engine-wing interfaces, and ran ABAQUS stress, deformation and buckling analyses against the loads implied by the distributed-propulsion layout and the STOL mission.",
     results: "Aircraft Design I converged on a 5,612 lb aircraft with a 16.98 m² wing at aspect ratio 10 spanning 13 m, its empennage sized by the tail volume coefficient method and the layout validated with a full weight-and-balance check and a 5-view SolidWorks model. Aircraft Design II delivered a final wing, stabilizer and engine-interface design that met the STOL-specific safety, weight and performance requirements the ABAQUS analyses were run against.",
     tags: ["Team Work", "SolidWorks", "ABAQUS", "FEM"],
     figures: [
       { file: "pic2.jpg", caption: "Team design poster for the AeroNEX hybrid-electric STOL air taxi, summarizing the mission requirements, configuration and sizing results." },
-      { file: "pic3.jpg", width: 620, caption: "AeroNEX in flight, showing the high tapered wing, distributed electric propulsion and V-tail from the final conceptual layout." }
+      { file: "pic3.jpg", width: 620, caption: "AeroNEX, the designed aircraft." }
     ]
   },
   {
     slug: "nanofluid-prediction",
     base: "assets/projects/nanofluid-prediction",
-    course: "Heat Transfer",
+    course: "Heat Transfer · Dr. Javadi",
     period: "02/25 – 04/25",
     title: "Heat Transfer Coefficient Prediction of Nanofluids",
     summary: "Predicting the heat transfer coefficient of nanofluids from their physical properties with machine learning, and finding which properties matter most.",
-    problem: "Team project for Dr. Javadi's Heat Transfer course. The convective heat transfer coefficient of a nanofluid depends on how the fluid flows and what is suspended in it, and measuring it for every combination is not practical. The brief was to predict it with machine learning from a synthetic dataset of 10,000 samples, using flow rate, inlet temperature, nanoparticle concentration, viscosity, density and thermal conductivity, then compare models and explain which properties drive the prediction.",
+    problem: "The convective heat transfer coefficient of a nanofluid depends on how the fluid flows and what is suspended in it, and measuring it for every combination is not practical. The brief was to predict it with machine learning from a synthetic dataset of 10,000 samples, using flow rate, inlet temperature, nanoparticle concentration, viscosity, density and thermal conductivity, then compare models and explain which properties drive the prediction.",
     approach: "The team checked the data first, finding no missing values, no outliers by the 1.5 IQR rule and no categorical columns, and a correlation matrix showing concentration, density and thermal conductivity moving in perfect lockstep with each other, each correlating at 0.97 with the target; they compared MinMax and standard scaling on the feature distributions, then split 80/20 into 8,000 training and 2,000 test samples. They trained four regressors with scikit-learn and scored them on MSE, MAE and R²: linear regression, a degree-2 polynomial fit, a 100-tree random forest and an MLP with one hidden layer of 100 neurons, then tuned the forest and the MLP with GridSearchCV, added ridge regression and pairwise interaction terms, ran 5-fold cross-validation and a voting ensemble, and ran permutation importance and SHAP on the random forest to see which inputs it leans on.",
     results: "All four models predict the coefficient almost exactly, with R² between 0.9972 and 0.9978 and a mean absolute error of 4.1 to 4.6 W/m²K on a target spanning about 200 to 690. Linear regression was best on all three measures, with MSE 25.8 against 32.9 for the random forest, and tuning the forest and the MLP did not change that ranking. Permutation importance puts thermal conductivity, concentration and density first and flow rate fourth, while viscosity scores almost zero despite its 0.70 correlation with the target.",
     figures: [
@@ -1638,7 +1638,7 @@ const EXTRA_PROJECTS = [
   {
     slug: "ai-research-assistant",
     base: "assets/projects/ai-research-assistant",
-    course: "Foundations of Data Science",
+    course: "Foundations of Data Science · Dr. Khalaj",
     period: "12/24 – 01/25",
     title: "Scholarly Citation Network Analysis & Research Assistant",
     summary: "Building a research assistant that finds papers by topic or author, on top of a network analysis of scholarly citations.",
@@ -1681,7 +1681,7 @@ const RESEARCH_DATA = [
     period: "02/26 – Present",
     title: "Optimal design of stiffened composite laminates using LLM-based agentic AI",
     summary: "Building a multi-agent LLM system for the preliminary design of stiffened composite laminates, with every number computed by a validated core.",
-    problem: "Composite structures are widely used for their strength-to-weight ratio, but anisotropy, nonlinearity and a complex microstructure make them hard to design. Buckling, delamination and other phenomena each have their own method, valid only under set conditions, and combining them rests on the designer's experience, so the process is slow and hard to reproduce. Classical optimization with Neural Networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, needs hundreds of finite element runs, and does not generalize across different structural configurations, each of which tends to need its own bespoke setup.",
+    problem: "Composite design still relies on traditional methods that depend heavily on the operator's experience and require accounting for many separate factors, which adds significant complexity to the process. Classical optimization with Neural Networks or evolutionary algorithms handles only a few numbers from a fixed model, cannot weigh manufacturability or cost, and needs hundreds of finite element runs. Existing alternative methods also fail to generalize across different structural configurations, each of which tends to need its own bespoke setup.",
     approachLabel: "Proposed solution",
     approach: "The proposal is a multi-agent system in which LLM agents lead the design: they plan, pull in design knowledge and requirements, call computational modules and check every result, following the analytical framework of a reference text on composite structures. Language models alone are not reliable enough for engineering, so every number comes from a deterministic, validated computational core. The agents need no prior training and the system grows by adding tools, so the same architecture adapts across different composite structural design problems instead of being rebuilt per configuration. For a composite, the agent must also reason about the layup, mechanical prerequisites and each theory's range of validity before calling an equation. Given the input requirements, the goal is for the system to return the most optimal design and best-suited structure.",
     plan: [
@@ -1719,8 +1719,8 @@ const RESEARCH_DATA = [
     period: "02/25 – 07/25",
     title: "Structural health monitoring: crack detection and localization",
     summary: "Detecting and locating cracks in thin aluminium plates from the ultrasonic signals picked up by bonded piezoelectric sensors.",
-    problem: "Structures crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Thin-walled structures, in particular, need a monitoring method that works within their limited thickness. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. That raises several separate questions, of which this project addresses two: whether a crack changes the received signal enough to measure, and whether several sensors together can locate it.",
-    approach: "The work ran in three stages. The first was a survey of the available methods, comparing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis, drawing mainly on journal papers and PhD-level work simplified to fit this scope; that comparison pointed to bonded PZT transducers driven with Lamb waves, and solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, with the shorter A0 wavelength of 7.90 mm fixing the 0.8 mm element size the mesh had to hold. The second stage addressed whether a crack is even detectable, bonding two PZT discs to a plate in Abaqus, solving the discs in Standard and the plate in Explicit through a surface-based co-execution, and comparing sensor voltage healthy against cracked. The third stage addressed locating the crack: I grew the setup to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, modelled the crack as a zero-thickness seam so both meshes stay identical element for element, turned wavelet energy per path into a damage index, and fed the six into a probability-based diagnostic imaging algorithm.",
+    problem: "Structures crack, and finding those cracks still means taking the structure out of service and inspecting it by hand. Thin-walled structures, in particular, need a monitoring method that works within their limited thickness. Bonded piezoelectric discs offer another route: launch an ultrasonic guided wave across the panel and read what arrives at a second disc. That raises several separate questions, of which this project addresses two: does a crack exist, and where is it?",
+    approach: "The work ran in three stages. The first was a review and comparison of the available methods, weighing vibration-based methods, acoustic emission, fibre-optic and distributed sensing, electromechanical impedance, infrared thermography, vision-based inspection and machine-learning diagnosis against each other, drawing mainly on journal papers and PhD-level work simplified to fit this scope; that comparison pointed to bonded PZT transducers driven with Lamb waves, and solving the Rayleigh-Lamb equations for a 1.6 mm aluminium plate at 200 kHz gave the S0 and A0 velocities, with the shorter A0 wavelength of 7.90 mm fixing the 0.8 mm element size the mesh had to hold. The second stage addressed whether a crack is even detectable, bonding two PZT discs to a plate in Abaqus, solving the discs in Standard and the plate in Explicit through a surface-based co-execution, and comparing sensor voltage healthy against cracked. The third stage addressed locating the crack: I grew the setup to four discs on a 400 mm plate for six sensing paths, swapped the continuous drive for a four-cycle Hann-windowed tone burst, turned wavelet energy per path into a damage index, and fed the six into a probability-based diagnostic imaging algorithm.",
     results: "On the two-transducer path the crack drops peak amplitude by 19.5% and gives a signal difference coefficient of 0.989, which settles detection and says nothing about position. With four transducers the path through the crack loses 23.4% of its S0 amplitude while the two paths 110 mm away register nothing to four decimal places. PDI places the crack 10 mm from where it was put, about 2.5% of the plate span, against 75 mm for delay-and-sum on the same signals; the full-field wavefield difference shows it radiating from the right point.",
     tags: ["ABAQUS", "Piezoelectric", "Lamb waves"],
     figures: [
@@ -1800,7 +1800,7 @@ const CERTIFICATES_DATA = [
 /* =================================================================
    TEACHING_DATA
    -----------------------------------------------------------------
-   Grouped by semester. Edit freely — purely presentational.
+   Grouped by semester. Edit freely: purely presentational.
    ================================================================= */
 const TEACHING_DATA = [
   {
@@ -1876,7 +1876,7 @@ function activateOnKey(e, el, fn) {
 // GitHub Pages); if it exists, the placeholder is swapped for a real iframe.
 function pdfViewer(src) {
   // The close button sits in a toolbar above .pdf-slot (outside it) so
-  // loadPdfSlots() — which replaces the slot's contents with an iframe —
+  // loadPdfSlots(), which replaces the slot's contents with an iframe,
   // never wipes it out, and it can't overlap the PDF's native toolbar.
   return `
     <div class="pdf-wrap">
@@ -1895,8 +1895,8 @@ function pdfViewer(src) {
 
 // For a homework whose work is a Jupyter notebook rather than a PDF: the
 // summary of what was done, plus a direct download link (browsers have no
-// built-in .ipynb viewer, so linking it is the honest option — no iframe to
-// fake a preview with).
+// built-in .ipynb viewer, so linking it is the honest option, with no iframe
+// to fake a preview with).
 function notebookBlock(hw, src) {
   const filename = src.split('/').pop();
   return `
@@ -1943,7 +1943,7 @@ function redactionNotice() {
 
    Collapsed, the card shows the title, the course, two lines of summary,
    and a thumbnail on the right. Opened, it reveals the full abstract and a
-   short "how it turned out" note — text only. The report and slide PDFs
+   short "how it turned out" note, text only. The report and slide PDFs
    stay on the course pages; the showcase never embeds one.
 
    Thumbnail convention:  <base>/pic1.jpg
@@ -1960,7 +1960,7 @@ function showcaseProjects() {
       out.push({
         id: `${slug}-${p.slug}`,
         base: `assets/courses/${slug}/projects/${p.slug}`,
-        course: COURSES_DATA[slug].name,
+        course: `${COURSES_DATA[slug].name} · ${COURSES_DATA[slug].instructor}`,
         period: p.period,
         title: p.title,
         summary: p.summary,
@@ -1994,13 +1994,13 @@ function showcaseProjects() {
 
 // Shared write-up renderer: problem / approach / results (or the in-progress
 // plan/schedule variant), plus result figures. This is the ONE place that
-// turns a project's data into its prose+figures markup — used both by the
+// turns a project's data into its prose+figures markup, used both by the
 // Projects/Research showcase cards and by a featured project's card on its
 // own course page (see projCardHtml in renderCourse), so the two can never
 // drift apart the way a separate hand-kept course-page blurb used to: edit
 // the project's data once, and both places pick it up.
 //
-// Deliberately carries no report/slide PDFs or code — it says what the work
+// Deliberately carries no report/slide PDFs or code: it says what the work
 // was and how it turned out, in text. Preferred shape is the three-part
 // write-up: problem / approach / results, with the result figures under the
 // last block. Entries that have not been written up that way yet fall back
@@ -2100,8 +2100,8 @@ function showcaseCardHtml(item, prefix) {
 // (no shortcut to an instant close). When the closing card sits above the
 // one just clicked, that collapse would otherwise drag the clicked card up
 // the screen mid-animation, so a rAF loop runs for the length of the
-// transition and scrolls by whatever the clicked head moved each frame —
-// the clicked card stays put while the card above it visibly folds shut.
+// transition and scrolls by whatever the clicked head moved each frame,
+// so the clicked card stays put while the card above it visibly folds shut.
 function setShowcase(card, open) {
   card.classList.toggle('open', open);
   card.querySelector('.drawer').classList.toggle('open', open);
@@ -2112,21 +2112,22 @@ const DRAWER_MS = 520; // a hair past the drawer's own 0.5s collapse
 // Runs `close`, which collapses zero or more drawers above `anchor`, and
 // keeps anchor's on-screen position fixed while that happens. `target` is
 // read once, before anything collapses, and every correction measures
-// against that same fixed value rather than the previous frame's reading —
-// re-basing to the last (already-drifted) frame is what turned this into a
+// against that same fixed value rather than the previous frame's reading.
+// Re-basing to the last (already-drifted) frame is what turned this into a
 // feedback loop that overshot and corrected back past itself each frame,
 // which is what actually read as a shake; anchoring every frame to one
 // fixed target converges instead of oscillating. With motion enabled the
-// collapse is a CSS transition, so getBoundingClientRect() moves gradually —
-// a rAF loop re-measures the drift from target every frame, for as long as
-// the transition runs. With reduced motion the CSS transition is switched
+// collapse is a CSS transition, so getBoundingClientRect() moves gradually,
+// and a rAF loop re-measures the drift from target every frame, for as long
+// as the transition runs. With reduced motion the CSS transition is switched
 // off (see the media query above), so the layout change is instant and one
 // before/after measurement is enough; the "after" read is also what forces
 // that change to actually happen. Every correction passes behavior:
-// 'instant' explicitly — html has scroll-behavior: smooth for anchor-link
-// scrolling, and the two-argument scrollBy(x, y) form has no way to opt out
-// of that and inherits it, so each nudge here would otherwise itself
-// animate over several hundred milliseconds instead of landing immediately.
+// 'instant' explicitly, since html has scroll-behavior: smooth for
+// anchor-link scrolling, and the two-argument scrollBy(x, y) form has no
+// way to opt out of that and inherits it, so each nudge here would
+// otherwise itself animate over several hundred milliseconds instead of
+// landing immediately.
 function collapseKeepingPut(anchor, close) {
   const target = anchor.getBoundingClientRect().top;
   if (reduceMotion.matches) {
@@ -2236,7 +2237,7 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
   const c = COURSES_DATA[slug];
   const filePrefix = courseFileName(c.name);
 
-  // homework cards — paired two-per-row; each pair is its own flex row so the
+  // homework cards, paired two-per-row; each pair is its own flex row so the
   // open card can grow and its row-mate shrink without touching other rows.
   // Drawers sit outside the row (full-width) so they never affect its flex math.
   let hwCards = '';
@@ -2261,11 +2262,11 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     }).join('');
   }
 
-  // project cards — presentations (kind: "Presentation") are pulled into
+  // project cards: presentations (kind: "Presentation") are pulled into
   // their own section, separate from actual projects.
   function projCardHtml(p) {
     const base = `assets/courses/${slug}/projects/${p.slug}`;
-    // A featured project is the SAME project shown on the Projects page —
+    // A featured project is the SAME project shown on the Projects page:
     // its write-up (problem/approach/results + figures) is authored once in
     // COURSES_DATA and rendered here via the shared writeupBlocksHtml(), so
     // this course page can never drift from what the showcase card says.
@@ -2274,10 +2275,10 @@ function renderCourse(slug, fadeMs, openProjectSlug) {
     // skipped; a Presentation's slides are its only content, so those stay.
     let blocks = p.featured ? writeupBlocksHtml({ ...p, base }) : '';
     if (p.featured) {
-      // report/reports intentionally not rendered — see comment above.
+      // report/reports intentionally not rendered, see comment above.
     } else if (p.reports && p.reports.length) {
       // Multiple named reports (e.g. one per project phase) instead of the
-      // single default report.pdf — each gets its own labeled viewer.
+      // single default report.pdf, each gets its own labeled viewer.
       p.reports.forEach(rep => {
         blocks += `
           <div class="proj-block">
@@ -2457,7 +2458,7 @@ function closeProj(btn) {
    close it (fade + slide, 0.3s) and collapse the full-width view, THEN swap in
    the new course and fade it in. With no PDF open, just crossfade (0.2s).
    Nothing ever cuts instantly. A course switch is a real "go somewhere else"
-   navigation, so — unlike opening a project drawer — it earns its own entry
+   navigation, so, unlike opening a project drawer, it earns its own entry
    in the back/forward history. */
 function switchCourse(slug, btn) {
   // highlight the chosen course immediately
@@ -2474,7 +2475,7 @@ function switchCourse(slug, btn) {
     setFocusMode(false);
   }
   // No history write here on purpose: switching courses in the sidebar is
-  // browsing, not navigation, same as opening a project drawer — a refresh
+  // browsing, not navigation, same as opening a project drawer. A refresh
   // or a tab switch must land back on the default (first) course, never on
   // whichever one was last clicked. Only an explicit nav-tab click or a
   // pasted deep link is allowed to change the URL (see resetPageState()).
@@ -2518,7 +2519,7 @@ const showcaseItems = showcaseProjects();
 document.getElementById('courseProjGrid').innerHTML =
   showcaseItems.map(i => showcaseCardHtml(i, 'cp')).join('');
 document.getElementById('projectsCount').textContent =
-  `${showcaseItems.length} project${showcaseItems.length !== 1 ? 's' : ''}`;
+  `${showcaseItems.length} selected project${showcaseItems.length !== 1 ? 's' : ''}`;
 
 /* ---------- RESEARCH ----------
    Same showcaseCardHtml() renderer as Projects, prefixed 'res' so its
@@ -2526,7 +2527,7 @@ document.getElementById('projectsCount').textContent =
 document.getElementById('researchGrid').innerHTML =
   RESEARCH_DATA.map(r => showcaseCardHtml(r, 'res')).join('');
 document.getElementById('researchCount').textContent =
-  `${RESEARCH_DATA.length} project${RESEARCH_DATA.length !== 1 ? 's' : ''}`;
+  `${RESEARCH_DATA.length} selected research`;
 
 /* ---------- TEACHING ---------- */
 document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group => `
@@ -2546,7 +2547,7 @@ document.getElementById('teachContainer').innerHTML = TEACHING_DATA.map(group =>
   </div>
 `).join('');
 
-// Total appointments, broken down by role — the same "N of these · M of
+// Total appointments, broken down by role: the same "N of these · M of
 // those" summary the course pages already give homeworks/projects.
 const allTeachEntries = TEACHING_DATA.flatMap(g => g.entries);
 const headTaCount = allTeachEntries.filter(e => e.role === 'Head TA').length;
@@ -2605,7 +2606,7 @@ function applyRoute(rawHash) {
 }
 
 /* =================================================================
-   MOBILE NAV  (hamburger dropdown, <760px — see the breakpoint in <style>)
+   MOBILE NAV  (hamburger dropdown, <760px; see the breakpoint in <style>)
    ================================================================= */
 const navToggle = document.getElementById('navToggle');
 function setMobileNavOpen(open) {
@@ -2623,7 +2624,7 @@ window.addEventListener('resize', () => {
   if (window.innerWidth > 760) setMobileNavOpen(false);
 });
 
-// Explicit nav-tab clicks always land on that page's default state — no
+// Explicit nav-tab clicks always land on that page's default state: no
 // card, project or PDF viewer stays open from an earlier visit in the same
 // session. Deep links (initial load, Back/Forward, a project's own URL) skip
 // this and keep going through applyRoute(), which may legitimately want a
@@ -2638,7 +2639,7 @@ function resetPageState(id) {
   });
   page.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
   if (id === 'courses') {
-    // Reset to the first course too, not just its open drawers — leaving and
+    // Reset to the first course too, not just its open drawers: leaving and
     // coming back to Courses should never keep whichever course was last
     // selected, same as a project drawer never stays open across a switch.
     const defaultSlug = courseSlugs[0];
@@ -2655,7 +2656,7 @@ navLinks.forEach(a => {
     resetPageState(id);
     setMobileNavOpen(false);
     // Courses keeps whichever course is already on screen, so the URL has to
-    // name it — a bare "#courses" would send anyone the link is shared with
+    // name it: a bare "#courses" would send anyone the link is shared with
     // to the first course instead of the one actually being looked at.
     let hash = '#' + id;
     if (id === 'courses') {
@@ -2692,7 +2693,7 @@ observeReveal(document);
    The topbar is sticky now (stays put while scrolling). Feeds --topbar-h
    so the sticky course sidebar (see .course-nav) stops just below it
    instead of sliding underneath. Re-measured on resize because the
-   topbar wraps to multiple rows — and grows taller — at the mobile
+   topbar wraps to multiple rows, and grows taller, at the mobile
    breakpoint.
    ================================================================= */
 function syncTopbarHeight() {
@@ -2705,7 +2706,7 @@ window.addEventListener('resize', syncTopbarHeight);
 /* =================================================================
    LINK GUARDS  (CV download, standalone "View report" links)
    -----------------------------------------------------------------
-   Unlike course PDFs, these aren't behind a placeholder drawer — a missing
+   Unlike course PDFs, these aren't behind a placeholder drawer, so a missing
    file would otherwise fail silently as a raw browser 404. A same-origin
    HEAD check greys the link out and disables it instead. Network errors
    (offline) are treated as "assume it's fine", matching loadPdfSlots().
